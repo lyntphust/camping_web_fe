@@ -1,0 +1,147 @@
+.page-container {
+  display: flex;
+  flex-direction: row;
+
+  img {
+    width: auto;
+    height: 1080px;
+  }
+}
+
+.signup-container {
+  display: flex;
+  flex-direction: column;
+  padding: 3vw 6vw 3vw 0;
+  border-radius: 5px;
+}
+
+.signup-header {
+  margin-bottom: 40px;
+
+  h2 {
+    font-size: 25px;
+    font-weight: bold;
+    color: #5495f7;
+    margin-bottom: 5px;
+  }
+
+  p {
+    font-size: 20px;
+    color: #666;
+  }
+}
+
+.signup-form {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin-bottom: 2vw;
+}
+
+.input-group {
+  margin-bottom: 10px;
+
+  label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 16px;
+  }
+
+  input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 3px;
+  }
+}
+
+.input-subgroup {
+  display: flex;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  flex-direction: row;
+
+  i {
+    color: #5495f7;
+    padding: 15px;
+  }
+}
+
+.checkbox-group {
+  display: flex;
+  align-items: center;
+  margin-top: 20px;
+  margin-bottom: 20px;
+
+  input {
+    margin-right: 10px;
+    transform: scale(1.5);
+  }
+
+  label {
+    font-size: 17px;
+  }
+}
+
+.login-link span {
+  font-size: 20px;
+  color: #5495f7;
+}
+
+.signup-button {
+  background-color: #5495f7;
+  height: 50px;
+  border-radius: 5px;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+}
+
+.success-popup {
+  border-radius: 5px;
+  display: flex;
+  position: fixed;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  height: 200px;
+  width: 400px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  padding: 20px;
+  z-index: 1000;
+
+  p {
+    font-size: 20px;
+    color: #333;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  button {
+    border-radius: 10px;
+    background-color: #5495f7;
+    height: 50px;
+    width: 100px;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+
+    &:hover {
+      background-color: #0d4eb0;
+    }
+
+    &:active {
+      background-color: #7f90a9;
+    }
+  }
+}

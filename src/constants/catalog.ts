@@ -1,0 +1,2 @@
+export const PRODUCT_LISTING_PAGE_SIZE = 12;
+export const BLOG_LISTING_PAGE_SIZE = 6;

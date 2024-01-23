@@ -1,0 +1,64 @@
+.modal-confirm.ant-modal {
+  top: 20%;
+
+  .ant-modal-content {
+    padding: 40px 48px 34px;
+    min-height: 400px;
+
+    .spin {
+      width: 100%;
+      height: 350px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    h1 {
+      font-size: 24px;
+      white-space: pre-line;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .group-btn {
+      margin-top: 60px;
+
+      .ant-checkbox-wrapper {
+        margin-bottom: 10px;
+      }
+
+      button {
+        min-width: 260px;
+      }
+    }
+
+    .ant-modal-body {
+      padding: 0;
+    }
+  }
+
+  .text-area {
+    margin-top: -20px;
+    height: 50px;
+  }
+
+  .modal-confirm-text {
+    text-align: center;
+    font-size: 16px;
+  }
+
+  .modal-note-text {
+    border: 1px solid;
+    border-radius: 3px;
+    padding: 13px 20px;
+    font-size: 20px;
+  }
+
+  .group-btn {
+    button {
+      height: 40px;
+      font-size: 16px;
+      margin-bottom: 10px;
+    }
+  }
+}

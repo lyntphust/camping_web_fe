@@ -1,0 +1,17 @@
+.custom-carousel {
+  .ant-carousel .slick-prev::after {
+    width: 30px;
+    height: 30px;
+  }
+  .slick-arrow.slick-prev {
+    color: black;
+    font-size: 20px;
+  }
+  .slick-arrow.slick-next {
+    ::after {
+      width: 30px;
+      height: 30px;
+    }
+    color: black;
+  }
+}
