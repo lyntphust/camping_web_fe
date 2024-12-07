@@ -1,29 +1,45 @@
-import createApolloClient from '@/lib/apollo/client'
-import { DocumentNode } from 'graphql'
+import api from "@services/baseApi";
+import { AxiosRequestConfig } from "axios";
+import { useCallback, useEffect, useState } from "react";
 
-export default async function useQuery(
-  query: DocumentNode
-): Promise<[any, any]> {
-  let data: any = {},
-    errors: any = {}
+export default function useQuery(
+  url: string,
+  params?: AxiosRequestConfig<any>
+) {
+  const [isLoading, setIsLoading] = useState(false);
+  const [data, setData] = useState<any>();
+  const [error, setError] = useState<unknown>();
 
-  try {
-    const response = await createApolloClient().query({
-      query,
-    })
+  const refetch = () => {
+    fetchData();
+  };
 
-    data = response.data
-  } catch (error: any) {
-    if (error.graphQLErrors) {
-      errors = error.graphQLErrors
-    } else {
-      errors = [
-        {
-          message: 'Something went wrong.',
-        },
-      ]
+  const fetchData = useCallback(async () => {
+    setIsLoading(true);
+
+    try {
+      const response = await api.get(url, params);
+
+      if (response) {
+        setData(response);
+      }
+    } catch (error) {
+      setError(error);
+    } finally {
+      setIsLoading(false);
     }
-  }
+  }, [params, url]);
 
-  return [data, errors]
+  useEffect(() => {
+    setIsLoading(true);
+
+    fetchData();
+  }, [fetchData]);
+
+  return {
+    data,
+    isLoading,
+    error,
+    refetch,
+  };
 }
