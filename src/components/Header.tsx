@@ -15,16 +15,20 @@ import {
 import type { MenuProps } from "antd";
 import { Dropdown, Input, Space } from "antd";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export default function Header() {
   const router = useRouter();
 
-  const accessToken = null;
+  const [accessToken, setAccessToken] = useState<string | null>();
 
-  if (typeof window !== "undefined" && window.localStorage) {
-    const accessToken = localStorage.getItem("access_token");
-    console.log("accessToken", accessToken);
-  }
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.localStorage) {
+      const accessToken = localStorage.getItem("access_token");
+
+      setAccessToken(accessToken);
+    }
+  }, []);
 
   const handleLogout = () => {
     // localStorage.removeItem("user");
