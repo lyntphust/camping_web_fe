@@ -175,7 +175,7 @@ const SignIn = () => {
         </div>
       </Col>
       <Col span={12} style={{ height: "100vh" }}>
-        <Image src="./glamping.jpg" alt="Ảnh mô tả" />
+        <Image src="/glamping.jpg" width={749} height={937} alt="Ảnh mô tả" />
       </Col>
       <MyModal
         setShowModal={setModalForgotPassword}
