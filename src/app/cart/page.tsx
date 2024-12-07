@@ -4,7 +4,6 @@ import { QuestionMarkCircleIcon } from "@heroicons/react/24/solid";
 import { Button, Image, Input, InputNumber, Skeleton } from "antd";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import withAuth from "../withAuth";
 
 const products = [
   {
@@ -52,34 +51,36 @@ const Cart = () => {
       </div>
       {products.length > 0 ? (
         <>
-          <ul role="list" class="">
+          <ul role="list" className="">
             {products?.map((product) => (
-              <li class="flex py-6" key={product.id}>
-                <div class="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
+              <li className="flex py-6" key={product.id}>
+                <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
                   <Image
                     src={product.imageSrc}
                     alt={product.imageAlt}
                     className="h-full w-full object-cover object-center"
                   />
                 </div>
-                <div class="ml-4 flex flex-1 flex-col">
+                <div className="ml-4 flex flex-1 flex-col">
                   <div>
-                    <div class="flex justify-between text-base font-medium text-gray-900">
+                    <div className="flex justify-between text-base font-medium text-gray-900">
                       <h3>
                         <a href="#">{product.name}</a>
                       </h3>
-                      <p class="ml-4">{product.price}</p>
+                      <p className="ml-4">{product.price}</p>
                     </div>
-                    <p class="mt-1 text-sm text-gray-500">{product.color}</p>
+                    <p className="mt-1 text-sm text-gray-500">
+                      {product.color}
+                    </p>
                   </div>
-                  <div class="flex flex-1 items-end justify-between text-sm">
-                    <div class="relative flex items-center max-w-[8rem]">
+                  <div className="flex flex-1 items-end justify-between text-sm">
+                    <div className="relative flex items-center max-w-[8rem]">
                       <Button
-                        type="button"
-                        class="bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 border border-gray-300 rounded-s-lg p-3 h-11 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none"
+                        type="default"
+                        className="bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 border border-gray-300 rounded-s-lg p-3 h-11 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none"
                       >
                         <svg
-                          class="w-3 h-3 text-gray-900 dark:text-white"
+                          className="w-3 h-3 text-gray-900 dark:text-white"
                           aria-hidden="true"
                           xmlns="http://www.w3.org/2000/svg"
                           fill="none"
@@ -98,16 +99,16 @@ const Cart = () => {
                         type="text"
                         data-input-counter-min="1"
                         data-input-counter-max="50"
-                        class="bg-gray-50 border-x-0 border-gray-300 text-center text-gray-900 text-sm focus:ring-blue-500 focus:border-blue-500 block w-full py-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        className="bg-gray-50 border-x-0 border-gray-300 text-center text-gray-900 text-sm focus:ring-blue-500 focus:border-blue-500 block w-full py-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                         value="1"
                         required
                       />
                       <Button
-                        type="button"
-                        class="bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 border border-gray-300 rounded-e-lg p-3 h-11 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none"
+                        type="default"
+                        className="bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-600 hover:bg-gray-200 border border-gray-300 rounded-e-lg p-3 h-11 focus:ring-gray-100 dark:focus:ring-gray-700 focus:ring-2 focus:outline-none"
                       >
                         <svg
-                          class="w-3 h-3 text-gray-900 dark:text-white"
+                          className="w-3 h-3 text-gray-900 dark:text-white"
                           aria-hidden="true"
                           xmlns="http://www.w3.org/2000/svg"
                           fill="none"
@@ -174,19 +175,19 @@ const Cart = () => {
                 <dd className="text-base font-medium text-gray-900">$27.00</dd>
               </div>
             </dl>
-            <div class="mt-6">
+            <div className="mt-6">
               <a
                 href="#"
-                class="flex items-center justify-center rounded-md border border-transparent bg-blue-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-blue-700"
+                className="flex items-center justify-center rounded-md border border-transparent bg-blue-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-blue-700"
               >
                 Checkout
               </a>
             </div>
-            <div class="mt-6 flex justify-center text-center text-sm text-gray-500">
+            <div className="mt-6 flex justify-center text-center text-sm text-gray-500">
               <p>
                 or {""}
                 <span
-                  class="font-medium text-blue-600 hover:text-blue-500 cursor-pointer"
+                  className="font-medium text-blue-600 hover:text-blue-500 cursor-pointer"
                   onClick={() => {
                     router.push("/category/what-is-new");
                   }}
@@ -201,7 +202,7 @@ const Cart = () => {
         <section className="text-center">
           Emty cart{" "}
           <span
-            class="font-medium text-blue-600 hover:text-blue-500 cursor-pointer"
+            className="font-medium text-blue-600 hover:text-blue-500 cursor-pointer"
             onClick={() => {
               router.push("/category/what-is-new");
             }}

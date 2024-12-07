@@ -19,7 +19,7 @@ const UserMangement = () => {
 
   const [visible, setVisible] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [selectedUsertId, setSelectedUserId] = useState(null);
+  const [selectedUsertId, setSelectedUserId] = useState<any>(null);
 
   const fetchData = async () => {
     // try {
@@ -41,12 +41,12 @@ const UserMangement = () => {
     fetchData();
   }, []);
 
-  const showModal = (record) => {
+  const showModal = (record: any) => {
     setIsModalVisible(true);
     setSelectedUserId(record);
   };
 
-  const handleOkDelete = async (id) => {
+  const handleOkDelete = async () => {
     // try {
     //   await usersApi.deleteUsers(id);
     //   message.success("Delete user successfully!");
@@ -91,7 +91,7 @@ const UserMangement = () => {
       title: "Role",
       dataIndex: "role",
       key: "role",
-      render: (record) =>
+      render: (record: any) =>
         record === "admin" ? (
           <Tag color="volcano">ADMIN</Tag>
         ) : (
@@ -102,18 +102,18 @@ const UserMangement = () => {
       title: "Phone",
       dataIndex: "phone",
       key: "phone",
-      render: (record) => record !== "/0" && <div>{record}</div>,
+      render: (record: any) => record !== "/0" && <div>{record}</div>,
     },
     {
       title: "Created At",
       dataIndex: "created_at",
       key: "created_at",
-      render: (record) => <div>{new Date(record).toLocaleString()}</div>,
+      render: (record: any) => <div>{new Date(record).toLocaleString()}</div>,
     },
     {
       title: "Action",
       key: "id",
-      render: (record) => (
+      render: (record: any) => (
         <Space size="middle">
           {record.role === "admin" ? null : (
             <>
@@ -127,12 +127,12 @@ const UserMangement = () => {
     },
   ];
 
-  const handleCategoryChange = (value) => {
+  const handleCategoryChange = (value: any) => {
     setFilterCategory(value);
   };
 
   const filteredUser = usersData.filter(
-    (user) => filterCategory === "" || user.role === filterCategory
+    (user: any) => filterCategory === "" || user.role === filterCategory
   );
 
   return (
@@ -181,7 +181,7 @@ const UserMangement = () => {
         <Modal
           title="Confirm Delete"
           visible={isModalVisible}
-          onOk={() => handleOkDelete(selectedUsertId.id)}
+          onOk={() => handleOkDelete()}
           onCancel={handleCancelDelete}
         >
           <p>

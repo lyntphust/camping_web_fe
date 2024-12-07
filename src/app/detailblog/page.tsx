@@ -27,11 +27,7 @@ export default function DetailBlog() {
                       Graphic Designer, educator & CEO Flowbite
                     </p>
                     <p className="text-base text-gray-500 dark:text-gray-400">
-                      <time
-                        pubdate
-                        datetime="2022-02-08"
-                        title="February 8th, 2022"
-                      >
+                      <time dateTime="2022-02-08" title="February 8th, 2022">
                         Feb. 8, 2024
                       </time>
                     </p>
@@ -177,7 +173,7 @@ export default function DetailBlog() {
                   />
                 </div>
                 <button
-                  type="primary"
+                  type="submit"
                   className="w-1/5 cursor-pointer px-4 py-3 text-center text-gray-100 bg-blue-600 border border-transparent dark:border-gray-700 hover:border-blue-500 hover:text-blue-700 hover:bg-blue-100 dark:text-gray-400 dark:bg-gray-700 dark:hover:bg-gray-900 rounded-xl"
                 >
                   Gửi
@@ -190,16 +186,14 @@ export default function DetailBlog() {
                       <Image
                         className="mr-2 w-6 h-6 rounded-full"
                         src="https://flowbite.com/docs/images/people/profile-picture-4.jpg"
+                        width={150}
+                        height={150}
                         alt="Helene Engels"
                       />
                       Helene Engels
                     </p>
                     <p className="text-sm text-gray-600 dark:text-gray-400">
-                      <time
-                        pubdate
-                        datetime="2022-06-23"
-                        title="June 23rd, 2022"
-                      >
+                      <time dateTime="2022-06-23" title="June 23rd, 2022">
                         Jun. 23, 2022
                       </time>
                     </p>
@@ -212,7 +206,7 @@ export default function DetailBlog() {
                 </p>
                 <div className="flex items-center mt-4 space-x-4">
                   <button
-                    type="primary"
+                    type="submit"
                     className="w-1/6 cursor-pointer px-4 py-3 text-center text-gray-100 bg-blue-600 border border-transparent dark:border-gray-700 hover:border-blue-500 hover:text-blue-700 hover:bg-blue-100 dark:text-gray-400 dark:bg-gray-700 dark:hover:bg-gray-900 rounded-xl"
                   >
                     <svg
@@ -248,6 +242,8 @@ export default function DetailBlog() {
                   src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/article/blog-1.png"
                   className="mb-5 rounded-lg"
                   alt="Image 1"
+                  width={150}
+                  height={150}
                 />
               </a>
               <h2 className="mb-2 text-xl font-bold leading-tight text-gray-900 dark:text-white">
@@ -270,6 +266,8 @@ export default function DetailBlog() {
                   src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/article/blog-2.png"
                   className="mb-5 rounded-lg"
                   alt="Image 2"
+                  width={150}
+                  height={150}
                 />
               </a>
               <h2 className="mb-2 text-xl font-bold leading-tight text-gray-900 dark:text-white">

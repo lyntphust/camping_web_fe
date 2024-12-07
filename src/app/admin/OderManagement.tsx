@@ -28,7 +28,7 @@ const OrderManagement = () => {
     // }
   };
 
-  const handleGetDataDetails = async (id) => {
+  const handleGetDataDetails = async () => {
     // try {
     //   const response = await orderApi.getDetailOrder(id);
     //   setOrderDetails(response.data.data);
@@ -44,9 +44,9 @@ const OrderManagement = () => {
     // }
   };
 
-  const handleViewDetails = (record) => {
+  const handleViewDetails = (record: any) => {
     setIsModalVisible(true);
-    handleGetDataDetails(record);
+    handleGetDataDetails();
   };
   const handleOkDetails = () => {
     setIsModalVisible(false);
@@ -57,13 +57,13 @@ const OrderManagement = () => {
   };
 
   // Delivered order
-  const handleDeliver = (record) => {
-    handleGetDataDetails(record.id);
+  const handleDeliver = (record: any) => {
+    handleGetDataDetails();
     setIsModalVisibleDeliver(true);
     setOrderIdSelected(record.id);
   };
 
-  const handleOkDeliver = async (id) => {
+  const handleOkDeliver = async () => {
     // try {
     //   const status = "shipping";
     //   await orderApi.updateStatusOrder(`${id}?status=${status}`);
@@ -79,13 +79,13 @@ const OrderManagement = () => {
   };
 
   // Delete order
-  const handleDelete = async (record) => {
-    handleGetDataDetails(record.id);
+  const handleDelete = async (record: any) => {
+    handleGetDataDetails();
     setIsModalVisibleDelete(true);
     setOrderIdSelected(record.id);
   };
 
-  const handleOkDelete = async (id) => {
+  const handleOkDelete = async () => {
     // try {
     //   await orderApi.deleteOrder(id);
     //   message.success("Delete order successfully!");
@@ -114,7 +114,7 @@ const OrderManagement = () => {
       title: "Product Name",
       dataIndex: "id",
       key: "id",
-      render: (record) => {
+      render: (record: any) => {
         return (
           <div
             style={{ color: "#1677ff", cursor: "pointer" }}
@@ -142,7 +142,7 @@ const OrderManagement = () => {
       title: "Status",
       dataIndex: "status",
       key: "status",
-      render: (record) => (
+      render: (record: any) => (
         <>
           {record === "created" && <Tag color="volcano">CREATED</Tag>}
           {record === "shipping" && <Tag color="blue">SHIPPING</Tag>}
@@ -159,7 +159,7 @@ const OrderManagement = () => {
       title: "Address",
       dataIndex: ["ordered_by", "address"],
       key: "address",
-      render: (record) => (
+      render: (record: any) => (
         <>
           {record && <div style={{ width: "250px" }}>{record}</div>}
           {!record && (
@@ -172,7 +172,7 @@ const OrderManagement = () => {
       title: "Action",
       key: "action",
       dataIndex: "id",
-      render: (text, record) => (
+      render: (text: any, record: any) => (
         <Space size="middle">
           {record.status !== "shipped" && record.status !== "shipping" && (
             <>
@@ -220,12 +220,12 @@ const OrderManagement = () => {
     },
   ];
 
-  const handleCategoryChange = (value) => {
+  const handleCategoryChange = (value: any) => {
     setFilterCategory(value);
   };
 
   const filteredProducts = ordersData.filter(
-    (product) => filterCategory === "" || product.status === filterCategory
+    (product: any) => filterCategory === "" || product.status === filterCategory
   );
 
   return (
@@ -260,18 +260,18 @@ const OrderManagement = () => {
       <Modal
         title="Deliver Order"
         visible={isModalVisibleDeliver}
-        onOk={() => handleOkDeliver(orderIdSelected)}
+        onOk={() => handleOkDeliver()}
         onCancel={handleCancelDeliver}
       >
         <Table columns={columnsOrderDetail} dataSource={orderDetails} />
       </Modal>
       <Modal
         title="Delete Order"
-        subject="Are you sure you want to delete this order?"
         visible={isModalVisibleDelete}
-        onOk={() => handleOkDelete(orderIdSelected)}
+        onOk={() => handleOkDelete()}
         onCancel={handleCancelDelete}
       >
+        <div>Are you sure you want to delete this order?</div>
         <Table columns={columnsOrderDetail} dataSource={orderDetails} />
       </Modal>
     </div>

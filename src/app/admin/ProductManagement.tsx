@@ -1,3 +1,4 @@
+import { useCreateProduct, useListProduct } from "@/hooks/catalog/useProduct";
 import productApi from "@/services/product";
 import { CloseCircleFilled, PlusOutlined } from "@ant-design/icons";
 import {
@@ -14,8 +15,9 @@ import {
   Tag,
   Upload,
 } from "antd";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import "../../styles/admin.scss";
+import LoadingFallback from "@/components/LoadingFallback";
 
 const ProductAdminPage = () => {
   const [filterCategory, setFilterCategory] = useState("");
@@ -25,31 +27,24 @@ const ProductAdminPage = () => {
   const [visibleEdit, setVisibleEdit] = useState(false);
   const [form] = Form.useForm();
 
-  const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([
-    { id: 1, name: "Category 1" },
-    { id: 2, name: "Category 2" },
-    { id: 3, name: "Category 3" },
+    { id: "1", name: "Category 1" },
+    { id: "2", name: "Category 2" },
+    { id: "3", name: "Category 3" },
   ]);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [selectedRecord, setSelectedRecord] = useState(null);
+  const [selectedRecord, setSelectedRecord] = useState<any>(null);
   const [selectedProductId, setSelectedProductId] = useState(null);
 
-  const [fileList, setFileList] = useState([]);
+  const {
+    data: productList,
+    isLoading: getListIsLoading,
+    refetch,
+  } = useListProduct();
+  const { isLoading: createProductIsLoading, mutate: createProduct } =
+    useCreateProduct();
 
-  const fetchData = async () => {
-    try {
-      const response = await productApi.getListProducts();
-      console.log(response.data);
-      setProducts(response.data);
-    } catch (error) {
-      message.error(error);
-    }
-  };
-
-  useEffect(() => {
-    fetchData();
-  }, []);
+  const [fileList, setFileList] = useState<any>([]);
 
   const columns = [
     {
@@ -76,14 +71,14 @@ const ProductAdminPage = () => {
       title: "Quantity",
       dataIndex: "stock",
       key: "quantity",
-      render: (record) => (
+      render: (record: any) => (
         <span>{record ? record : <Tag color="volcano">SOLD</Tag>}</span>
       ),
     },
     {
       title: "Action",
       key: "action",
-      render: (record) => (
+      render: (record: any) => (
         <Space size="middle">
           <Button type="primary" onClick={() => handleEdit(record)}>
             Edit
@@ -96,16 +91,15 @@ const ProductAdminPage = () => {
     },
   ];
 
-  const showModalDelete = (record) => {
+  const showModalDelete = (record: any) => {
     setSelectedRecord(record);
     setIsModalVisible(true);
   };
 
-  const handleDelete = async (id) => {
+  const handleDelete = async (id: any) => {
     try {
       await productApi.deleteProduct(id);
       setIsModalVisible(false);
-      fetchData();
       message.success("Đã xóa sản phẩm thành công!");
     } catch (error) {
       message.error("Sản phẩm không thể bị xóa! Vui lòng thử lại sau");
@@ -117,7 +111,6 @@ const ProductAdminPage = () => {
   };
 
   const openAddForm = () => {
-    const maxId = Math.max(...products.map((product) => product.id));
     resetForm();
     setVisible(true);
   };
@@ -128,7 +121,7 @@ const ProductAdminPage = () => {
       category: "",
       name: "",
       price: "",
-      size: 0,
+      size: "",
       discount: 0,
       color: "",
       img: "",
@@ -143,13 +136,17 @@ const ProductAdminPage = () => {
       values.file = fileList[0].originFileObj;
     }
     try {
-      await productApi.postProduct(values);
-      setVisible(false);
-      fetchData();
-      message.success("Đã thêm sản phẩm thành công!");
+      const data = await createProduct(values);
+
+      if (data) {
+        setVisible(false);
+        message.success("Đã thêm sản phẩm thành công!");
+      }
+
+      refetch();
       resetForm();
     } catch (error) {
-      if (error.response.data.message === "image is not allowed") {
+      if ((error as any).response.data.message === "image is not allowed") {
         message.error("Vui lòng chọn hình ảnh sản phẩm!");
       }
       message.error("Không thể thêm sản phẩm! Vui lòng thử lại sau");
@@ -160,7 +157,7 @@ const ProductAdminPage = () => {
     setVisible(false);
   };
 
-  const fillDataToForm = async (record) => {
+  const fillDataToForm = async (record: any) => {
     form.setFieldsValue(record);
 
     setFileList([
@@ -172,40 +169,39 @@ const ProductAdminPage = () => {
     setVisible(true);
   };
 
-  const handleEdit = async (record) => {
+  const handleEdit = async (record: any) => {
     fillDataToForm(record);
     setSelectedProductId(record.id);
   };
 
-  const handleOkEdit = async (id) => {
+  const handleOkEdit = async () => {
     const values = await form.validateFields();
     if (fileList.length > 0) {
       values.img = fileList[0].originFileObj;
     }
-    console.log(values);
   };
 
   const handleCancelEdit = () => {
     setVisibleEdit(false);
   };
 
-  const handleCategoryChange = (value) => {
+  const handleCategoryChange = (value: any) => {
     setFilterCategory(value);
   };
 
-  const handleCategoryChangeForAction = (value) => {
+  const handleCategoryChangeForAction = (value: any) => {
     setFilterCategoryForAction(value);
   };
 
-  const handleFileChange = ({ fileList }) => {
+  const handleFileChange = ({ fileList }: any) => {
     setFileList(fileList);
   };
 
-  const handleRemoveImage = async (img, action) => {
+  const handleRemoveImage = async () => {
     setFileList([]);
   };
 
-  const handleRender = (__, img) => {
+  const handleRender = (__: any, img: any) => {
     let imgUploadUrl;
     if (!img.url) {
       imgUploadUrl = URL.createObjectURL(img.originFileObj);
@@ -215,7 +211,7 @@ const ProductAdminPage = () => {
       <div className="img-item">
         <CloseCircleFilled
           className="remove-icon fz-16"
-          onClick={() => handleRemoveImage(img)}
+          onClick={() => handleRemoveImage()}
         />
         <div className="image-container">
           <Image
@@ -232,8 +228,15 @@ const ProductAdminPage = () => {
     );
   };
 
+  console.log(getListIsLoading || createProductIsLoading);
+
   return (
     <div className="admin-page-product">
+      <LoadingFallback
+        isLoading={getListIsLoading || createProductIsLoading}
+        width={200}
+        height={800}
+      />
       <div className="container">
         <a
           className="w-full px-4 py-3 mr-4 text-center text-gray-100 bg-blue-600 border border-transparent dark:border-gray-700 hover:border-blue-500 hover:text-blue-700 hover:bg-blue-100 dark:text-gray-400 dark:bg-gray-700 dark:hover:bg-gray-900 rounded-xl"
@@ -256,7 +259,7 @@ const ProductAdminPage = () => {
         </Select>
         <Table
           columns={columns}
-          dataSource={products}
+          dataSource={productList?.data}
           pagination={{ pageSize: 8 }}
         />
         <Modal
@@ -290,7 +293,7 @@ const ProductAdminPage = () => {
               <Input />
             </Form.Item>
             <Form.Item label="Quantity" name="size">
-              <InputNumber />
+              <Input />
             </Form.Item>
             <Form.Item label="Color" name="color">
               <Input />
@@ -319,7 +322,7 @@ const ProductAdminPage = () => {
         <Modal
           title="Edit Product"
           visible={visibleEdit}
-          onOk={() => handleOkEdit(selectedProductId)}
+          onOk={() => handleOkEdit()}
           onCancel={handleCancelEdit}
         >
           <Form form={form} layout="vertical">
@@ -376,7 +379,7 @@ const ProductAdminPage = () => {
         <Modal
           title="Confirm Delete"
           visible={isModalVisible}
-          onOk={() => handleDelete(selectedRecord.id)}
+          onOk={() => handleDelete(selectedRecord?.id as any)}
           onCancel={() => handleCancelDelete()}
         >
           <p>

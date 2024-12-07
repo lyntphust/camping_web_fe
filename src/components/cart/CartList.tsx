@@ -136,7 +136,7 @@ export default function CartList() {
 
                         <div className="absolute right-0 top-0">
                           <button
-                            type="button"
+                            type="default"
                             className="-m-2 inline-flex p-2 text-gray-400 hover:text-gray-500"
                           >
                             <span className="sr-only">Remove</span>
