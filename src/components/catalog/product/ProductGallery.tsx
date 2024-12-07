@@ -1,6 +1,5 @@
 "use client";
 
-import { GalleryEntry } from "@/types";
 import {
   ChevronLeftIcon,
   ChevronRightIcon,
@@ -11,17 +10,17 @@ import { useState } from "react";
 import Swipe from "react-easy-swipe";
 
 interface Props {
-  galleryEntries: GalleryEntry[];
+  galleryImages: string[];
   className?: string;
   activeIndex?: number;
 }
 
 export default function ProductGallery({
-  galleryEntries,
+  galleryImages,
   className = "",
   activeIndex: initialActiveIndex = 0,
 }: Props) {
-  const galleryLength = galleryEntries.length;
+  const galleryLength = galleryImages.length;
   const [activeIndex, setActiveIndex] = useState<number>(initialActiveIndex);
   const [previewIndex, setPreviewIndex] = useState<number | null>(null);
 
@@ -53,7 +52,7 @@ export default function ProductGallery({
               width={800}
               height={800}
               className="object-contain w-auto lg:h-[640px] cursor-pointer"
-              src="https://dioutdoor.vn/media/2022/06/Leu-Glamping-Naturehike-Village-5.0-NH21ZP009-8-600x600.jpg.webp"
+              src={galleryImages[previewIndex]}
               alt="Main image"
             />
           </div>
@@ -78,7 +77,7 @@ export default function ProductGallery({
               width={600}
               height={600}
               className="object-contain w-full lg:h-full cursor-pointer"
-              src="https://dioutdoor.vn/media/2022/06/Leu-Glamping-Naturehike-Village-5.0-NH21ZP009-8-600x600.jpg.webp"
+              src={galleryImages[activeIndex]}
               alt="Main image"
               onClick={() => {
                 setPreviewIndex(activeIndex);
@@ -97,7 +96,7 @@ export default function ProductGallery({
       </div>
       <div className="w-full md:hidden">
         <div className="w-fit mx-auto flex gap-4">
-          {galleryEntries.map((entry, index) => (
+          {galleryImages.map((image, index) => (
             <div
               key={index}
               className={`w-4 h-4 rounded-full border-blue-400 border-2 ${
@@ -111,7 +110,7 @@ export default function ProductGallery({
         </div>
       </div>
       <div className="flex-wrap hidden md:flex">
-        {galleryEntries.map((entry, index) => (
+        {galleryImages.map((image, index) => (
           <div
             key={index}
             className="w-1/2 p-2 sm:w-1/4"
@@ -133,7 +132,7 @@ export default function ProductGallery({
                 width={200}
                 height={200}
                 className="object-contain w-full lg:h-28"
-                src="https://dioutdoor.vn/media/2022/06/Leu-Glamping-Naturehike-Village-5.0-NH21ZP009-8-600x600.jpg.webp"
+                src={image}
                 alt="Image"
               />
             </div>

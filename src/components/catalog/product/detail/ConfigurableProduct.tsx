@@ -13,6 +13,7 @@ import { HeartIcon } from "@heroicons/react/24/solid";
 import { Input } from "antd";
 import Image from "next/image";
 import { useState } from "react";
+import ProductGallery from "../ProductGallery";
 
 interface Props {
   product: ProductDetail;
@@ -83,7 +84,7 @@ export default function ConfigurableProduct({
           <div className="flex flex-wrap mb-8 -mx-4">
             <div className="w-full mb-8 md:w-[60%] md:mb-0">
               <div className="overflow-hidden mt-8">
-                {/* <ProductGallery galleryEntries={product.image} /> */}
+                <ProductGallery galleryImages={[product.image]} />
               </div>
             </div>
             <div className="w-full md:w-[40%]">
@@ -156,7 +157,7 @@ export default function ConfigurableProduct({
                 />
               </div>
               <button
-                type="button"
+                type="submit"
                 className="w-1/7 cursor-pointer px-4 py-3 text-center text-gray-100 bg-blue-600 border border-transparent dark:border-gray-700 hover:border-blue-500 hover:text-blue-700 hover:bg-blue-100 dark:text-gray-400 dark:bg-gray-700 dark:hover:bg-gray-900 rounded-xl"
               >
                 Gửi
@@ -169,6 +170,8 @@ export default function ConfigurableProduct({
                     <Image
                       className="mr-2 w-6 h-6 rounded-full"
                       src="https://flowbite.com/docs/images/people/profile-picture-4.jpg"
+                      width={150}
+                      height={150}
                       alt="Helene Engels"
                     />
                     Helene Engels
@@ -186,7 +189,7 @@ export default function ConfigurableProduct({
               </p>
               <div className="flex items-center mt-4 space-x-4">
                 <button
-                  type="button"
+                  type="submit"
                   className="w-1/8 cursor-pointer px-4 py-3 text-center text-gray-100 bg-blue-600 border border-transparent dark:border-gray-700 hover:border-blue-500 hover:text-blue-700 hover:bg-blue-100 dark:text-gray-400 dark:bg-gray-700 dark:hover:bg-gray-900 rounded-xl"
                 >
                   <svg
@@ -219,6 +222,8 @@ export default function ConfigurableProduct({
                       src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/article/blog-1.png"
                       className="mb-5 rounded-lg"
                       alt="Image 1"
+                      width={150}
+                      height={150}
                     />
                   </a>
                   <h2 className="mb-2 text-xl font-bold leading-tight text-gray-900 dark:text-white">
@@ -241,6 +246,8 @@ export default function ConfigurableProduct({
                       src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/article/blog-2.png"
                       className="mb-5 rounded-lg"
                       alt="Image 2"
+                      width={150}
+                      height={150}
                     />
                   </a>
                   <h2 className="mb-2 text-xl font-bold leading-tight text-gray-900 dark:text-white">

@@ -35,9 +35,7 @@ export interface CategoryProduct {
   id: string;
   uid?: string;
   name: string;
-  image: {
-    url: string;
-  };
+  image: string;
   price: number;
   discount: number;
   review_count: number;

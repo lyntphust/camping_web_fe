@@ -50,14 +50,6 @@ export interface ConfigurableOption {
   values: ConfigurableOptionValue[];
 }
 
-export interface GalleryEntry {
-  uid: string;
-  disabled: boolean;
-  file: string;
-  label: string;
-  position: number;
-}
-
 export interface ProductVariant {
   attributes: [
     {
@@ -68,7 +60,7 @@ export interface ProductVariant {
   ];
   product: {
     uid: string;
-    media_gallery_entries: GalleryEntry[];
+    media_gallery_entries: string[];
     sku: string;
     stock_status: number;
     price: {
@@ -116,11 +108,8 @@ export interface ProductDetail {
   short_description: {
     html: string;
   };
-  image: {
-    url: string;
-    label: string;
-  };
-  media_gallery_entries: GalleryEntry[];
+  image: string;
+  media_gallery_entries: string[];
   price: number;
   discount: number;
   review_count: number;

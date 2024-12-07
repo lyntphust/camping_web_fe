@@ -20,12 +20,7 @@ export default function ProductCard({ product, className = "" }: Props) {
         router.push(`/product/${product.id}`);
       }}
     >
-      <Image
-        src={product.image.url}
-        alt={product.name}
-        width={280}
-        height={400}
-      />
+      <Image src={product.image} alt={product.name} width={280} height={400} />
       <div className="p-4">
         <p
           className="pb-4 font-semibold text-xl"
@@ -55,7 +50,7 @@ export default function ProductCard({ product, className = "" }: Props) {
         </div>
       </div>
       <button
-        type="button"
+        type="submit"
         aria-label="Shop now"
         className="text-white bg-gradient-to-r from-blue-500 to-blue-700 hover:bg-gradient-to-br shadow-lg shadow-blue-500/50 rounded-lg font-bold py-3 text-center focus:ring-0 capitalize"
       >
