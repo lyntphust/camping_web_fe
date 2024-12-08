@@ -1,3 +1,4 @@
+import { LOADING_DELAY } from "@/constants";
 import api from "@services/baseApi";
 import { AxiosRequestConfig } from "axios";
 import { useCallback, useEffect, useState } from "react";
@@ -26,7 +27,7 @@ export default function useQuery(
     } catch (error) {
       setError(error);
     } finally {
-      setIsLoading(false);
+      setTimeout(() => setIsLoading(false), LOADING_DELAY);
     }
   }, [params, url]);
 

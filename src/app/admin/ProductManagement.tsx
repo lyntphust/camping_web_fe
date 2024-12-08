@@ -1,3 +1,4 @@
+import LoadingFallback from "@/components/LoadingFallback";
 import { useCreateProduct, useListProduct } from "@/hooks/catalog/useProduct";
 import productApi from "@/services/product";
 import { CloseCircleFilled, PlusOutlined } from "@ant-design/icons";
@@ -17,7 +18,6 @@ import {
 } from "antd";
 import { useState } from "react";
 import "../../styles/admin.scss";
-import LoadingFallback from "@/components/LoadingFallback";
 
 const ProductAdminPage = () => {
   const [filterCategory, setFilterCategory] = useState("");
@@ -41,7 +41,7 @@ const ProductAdminPage = () => {
     isLoading: getListIsLoading,
     refetch,
   } = useListProduct();
-  const { isLoading: createProductIsLoading, mutate: createProduct } =
+  const { isLoading: createProductIsLoading, doMutate: createProduct } =
     useCreateProduct();
 
   const [fileList, setFileList] = useState<any>([]);

@@ -48,7 +48,7 @@ export default function ProductDetail({ params: { id } }: Props) {
               currentNode={productName}
             />
           )}
-          {renderProductDetail(products[1])}
+          {renderProductDetail(products[0])}
         </section>
       </IntlProvider>
     </div>
