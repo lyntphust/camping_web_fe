@@ -1,63 +1,70 @@
 "use client";
 
+import { useCart } from "@/hooks/cart/useCart";
+import { formatPrice } from "@/util";
 import { QuestionMarkCircleIcon } from "@heroicons/react/24/solid";
-import { Button, Image, Input, InputNumber, Skeleton } from "antd";
+import { Button, Image, Input } from "antd";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-
-const products = [
-  {
-    id: 1,
-    name: "Throwback Hip Bag",
-    href: "#",
-    color: "Salmon",
-    price: "$9.00",
-    quantity: 1,
-    imageSrc:
-      "https://tailwindui.com/img/ecommerce-images/shopping-cart-page-04-product-01.jpg",
-    imageAlt:
-      "Salmon orange fabric pouch with match zipper, gray zipper pull, and adjustable hip belt.",
-  },
-  {
-    id: 2,
-    name: "Medium Stuff Satchel",
-    href: "#",
-    color: "Blue",
-    price: "$13.00",
-    quantity: 1,
-    imageSrc:
-      "https://tailwindui.com/img/ecommerce-images/shopping-cart-page-04-product-02.jpg",
-    imageAlt:
-      "Front of satchel with blue canvas body, black straps and handle, drawstring top, and front zipper pouch.",
-  },
-];
+import { useMemo } from "react";
 
 const Cart = () => {
   const router = useRouter();
 
-  // useEffect(() => {
-  //   // const totalPrice = products.map(product);
-  // }, [products]);
+  const { data: cart, isLoading, error } = useCart();
+
+  const cartProducts = useMemo(() => {
+    if (!cart || !cart?.data) {
+      return [];
+    }
+
+    const items = [...(cart.data.items || [])];
+
+    return items.map((cartItem) => {
+      const variant = cartItem.productVariant;
+      const product = variant.product;
+
+      return {
+        id: variant.id,
+        name: product.name,
+        photo: product.photo,
+        description: product.description,
+        price: variant.price,
+        color: variant.color,
+        size: variant.size,
+        quantity: cartItem.quantity,
+      };
+    });
+  }, [cart]);
+
+  const cartTotal = useMemo(() => {
+    if (!cart || !cart?.data) {
+      return 0;
+    }
+
+    return cart.data.total;
+  }, [cart]);
 
   return (
     <div>
       <div className="mx-automax-w-screen-sm text-center ">
         <h2 className="mb-4 mt-12 text-3xl lg:text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white">
-          Shopping Cart
+          Giỏ hàng
         </h2>
         <p className="font-light text-gray-500 sm:text-xl dark:text-gray-400">
-          Items in your shopping cart
+          Sản phẩm trong giỏ hàng của bạn
         </p>
       </div>
-      {products.length > 0 ? (
+      {cartProducts.length > 0 ? (
         <>
           <ul role="list" className="">
-            {products?.map((product) => (
+            {cartProducts.map((product) => (
               <li className="flex py-6" key={product.id}>
-                <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
+                <div className="h-48 w-48 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
                   <Image
-                    src={product.imageSrc}
-                    alt={product.imageAlt}
+                    src={product.photo}
+                    width={192}
+                    height={192}
+                    alt={product.name}
                     className="h-full w-full object-cover object-center"
                   />
                 </div>
@@ -67,7 +74,7 @@ const Cart = () => {
                       <h3>
                         <a href="#">{product.name}</a>
                       </h3>
-                      <p className="ml-4">{product.price}</p>
+                      <p className="ml-4">{formatPrice(product.price)}</p>
                     </div>
                     <p className="mt-1 text-sm text-gray-500">
                       {product.color}
@@ -100,7 +107,7 @@ const Cart = () => {
                         data-input-counter-min="1"
                         data-input-counter-max="50"
                         className="bg-gray-50 border-x-0 border-gray-300 text-center text-gray-900 text-sm focus:ring-blue-500 focus:border-blue-500 block w-full py-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                        value="1"
+                        value={product.quantity}
                         required
                       />
                       <Button
@@ -129,7 +136,7 @@ const Cart = () => {
                         href="/"
                         className="w-full px-4 py-3 text-center text-gray-100 bg-blue-600 border border-transparent dark:border-gray-700 hover:border-blue-500 hover:text-blue-700 hover:bg-blue-100 dark:text-gray-400 dark:bg-gray-700 dark:hover:bg-gray-900 rounded-xl"
                       >
-                        Remove
+                        Xoá
                       </a>
                     </div>
                   </div>
@@ -142,17 +149,19 @@ const Cart = () => {
               id="summary-heading"
               className="text-lg font-medium text-gray-900"
             >
-              Order summary
+              Chi tiết thanh toán
             </h2>
 
             <dl className="mt-6 space-y-4">
               <div className="flex items-center justify-between">
-                <dt className="text-sm text-gray-600">Subtotal</dt>
-                <dd className="text-sm font-medium text-gray-900">$22.00</dd>
+                <dt className="text-sm text-gray-600">Tổng tiền hàng</dt>
+                <dd className="text-sm font-medium text-gray-900">
+                  {formatPrice(cartTotal)}
+                </dd>
               </div>
               <div className="flex items-center justify-between border-t border-gray-200 pt-4">
                 <dt className="flex items-center text-sm text-gray-600">
-                  <span>Shipping estimate</span>
+                  <span>Phí vận chuyển</span>
                   <a
                     href="#"
                     className="ml-2 flex-shrink-0 text-gray-400 hover:text-gray-500"
@@ -166,13 +175,17 @@ const Cart = () => {
                     />
                   </a>
                 </dt>
-                <dd className="text-sm font-medium text-gray-900">$5.00</dd>
+                <dd className="text-sm font-medium text-gray-900">
+                  {formatPrice(50000)}
+                </dd>
               </div>
               <div className="flex items-center justify-between border-t border-gray-200 pt-4">
                 <dt className="text-base font-medium text-gray-900">
-                  Order total
+                  Tổng thanh toán
                 </dt>
-                <dd className="text-base font-medium text-gray-900">$27.00</dd>
+                <dd className="text-base font-medium text-gray-900">
+                  {formatPrice(cartTotal + 50000)}
+                </dd>
               </div>
             </dl>
             <div className="mt-6">
@@ -180,19 +193,19 @@ const Cart = () => {
                 href="#"
                 className="flex items-center justify-center rounded-md border border-transparent bg-blue-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-blue-700"
               >
-                Checkout
+                Thanh toán ngay
               </a>
             </div>
             <div className="mt-6 flex justify-center text-center text-sm text-gray-500">
               <p>
-                or {""}
+                hoặc {""}
                 <span
                   className="font-medium text-blue-600 hover:text-blue-500 cursor-pointer"
                   onClick={() => {
                     router.push("/category/what-is-new");
                   }}
                 >
-                  Continue Shopping
+                  Tiếp tục mua sắm
                 </span>
               </p>
             </div>
@@ -200,14 +213,14 @@ const Cart = () => {
         </>
       ) : (
         <section className="text-center">
-          Emty cart{" "}
+          Không có sản phẩm{" "}
           <span
             className="font-medium text-blue-600 hover:text-blue-500 cursor-pointer"
             onClick={() => {
               router.push("/category/what-is-new");
             }}
           >
-            Continue Shopping
+            Tiếp tục mua sắm
           </span>
         </section>
       )}
