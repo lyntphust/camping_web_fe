@@ -32,8 +32,6 @@ export default function CategoryProductList({ categoryUid }: Props) {
       try {
         const response = await productApi.getListProducts();
         setProducts(response.data);
-
-        console.log(response.data);
       } catch (error) {
         message.error("Cannot get products! Please try again.");
       }
@@ -75,8 +73,6 @@ export default function CategoryProductList({ categoryUid }: Props) {
     },
     [pathname, router, searchParams]
   );
-
-  console.log(products);
 
   return products?.length > 0 ? (
     <div className="mt-6 md:flex">

@@ -58,7 +58,6 @@ const UserMangement = () => {
   };
 
   const handleCancelDelete = () => {
-    console.log("Clicked cancel button");
     setIsModalVisible(false);
   };
   const handleOk = async () => {
