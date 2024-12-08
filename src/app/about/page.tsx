@@ -5,10 +5,10 @@ const About = () => {
     <div className="2xl:container 2xl:mx-auto lg:py-6 lg:px-20 md:py-12 md:px-6 py-9 px-4">
       <div className="mx-auto max-w-screen-sm text-center">
         <h2 className="mb-4 text-3xl lg:text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white">
-          About Us
+          Về chúng tôi
         </h2>
         <p className="font-light mb-0 text-gray-500 sm:text-xl dark:text-gray-400">
-          Who we are and what we do?
+          Chúng tôi là ai và chúng tôi làm gì?
         </p>
       </div>
       <div className="flex flex-col lg:flex-row justify-between gap-8">
@@ -16,12 +16,14 @@ const About = () => {
           <Image
             className="w-full h-full"
             src="/logo.svg"
-            alt="A group of People"
+            width={733}
+            height={415}
+            alt="Logo"
           />
         </div>
         <div className="w-full lg:w-5/12 flex flex-col justify-center">
           <h1 className="text-3xl lg:text-4xl font-bold leading-9 text-gray-800 dark:text-white pb-4">
-            Who we are?
+            Chúng tôi là ai?
           </h1>
           <p className="font-normal text-base leading-6 text-gray-600 dark:text-white">
             Wildnest là một cửa hàng trực tuyến chuyên bán các thiết bị và dụng
@@ -44,7 +46,7 @@ const About = () => {
       <div className="flex mb-24 flex-col lg:flex-row justify-between gap-8">
         <div className="w-full lg:w-5/12 flex flex-col justify-center">
           <h1 className="text-3xl lg:text-4xl font-bold leading-9 text-gray-800 dark:text-white pb-4">
-            What we do?
+            Chúng tôi làm gì?
           </h1>
           <p className="font-normal text-base leading-6 text-gray-600 dark:text-white">
             Tại Wildnest, chúng tôi đam mê những chuyến phiêu lưu ngoài trời và
@@ -60,7 +62,9 @@ const About = () => {
           <Image
             className="w-full h-full rounded-md"
             src="/about_img.png"
-            alt="A group of People"
+            width={749}
+            height={430}
+            alt="Night camp"
           />
         </div>
       </div>
@@ -69,12 +73,14 @@ const About = () => {
           <Image
             className="w-full h-full"
             src="https://i.ibb.co/FhgPJt8/Rectangle-116.png"
+            width={733}
+            height={415}
             alt="A group of People"
           />
         </div>
         <div className="w-full lg:w-5/12 flex flex-col justify-center">
           <h1 className="text-3xl lg:text-4xl font-bold leading-9 text-gray-800 dark:text-white pb-4">
-            Cooperate with us!
+            Hợp tác với chúng tôi!
           </h1>
           <p className="font-normal text-base leading-6 text-gray-600 dark:text-white">
             Chúng tôi là Wildnest, một nền tảng chuyên cung cấp các sản phẩm và

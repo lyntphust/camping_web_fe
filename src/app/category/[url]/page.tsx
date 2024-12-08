@@ -1,6 +1,4 @@
 import BreadCrumb from "@/components/Breadcrumb";
-import CategoryiesList from "@/components/CategoriesList";
-import ErrorFallback from "@/components/ErrorFallback";
 import CategoryProductList from "@/components/catalog/category/CategoryProductList";
 import { categoryDetail } from "@/data";
 
