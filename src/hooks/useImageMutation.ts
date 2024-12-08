@@ -7,8 +7,6 @@ export default function useImageMutation(url: string) {
   const [error, setError] = useState<unknown>();
 
   const mutate = async (params: any) => {
-    console.log("mutate");
-
     setIsLoading(true);
 
     try {

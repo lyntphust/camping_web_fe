@@ -228,8 +228,6 @@ const ProductAdminPage = () => {
     );
   };
 
-  console.log(getListIsLoading || createProductIsLoading);
-
   return (
     <div className="admin-page-product">
       <LoadingFallback

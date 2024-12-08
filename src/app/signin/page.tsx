@@ -7,8 +7,8 @@ import axios from "axios";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { ReactComponent as IconSuccess } from "../../../public/icon/icon-success.svg";
-import "../../styles/register.scss";
+import { default as IconSuccess } from "@public/icon/icon-success.svg";
+import "@/styles/register.scss";
 
 const SignIn = () => {
   const router = useRouter();
@@ -46,8 +46,6 @@ const SignIn = () => {
           // window.location.reload();
         }
       } catch (error) {
-        console.log("error", error);
-
         if (axios.isAxiosError(error)) {
           if (error.response?.status === 404) {
             message.error("Email không tồn tại! Vui lòng thử lại.");

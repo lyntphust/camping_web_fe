@@ -1,10 +1,10 @@
 export function kebabCaseToCamelCase(str: string) {
-  return str.replace(/-./g, (x) => x[1].toUpperCase())
+  return str.replace(/-./g, (x) => x[1].toUpperCase());
 }
 
 interface QueryParamPair {
-  key: string
-  value: string | number
+  key: string;
+  value: string | number;
 }
 
 export function upsertQueryParam(
@@ -12,26 +12,26 @@ export function upsertQueryParam(
   key: string,
   value: string | number
 ) {
-  const params = new URLSearchParams(searchParams)
-  params.set(key, value.toString())
+  const params = new URLSearchParams(searchParams);
+  params.set(key, value.toString());
 
-  return params.toString()
+  return params.toString();
 }
 
 export function upsertQueryParams(
   searchParams: URLSearchParams,
   params: Record<string, string>
 ) {
-  const result = new URLSearchParams(searchParams)
+  const result = new URLSearchParams(searchParams);
 
   for (const key in params) {
-    if (!params[key] || params[key] === '') {
-      result.delete(key)
-      continue
+    if (!params[key] || params[key] === "") {
+      result.delete(key);
+      continue;
     }
 
-    result.set(key, params[key])
+    result.set(key, params[key]);
   }
 
-  return result.toString()
+  return result.toString();
 }
