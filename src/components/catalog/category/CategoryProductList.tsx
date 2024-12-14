@@ -11,6 +11,7 @@ import { upsertQueryParam, upsertQueryParams } from "@/util";
 import { message } from "antd";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
+import { IntlProvider } from "react-intl";
 
 interface Props {
   categoryUid: string;

@@ -13,6 +13,7 @@ import { HeartIcon } from "@heroicons/react/24/solid";
 import { Input } from "antd";
 import Image from "next/image";
 import { useState } from "react";
+import { IntlProvider } from "react-intl";
 import ProductGallery from "../ProductGallery";
 
 interface Props {
@@ -93,10 +94,12 @@ export default function ConfigurableProduct({
                   <h2 className="max-w-xl mt-6 mb-6 text-2xl font-semibold leading-loose tracking-wide text-gray-700 md:text-3xl">
                     {product.name}
                   </h2>
-                  <ProductPartialPrice
-                    price={product.price}
-                    discount={product.discount}
-                  />
+                  <IntlProvider locale="vi">
+                    <ProductPartialPrice
+                      price={product.price}
+                      discount={product.discount}
+                    />
+                  </IntlProvider>
                   <ProductRating ratingSummary={10} reviewCount={100} />
                 </div>
                 {/* {renderConfigurableOptions(configurable_options, variants)} */}
