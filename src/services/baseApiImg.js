@@ -1,27 +1,26 @@
-import axios from 'axios'
+import axios from "axios";
 
 const apiImg = axios.create({
-  baseURL: 'http://localhost:8888',
+  baseURL: "http://localhost:8888",
   headers: {
-    'accept ': 'application/json',
-    'Content-Type': 'application/json',
-    'ngrok-skip-browser-warning': '69420',
-    'Content-Type': 'multipart/form-data',
+    "accept ": "application/json",
+    "Content-Type": "application/json",
+    "ngrok-skip-browser-warning": "69420",
+    "Content-Type": "multipart/form-data",
   },
-})
+});
 
 apiImg.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('access_token')
+    const token = localStorage.getItem("access_token");
     if (token) {
-      const parsedToken = JSON.parse(token)
-      config.headers['Authorization'] = `Bearer ${parsedToken}`
+      config.headers["Authorization"] = `Bearer ${token}`;
     }
-    return config
+    return config;
   },
   (error) => {
-    return Promise.reject(error)
+    return Promise.reject(error);
   }
-)
+);
 
-export default apiImg
+export default apiImg;
