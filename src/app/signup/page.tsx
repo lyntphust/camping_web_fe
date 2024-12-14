@@ -14,9 +14,11 @@ import {
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import Image from "next/image";
+import { useAuth } from "@/context/AuthContext";
 
 const Register = () => {
   const router = useRouter();
+  const { accessToken, updateAccessToken } = useAuth();
   const [formData, setFormData] = useState({
     name: "",
     surname: "",
@@ -44,14 +46,9 @@ const Register = () => {
         roleName: "user",
       });
       if (response.status === 201) {
-        // localStorage.setItem("user", JSON.stringify(response.data.data));
-        localStorage.setItem(
-          "access_token",
-          JSON.stringify(response.data.accessToken)
-        );
+        updateAccessToken(response.data.accessToken);
         message.success("Account registration successful!");
         router.push("/");
-        // window.location.reload();
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {

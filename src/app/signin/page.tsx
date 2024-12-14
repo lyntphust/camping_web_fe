@@ -1,14 +1,15 @@
 "use client";
 
 import MyModal from "@/components/MyModal";
+import { useAuth } from "@/context/AuthContext";
 import authApi from "@/services/auth";
+import "@/styles/register.scss";
+import { default as IconSuccess } from "@public/icon/icon-success.svg";
 import { Button, Col, Input, message } from "antd";
 import axios from "axios";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { default as IconSuccess } from "@public/icon/icon-success.svg";
-import "@/styles/register.scss";
 
 const SignIn = () => {
   const router = useRouter();
@@ -18,6 +19,7 @@ const SignIn = () => {
   const [modalForgotPassword, setModalForgotPassword] = useState(false);
   const [loadingSendEmail, setLoadingSendEmail] = useState(false);
   const [emailSent, setEmailSent] = useState(false);
+  const { accessToken, updateAccessToken } = useAuth();
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
@@ -36,14 +38,9 @@ const SignIn = () => {
       try {
         const response = await authApi.signin({ email, password });
         if (response.status === 201) {
-          // localStorage.setItem("user", JSON.stringify(response.data.data));
-          localStorage.setItem(
-            "access_token",
-            JSON.stringify(response.data.accessToken)
-          );
+          updateAccessToken(response.data.accessToken);
           message.success("Đăng nhập thành công!");
           router.push("/");
-          // window.location.reload();
         }
       } catch (error) {
         if (axios.isAxiosError(error)) {
