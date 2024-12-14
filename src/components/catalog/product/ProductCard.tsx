@@ -40,7 +40,7 @@ export default function ProductCard({ product, className = "" }: Props) {
           />
         </div>
         <div className="mt-6">
-          <IntlProvider locale="en">
+          <IntlProvider locale="vi">
             <ProductPartialPrice
               className="inline-flex"
               price={product.price}

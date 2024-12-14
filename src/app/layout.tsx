@@ -3,12 +3,12 @@ import CategoryNav from "@/components/CategoryNav";
 import ChatBot from "@/components/ChatBot";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
+import { AuthProvider } from "@context/AuthContext";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
-import { AuthProvider } from "../context/AuthContext";
 
 const inter = Inter({ subsets: ["latin"] });
 
