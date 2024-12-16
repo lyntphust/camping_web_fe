@@ -1,16 +1,16 @@
-import api from "@/services/baseApiImg";
+import api from "@/services/baseApi";
 import { useState } from "react";
 
-export default function useImageMutation(url: string) {
+export default function useDeletion(url: string) {
   const [isLoading, setIsLoading] = useState(false);
   const [data, setData] = useState<any>();
   const [error, setError] = useState<unknown>();
 
-  const mutate = async (params?: any) => {
+  const doDelete = async (params?: any) => {
     setIsLoading(true);
 
     try {
-      const response = await api.post(url, params);
+      const response = await api.delete(url, params);
 
       return response;
     } catch (error) {
@@ -23,6 +23,6 @@ export default function useImageMutation(url: string) {
   return {
     isLoading,
     error,
-    mutate,
+    doDelete,
   };
 }

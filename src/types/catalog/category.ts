@@ -20,14 +20,3 @@ export interface CategoryDetail {
   url_path: string;
   url_key: string;
 }
-
-export interface CategoryProduct {
-  id: string;
-  uid?: string;
-  name: string;
-  image: string;
-  price: number;
-  discount: number;
-  review_count: number;
-  rating_summary: number;
-}

@@ -1,7 +1,6 @@
 "use client";
 
 import ConfigurableProduct from "@/components/catalog/product/detail/ConfigurableProduct";
-import { productDetail } from "@/data";
 import productApi from "@/services/product";
 import { ProductDetail as ProductDetailInteface } from "@/types";
 import { message } from "antd";
@@ -9,7 +8,7 @@ import { useEffect, useState } from "react";
 
 interface Props {
   params: {
-    id: string;
+    id: number;
   };
 }
 
@@ -22,8 +21,6 @@ const renderProductDetail = (product: ProductDetailInteface | undefined) => {
 };
 
 export default function ProductDetail({ params: { id } }: Props) {
-  const product = productDetail;
-
   const [products, setProducts] = useState<ProductDetailInteface[]>([]);
 
   useEffect(() => {

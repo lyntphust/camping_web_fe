@@ -1,12 +1,11 @@
 import ProductPartialPrice from "@/components/catalog/product/ProductPartialPrice";
-import ProductRating from "@/components/catalog/product/ProductRating";
-import { CategoryProduct } from "@/types";
+import { ProductDetail } from "@/types";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { IntlProvider } from "react-intl";
 
 interface Props {
-  product: CategoryProduct;
+  product: ProductDetail;
   className?: string;
 }
 
@@ -34,10 +33,10 @@ export default function ProductCard({ product, className = "" }: Props) {
           {product.name}
         </p>
         <div className="my-2">
-          <ProductRating
+          {/* <ProductRating
             ratingSummary={product.rating_summary}
             reviewCount={product.review_count}
-          />
+          /> */}
         </div>
         <div className="mt-6">
           <IntlProvider locale="vi">
