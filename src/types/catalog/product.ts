@@ -1,5 +1,3 @@
-import { BreadCrumbNode } from ".";
-
 export interface ProductPartialPrice {
   regular_price: {
     value: number;
@@ -95,15 +93,13 @@ export interface ProductDetail {
       uid: string;
       category_name: string;
       category_level: number;
-      breadcrumbs: BreadCrumbNode[];
     }
   ];
   category?: {
     uid: string;
     category_name: string;
     category_level: number;
-    breadcrumbs: BreadCrumbNode[];
-  }; // Custom attribute for breadcrumb in product detail page
+  };
   description: string;
   short_description: {
     html: string;
