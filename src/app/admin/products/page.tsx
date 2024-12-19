@@ -12,6 +12,7 @@ import {
   message,
   Modal,
   Select,
+  Skeleton,
   Space,
   Table,
   Tag,
@@ -167,7 +168,7 @@ const ProductAdminPage = () => {
       },
     ]);
 
-    setVisible(true);
+    setVisibleEdit(true);
   };
 
   const handleEdit = async (record: any) => {
@@ -228,165 +229,158 @@ const ProductAdminPage = () => {
       </div>
     );
   };
-
+  if (getListIsLoading || createProductIsLoading) return <Skeleton />;
   return (
-    <div className="admin-page-content">
-      <LoadingFallback
-        isLoading={getListIsLoading || createProductIsLoading}
-        width={1000}
-        height={800}
+    <div className="container">
+      <a
+        className="w-full px-4 py-3 mr-4 text-center text-gray-100 bg-blue-600 border border-transparent dark:border-gray-700 hover:border-blue-500 hover:text-blue-700 hover:bg-blue-100 dark:text-gray-400 dark:bg-gray-700 dark:hover:bg-gray-900 rounded-xl"
+        onClick={() => openAddForm()}
+      >
+        Add product
+      </a>
+      <Select
+        style={{ width: 200, marginBottom: 16, height: 40 }}
+        placeholder="Filter by Category"
+        onChange={handleCategoryChange}
+        value={filterCategory}
+      >
+        <Select.Option value="">All</Select.Option>
+        {categories.map((category) => (
+          <Select.Option value={category.name} key={category.id}>
+            {category.name}
+          </Select.Option>
+        ))}
+      </Select>
+      <Table
+        columns={columns}
+        dataSource={productList?.data}
+        pagination={{ pageSize: 8 }}
       />
-      <div className="container">
-        <a
-          className="w-full px-4 py-3 mr-4 text-center text-gray-100 bg-blue-600 border border-transparent dark:border-gray-700 hover:border-blue-500 hover:text-blue-700 hover:bg-blue-100 dark:text-gray-400 dark:bg-gray-700 dark:hover:bg-gray-900 rounded-xl"
-          onClick={() => openAddForm()}
-        >
-          Add product
-        </a>
-        <Select
-          style={{ width: 200, marginBottom: 16, height: 40 }}
-          placeholder="Filter by Category"
-          onChange={handleCategoryChange}
-          value={filterCategory}
-        >
-          <Select.Option value="">All</Select.Option>
-          {categories.map((category) => (
-            <Select.Option value={category.name} key={category.id}>
-              {category.name}
-            </Select.Option>
-          ))}
-        </Select>
-        <Table
-          columns={columns}
-          dataSource={productList?.data}
-          pagination={{ pageSize: 8 }}
-        />
-        <Modal
-          title="Add Product"
-          visible={visible}
-          onOk={handleOk}
-          onCancel={handleCancel}
-        >
-          <Form form={form} layout="vertical" className="add-form">
-            <Form.Item label="Category" name="category">
-              <Select
-                style={{ width: 200, marginBottom: 16 }}
-                placeholder="Select Category"
-                onChange={handleCategoryChangeForAction}
-                value={filterCategoryForAction}
-              >
-                {categories.map((category) => (
-                  <Select.Option key={category.id} value={category.id}>
-                    {category.name}
-                  </Select.Option>
-                ))}
-              </Select>
-            </Form.Item>
-            <Form.Item label="Name" name="name">
-              <Input />
-            </Form.Item>
-            <Form.Item label="Price" name="price">
-              <Input />
-            </Form.Item>
-            <Form.Item label="Discount" name="discount">
-              <Input />
-            </Form.Item>
-            <Form.Item label="Quantity" name="size">
-              <Input />
-            </Form.Item>
-            <Form.Item label="Color" name="color">
-              <Input />
-            </Form.Item>
-            <Form.Item label="Image" name="file">
-              <Upload
-                beforeUpload={() => false}
-                className="upload"
-                listType="picture-card"
-                itemRender={handleRender}
-                accept="image/png, image/jpeg"
-                fileList={fileList}
-                onChange={(fileList) => handleFileChange(fileList)}
-              >
-                <div className="btn-upload">
-                  <PlusOutlined />
-                  <span className="btn-text">Upload</span>
-                </div>
-              </Upload>
-            </Form.Item>
-            <Form.Item label="Description" name="description">
-              <Input.TextArea />
-            </Form.Item>
-          </Form>
-        </Modal>
-        <Modal
-          title="Edit Product"
-          visible={visibleEdit}
-          onOk={() => handleOkEdit()}
-          onCancel={handleCancelEdit}
-        >
-          <Form form={form} layout="vertical">
-            <Form.Item label="ID Category" name="categoryId">
-              <Select
-                style={{ width: 200, marginBottom: 16 }}
-                placeholder="Select Category"
-                onChange={handleCategoryChangeForAction}
-                value={filterCategoryForAction}
-              >
-                {categories.map((category) => (
-                  <Select.Option key={category.id} value={category.id}>
-                    {category.name}
-                  </Select.Option>
-                ))}
-              </Select>
-            </Form.Item>
-            <Form.Item label="Tên" name="name">
-              <Input />
-            </Form.Item>
-            <Form.Item label="Giá cả" name="price">
-              <Input />
-            </Form.Item>
-            <Form.Item label="Giảm giá(%)" name="discount">
-              <InputNumber />
-            </Form.Item>
-            <Form.Item label="Số lượng" name="weight">
-              <InputNumber />
-            </Form.Item>
-            <Form.Item label="Đã bán" name="weight">
-              <InputNumber readOnly disabled={true} />
-            </Form.Item>
-            <Form.Item label="Hình ảnh" name="img">
-              <Upload
-                beforeUpload={() => false}
-                className="upload"
-                listType="picture-card"
-                itemRender={handleRender}
-                accept="image/png, image/jpeg"
-                fileList={fileList}
-                onChange={(fileList) => handleFileChange(fileList)}
-              >
-                <div className="btn-upload">
-                  <PlusOutlined />
-                  <span className="btn-text">Upload</span>
-                </div>
-              </Upload>
-            </Form.Item>
-            <Form.Item label="Mô tả" name="description">
-              <Input.TextArea />
-            </Form.Item>
-          </Form>
-        </Modal>
-        <Modal
-          title="Confirm Delete"
-          visible={isModalVisible}
-          onOk={() => handleDelete(selectedRecord?.id as any)}
-          onCancel={() => handleCancelDelete()}
-        >
-          <p>
-            Are you sure you want to delete this product
-            <div>{selectedRecord?.name || ""} ?</div>
-          </p>
-        </Modal>
-      </div>
+      <Modal
+        title="Add Product"
+        visible={visible}
+        onOk={handleOk}
+        onCancel={handleCancel}
+      >
+        <Form form={form} layout="vertical" className="add-form">
+          <Form.Item label="Category" name="category">
+            <Select
+              style={{ width: 200, marginBottom: 16 }}
+              placeholder="Select Category"
+              onChange={handleCategoryChangeForAction}
+              value={filterCategoryForAction}
+            >
+              {categories.map((category) => (
+                <Select.Option key={category.id} value={category.id}>
+                  {category.name}
+                </Select.Option>
+              ))}
+            </Select>
+          </Form.Item>
+          <Form.Item label="Name" name="name">
+            <Input />
+          </Form.Item>
+          <Form.Item label="Price" name="price">
+            <Input />
+          </Form.Item>
+          <Form.Item label="Discount" name="discount">
+            <Input />
+          </Form.Item>
+          <Form.Item label="Quantity" name="size">
+            <Input />
+          </Form.Item>
+          <Form.Item label="Color" name="color">
+            <Input />
+          </Form.Item>
+          <Form.Item label="Image" name="file">
+            <Upload
+              beforeUpload={() => false}
+              className="upload"
+              listType="picture-card"
+              itemRender={handleRender}
+              accept="image/png, image/jpeg"
+              fileList={fileList}
+              onChange={(fileList) => handleFileChange(fileList)}
+            >
+              <div className="btn-upload">
+                <PlusOutlined />
+                <span className="btn-text">Upload</span>
+              </div>
+            </Upload>
+          </Form.Item>
+          <Form.Item label="Description" name="description">
+            <Input.TextArea />
+          </Form.Item>
+        </Form>
+      </Modal>
+      <Modal
+        title="Edit Product"
+        visible={visibleEdit}
+        onOk={() => handleOkEdit()}
+        onCancel={handleCancelEdit}
+      >
+        <Form form={form} layout="vertical">
+          <Form.Item label="ID Category" name="categoryId">
+            <Select
+              style={{ width: 200, marginBottom: 16 }}
+              placeholder="Select Category"
+              onChange={handleCategoryChangeForAction}
+              value={filterCategoryForAction}
+            >
+              {categories.map((category) => (
+                <Select.Option key={category.id} value={category.id}>
+                  {category.name}
+                </Select.Option>
+              ))}
+            </Select>
+          </Form.Item>
+          <Form.Item label="Tên" name="name">
+            <Input />
+          </Form.Item>
+          <Form.Item label="Giá cả" name="price">
+            <Input />
+          </Form.Item>
+          <Form.Item label="Giảm giá(%)" name="discount">
+            <InputNumber />
+          </Form.Item>
+          <Form.Item label="Số lượng" name="weight">
+            <InputNumber />
+          </Form.Item>
+          <Form.Item label="Đã bán" name="weight">
+            <InputNumber readOnly disabled={true} />
+          </Form.Item>
+          <Form.Item label="Hình ảnh" name="img">
+            <Upload
+              beforeUpload={() => false}
+              className="upload"
+              listType="picture-card"
+              itemRender={handleRender}
+              accept="image/png, image/jpeg"
+              fileList={fileList}
+              onChange={(fileList) => handleFileChange(fileList)}
+            >
+              <div className="btn-upload">
+                <PlusOutlined />
+                <span className="btn-text">Upload</span>
+              </div>
+            </Upload>
+          </Form.Item>
+          <Form.Item label="Mô tả" name="description">
+            <Input.TextArea />
+          </Form.Item>
+        </Form>
+      </Modal>
+      <Modal
+        title="Confirm Delete"
+        visible={isModalVisible}
+        onOk={() => handleDelete(selectedRecord?.id as any)}
+        onCancel={() => handleCancelDelete()}
+      >
+        <p>
+          Are you sure you want to delete this product
+          <div>{selectedRecord?.name || ""} ?</div>
+        </p>
+      </Modal>
     </div>
   );
 };
