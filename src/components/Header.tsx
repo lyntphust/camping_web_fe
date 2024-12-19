@@ -1,5 +1,6 @@
 "use client";
 
+import { useAuth } from "@/context/AuthContext";
 import {
   LogoutOutlined,
   SettingFilled,
@@ -15,26 +16,13 @@ import {
 import type { MenuProps } from "antd";
 import { Dropdown, Input, Space } from "antd";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
 
 export default function Header() {
   const router = useRouter();
-
-  const [accessToken, setAccessToken] = useState<string | null>();
-
-  useEffect(() => {
-    if (typeof window !== "undefined" && window.localStorage) {
-      const accessToken = localStorage.getItem("access_token");
-
-      setAccessToken(accessToken);
-    }
-  }, []);
+  const { accessToken, updateAccessToken } = useAuth();
 
   const handleLogout = () => {
-    // localStorage.removeItem("user");
-    if (typeof window !== "undefined" && window.localStorage) {
-      localStorage?.removeItem("access_token");
-    }
+    updateAccessToken(null);
     router.push("/signin");
     window.location.reload();
   };

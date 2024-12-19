@@ -27,6 +27,7 @@
       "@types/*": ["./src/types/*"],
       "@services/*": ["./src/services/*"],
       "@hooks/*": ["./src/hooks/*"],
+      "@context/*": ["./src/context/*"],
       "@public/*": ["./public/*"]
     }
   },

@@ -1,5 +1,3 @@
-import { BreadCrumbNode } from ".";
-
 export interface ProductPartialPrice {
   regular_price: {
     value: number;
@@ -86,49 +84,21 @@ export interface ProductVariant {
 }
 
 export interface ProductDetail {
-  __typename: string;
-  id: string;
-  uid: string;
+  id: number;
   name: string;
-  categories: [
-    {
-      uid: string;
-      category_name: string;
-      category_level: number;
-      breadcrumbs: BreadCrumbNode[];
-    }
-  ];
-  category?: {
-    uid: string;
-    category_name: string;
-    category_level: number;
-    breadcrumbs: BreadCrumbNode[];
-  }; // Custom attribute for breadcrumb in product detail page
-  description: string;
-  short_description: {
-    html: string;
-  };
-  image: string;
-  media_gallery_entries: string[];
-  price: number;
+  color: string;
   discount: number;
-  review_count: number;
-  rating_summary: number;
-  configurable_options: ConfigurableOption[];
-  custom_attributes: [
-    {
-      attribute_metadata: string;
-      entered_attribute_value: string;
-      selected_attribute_options: [
-        {
-          attribute_option: {
-            is_default: boolean;
-            label: string;
-            uid: string;
-          };
-        }
-      ];
-    }
-  ];
-  variants: ProductVariant[];
+  weight: string;
+  price: number;
+  photo: string;
+  image: string;
+  description: string;
+  size: string;
+  category: string;
+}
+
+export interface FavProduct {
+  id: number;
+  userId: number;
+  productId: number;
 }

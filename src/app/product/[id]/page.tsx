@@ -1,29 +1,27 @@
 "use client";
 
-import BreadCrumb from "@/components/Breadcrumb";
 import ConfigurableProduct from "@/components/catalog/product/detail/ConfigurableProduct";
-import { productDetail } from "@/data";
 import productApi from "@/services/product";
 import { ProductDetail as ProductDetailInteface } from "@/types";
 import { message } from "antd";
 import { useEffect, useState } from "react";
-import { IntlProvider } from "react-intl";
 
 interface Props {
   params: {
-    id: string;
+    id: number;
   };
 }
 
-const renderProductDetail = (product: ProductDetailInteface) => {
+const renderProductDetail = (product: ProductDetailInteface | undefined) => {
+  if (!product) {
+    return null;
+  }
+
   return <ConfigurableProduct product={product} />;
 };
 
 export default function ProductDetail({ params: { id } }: Props) {
-  const product = productDetail;
-
-  const { name: productName, category } = product;
-  const [products, setProducts] = useState([]);
+  const [products, setProducts] = useState<ProductDetailInteface[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -40,17 +38,9 @@ export default function ProductDetail({ params: { id } }: Props) {
 
   return (
     <div>
-      <IntlProvider locale="en">
-        <section>
-          {category && (
-            <BreadCrumb
-              breadcrumb={category.breadcrumbs}
-              currentNode={productName}
-            />
-          )}
-          {renderProductDetail(products[0])}
-        </section>
-      </IntlProvider>
+      <section>
+        {renderProductDetail(products.find((product) => product.id == id))}
+      </section>
     </div>
   );
 }

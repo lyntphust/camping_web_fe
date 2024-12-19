@@ -1,7 +1,9 @@
 "use-client";
 
+import ProductGallery from "@/components/catalog/product/ProductGallery";
 import ProductPartialPrice from "@/components/catalog/product/ProductPartialPrice";
 import ProductRating from "@/components/catalog/product/ProductRating";
+import ProductDetailFavorite from "@/components/catalog/product/detail/Favorite";
 import Swatch from "@/components/catalog/product/detail/Swatch";
 import {
   ConfigurableOption,
@@ -9,11 +11,10 @@ import {
   ProductDetail,
   ProductVariant,
 } from "@/types";
-import { HeartIcon } from "@heroicons/react/24/solid";
 import { Input } from "antd";
 import Image from "next/image";
 import { useState } from "react";
-import ProductGallery from "../ProductGallery";
+import { IntlProvider } from "react-intl";
 
 interface Props {
   product: ProductDetail;
@@ -46,10 +47,12 @@ export default function ConfigurableProduct({
                   <h2 className="max-w-xl mt-6 mb-6 text-2xl font-semibold leading-loose tracking-wide text-gray-700 md:text-3xl">
                     {product.name}
                   </h2>
-                  <ProductPartialPrice
-                    price={product.price}
-                    discount={product.discount}
-                  />
+                  <IntlProvider locale="vi">
+                    <ProductPartialPrice
+                      price={product.price}
+                      discount={product.discount}
+                    />
+                  </IntlProvider>
                   <ProductRating ratingSummary={10} reviewCount={100} />
                 </div>
                 {/* {renderConfigurableOptions(configurable_options, variants)} */}
@@ -60,12 +63,7 @@ export default function ConfigurableProduct({
               </div>
             </div> */}
                   <div className="mb-4 lg:mb-0">
-                    <HeartIcon
-                      className={`h-10 w-10 flex-shrink-0 cursor-pointer ${
-                        isLiked ? "text-red-500" : "text-gray-400"
-                      } group-hover:text-gray-500`}
-                      onClick={handleHeartClick}
-                    />
+                    <ProductDetailFavorite productId={product.id} />
                   </div>
                   <a
                     href="#"

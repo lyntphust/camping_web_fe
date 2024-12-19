@@ -6,40 +6,12 @@ const productDetail = {
     {
       __typename: "CategoryTree",
       uid: "MjE=",
-      breadcrumbs: [
-        {
-          __typename: "Breadcrumb",
-          category_id: 20,
-          category_uid: "MjA=",
-          category_name: "Leo núi - Dã ngoại",
-          category_level: 2,
-          category_url_key: "women",
-        },
-      ],
     },
     {
       __typename: "CategoryTree",
       uid: "MjQ=",
-      breadcrumbs: [
-        {
-          __typename: "Breadcrumb",
-          category_id: 20,
-          category_uid: "MjA=",
-          category_name: "Leo núi - Dã ngoại",
-          category_level: 2,
-          category_url_key: "leo-nui-da-ngoai",
-        },
-        {
-          __typename: "Breadcrumb",
-          category_id: 21,
-          category_uid: "MjE=",
-          category_name: "Lều dã ngoại",
-          category_level: 3,
-          category_url_key: "leu-da-ngoai",
-        },
-      ],
     },
-    { __typename: "CategoryTree", uid: "MzQ=", breadcrumbs: null },
+    { __typename: "CategoryTree", uid: "MzQ=" },
   ],
   description: {
     __typename: "ComplexTextValue",
@@ -964,24 +936,6 @@ const productDetail = {
   category: {
     __typename: "CategoryTree",
     uid: "MjQ=",
-    breadcrumbs: [
-      {
-        __typename: "Breadcrumb",
-        category_id: 20,
-        category_uid: "MjA=",
-        category_name: "Leo núi",
-        category_level: 2,
-        category_url_key: "leo-nui",
-      },
-      {
-        __typename: "Breadcrumb",
-        category_id: 21,
-        category_uid: "MjE=",
-        category_name: "Lề dã ngoại",
-        category_level: 3,
-        category_url_key: "leu-da-ngoai",
-      },
-    ],
   },
 };
 
