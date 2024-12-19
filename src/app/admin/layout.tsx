@@ -9,28 +9,29 @@ import {
 import "@styles/admin.scss";
 import { Layout, Menu } from "antd";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 const { Content } = Layout;
 
 const menus = [
   {
     key: "products",
-    title: "Products",
+    label: <Link href={`/admin/products`}>Products</Link>,
     icon: <SquaresPlusIcon className="h-8 w-8 mr-2" />,
   },
   {
     key: "orders",
-    title: "Orders",
+    label: <Link href={`/admin/orders`}>Orders</Link>,
     icon: <ShoppingCartIcon className="h-8 w-8 mr-2" />,
   },
   {
     key: "users",
-    title: "Users",
+    label: <Link href={`/admin/users`}>Users</Link>,
     icon: <UserIcon className="h-8 w-8 mr-2" />,
   },
   {
     key: "blogs",
-    title: "Blogs",
+    label: <Link href={`/admin/blogs`}>Blogs</Link>,
     icon: <HeartIcon className="h-8 w-8 mr-2" />,
   },
 ];
@@ -40,6 +41,10 @@ export default function AdminLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const pathname = usePathname();
+
+  const selectedKey = pathname.split("/").pop() || menus[0].key;
+
   return (
     <div className="bg-gray-100 font-family-karla flex admin-page">
       <aside className="relative bg-sidebar h-screen w-64 hidden sm:block shadow-xl">
@@ -51,15 +56,10 @@ export default function AdminLayout({
         <Menu
           theme="light"
           mode="inline"
-          defaultSelectedKeys={["products"]}
+          defaultSelectedKeys={[selectedKey]}
           className="text-base font-semibold pt-3"
-        >
-          {menus.map((menu) => (
-            <Menu.Item key={menu.key} icon={menu.icon}>
-              <Link href={`/admin/${menu.key}`}>{menu.title}</Link>
-            </Menu.Item>
-          ))}
-        </Menu>
+          items={menus}
+        ></Menu>
       </aside>
 
       <div className="w-full overflow-x-hidden border-t flex flex-col">

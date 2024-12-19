@@ -162,7 +162,7 @@ const UserMangement = () => {
         />
         <Modal
           title="Add Admin"
-          visible={visible}
+          open={visible}
           onOk={handleOk}
           onCancel={handleCancel}
         >
@@ -180,7 +180,7 @@ const UserMangement = () => {
         </Modal>
         <Modal
           title="Confirm Delete"
-          visible={isModalVisible}
+          open={isModalVisible}
           onOk={() => handleOkDelete()}
           onCancel={handleCancelDelete}
         >

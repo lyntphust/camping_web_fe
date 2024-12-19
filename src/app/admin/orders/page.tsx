@@ -1,16 +1,16 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import {
-  Table,
-  Space,
   Button,
-  Select,
   message,
   Modal,
-  Tag,
+  Select,
   Skeleton,
+  Space,
+  Table,
+  Tag,
 } from "antd";
+import { useMemo, useState } from "react";
 
 import { useListOrder, useUpdateStatusOrder } from "@/hooks/admin/useOrder";
 // import orderApi from "../../services/oder";
@@ -29,6 +29,15 @@ const OrderManagement = () => {
     isLoading: getListIsLoading,
     refetch,
   } = useListOrder();
+
+  const orderListData = useMemo(
+    () =>
+      orderList?.data?.map((order: any) => ({
+        ...order,
+        key: order.id,
+      })),
+    [orderList]
+  );
 
   const { patch: updateStatusOrder, isLoading: updateStatusIsLoading } =
     useUpdateStatusOrder(orderIdSelected, statusOrder);
@@ -226,7 +235,7 @@ const OrderManagement = () => {
     setFilterCategory(value);
   };
 
-  const filteredProducts = orderList?.data?.filter(
+  const filteredProducts = orderListData?.filter(
     (product: any) => filterCategory === "" || product.status === filterCategory
   );
 
@@ -257,7 +266,7 @@ const OrderManagement = () => {
       </div>
       <Modal
         title="Chi tiết đơn hàng"
-        visible={isModalVisible}
+        open={isModalVisible}
         onOk={handleOkDetails}
         onCancel={handleCancelDetails}
       >
@@ -265,7 +274,7 @@ const OrderManagement = () => {
       </Modal>
       <Modal
         title="Deliver Order"
-        visible={isModalVisibleDeliver}
+        open={isModalVisibleDeliver}
         onOk={() => handleOkDeliver()}
         onCancel={handleCancelDeliver}
       >
@@ -273,7 +282,7 @@ const OrderManagement = () => {
       </Modal>
       <Modal
         title="Delete Order"
-        visible={isModalVisibleDelete}
+        open={isModalVisibleDelete}
         onOk={() => handleOkDelete()}
         onCancel={handleCancelDelete}
       >

@@ -18,8 +18,7 @@ import {
   Tag,
   Upload,
 } from "antd";
-import { useState } from "react";
-import LoadingFallback from "@/components/LoadingFallback";
+import { useMemo, useState } from "react";
 
 const ProductAdminPage = () => {
   const [filterCategory, setFilterCategory] = useState("");
@@ -45,6 +44,15 @@ const ProductAdminPage = () => {
   } = useListProduct();
   const { isLoading: createProductIsLoading, mutate: createProduct } =
     useCreateProduct();
+
+  const productListData = useMemo(
+    () =>
+      productList?.data?.map((product) => ({
+        ...product,
+        key: product.id,
+      })) || [],
+    [productList]
+  );
 
   const [fileList, setFileList] = useState<any>([]);
 
@@ -253,12 +261,12 @@ const ProductAdminPage = () => {
       </Select>
       <Table
         columns={columns}
-        dataSource={productList?.data}
+        dataSource={productListData}
         pagination={{ pageSize: 8 }}
       />
       <Modal
         title="Add Product"
-        visible={visible}
+        open={visible}
         onOk={handleOk}
         onCancel={handleCancel}
       >
@@ -315,7 +323,7 @@ const ProductAdminPage = () => {
       </Modal>
       <Modal
         title="Edit Product"
-        visible={visibleEdit}
+        open={visibleEdit}
         onOk={() => handleOkEdit()}
         onCancel={handleCancelEdit}
       >
@@ -372,7 +380,7 @@ const ProductAdminPage = () => {
       </Modal>
       <Modal
         title="Confirm Delete"
-        visible={isModalVisible}
+        open={isModalVisible}
         onOk={() => handleDelete(selectedRecord?.id as any)}
         onCancel={() => handleCancelDelete()}
       >
