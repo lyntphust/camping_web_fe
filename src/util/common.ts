@@ -1,12 +1,3 @@
-export function kebabCaseToCamelCase(str: string) {
-  return str.replace(/-./g, (x) => x[1].toUpperCase());
-}
-
-interface QueryParamPair {
-  key: string;
-  value: string | number;
-}
-
 export function upsertQueryParam(
   searchParams: URLSearchParams,
   key: string,
@@ -34,4 +25,11 @@ export function upsertQueryParams(
   }
 
   return result.toString();
+}
+
+export function formatPrice(price: number, currency = "VND") {
+  return new Intl.NumberFormat(currency, {
+    style: "currency",
+    currency,
+  }).format(price);
 }

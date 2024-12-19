@@ -1,6 +1,6 @@
 import { ProductDetail } from "@/types";
 import useQuery from "@hooks/useQuery";
-import useImageMutation from "../useImageMutation";
+import useImageMutation from "@hooks/useImageMutation";
 
 export function useListProduct() {
   return useQuery<ProductDetail[]>("/product");
