@@ -1,7 +1,9 @@
 "use-client";
 
+import ProductGallery from "@/components/catalog/product/ProductGallery";
 import ProductPartialPrice from "@/components/catalog/product/ProductPartialPrice";
 import ProductRating from "@/components/catalog/product/ProductRating";
+import ProductDetailFavorite from "@/components/catalog/product/detail/Favorite";
 import Swatch from "@/components/catalog/product/detail/Swatch";
 import {
   ConfigurableOption,
@@ -9,12 +11,10 @@ import {
   ProductDetail,
   ProductVariant,
 } from "@/types";
-import { HeartIcon } from "@heroicons/react/24/solid";
 import { Input } from "antd";
 import Image from "next/image";
 import { useState } from "react";
 import { IntlProvider } from "react-intl";
-import ProductGallery from "../ProductGallery";
 
 interface Props {
   product: ProductDetail;
@@ -110,12 +110,7 @@ export default function ConfigurableProduct({
               </div>
             </div> */}
                   <div className="mb-4 lg:mb-0">
-                    <HeartIcon
-                      className={`h-10 w-10 flex-shrink-0 cursor-pointer ${
-                        isLiked ? "text-red-500" : "text-gray-400"
-                      } group-hover:text-gray-500`}
-                      onClick={handleHeartClick}
-                    />
+                    <ProductDetailFavorite productId={product.id} />
                   </div>
                   <a
                     href="#"
