@@ -1,53 +1,41 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Table, Space, Button, Select, message, Modal, Tag } from "antd";
+import {
+  Table,
+  Space,
+  Button,
+  Select,
+  message,
+  Modal,
+  Tag,
+  Skeleton,
+} from "antd";
+
+import { useListOrder, useUpdateStatusOrder } from "@/hooks/admin/useOrder";
 // import orderApi from "../../services/oder";
 
 const OrderManagement = () => {
-  const [ordersData, setOrdersData] = useState([]);
   const [filterCategory, setFilterCategory] = useState("");
   const [isModalVisibleDeliver, setIsModalVisibleDeliver] = useState(false);
   const [isModalVisibleDelete, setIsModalVisibleDelete] = useState(false);
-  const [orderIdSelected, setOrderIdSelected] = useState(null);
+  const [orderIdSelected, setOrderIdSelected] = useState<number>(0);
 
+  const [statusOrder, setStatusOrder] = useState<string>("");
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [orderDetails, setOrderDetails] = useState([]);
+  const {
+    data: orderList,
+    isLoading: getListIsLoading,
+    refetch,
+  } = useListOrder();
 
-  const fetchData = async () => {
-    // try {
-    //   const response = await orderApi.getOrders();
-    //   setOrdersData(response.data.data);
-    // } catch (error) {
-    //   if (error.response.message === "Unauthorized") {
-    //     message.error(
-    //       "You are not authorized to view this page! Please login again"
-    //     );
-    //   } else {
-    //     message.error("An error occurred while fetching products");
-    //   }
-    // }
-  };
-
-  const handleGetDataDetails = async () => {
-    // try {
-    //   const response = await orderApi.getDetailOrder(id);
-    //   setOrderDetails(response.data.data);
-    // } catch (error) {
-    //   console.log(error);
-    //   if (error.response.message === "Unauthorized") {
-    //     message.error(
-    //       "You are not authorized to view this page! Please login again"
-    //     );
-    //   } else {
-    //     message.error("An error occurred while fetching products");
-    //   }
-    // }
-  };
+  const { patch: updateStatusOrder, isLoading: updateStatusIsLoading } =
+    useUpdateStatusOrder(orderIdSelected, statusOrder);
 
   const handleViewDetails = (record: any) => {
     setIsModalVisible(true);
-    handleGetDataDetails();
+    setOrderDetails(record.OrdersProducts);
   };
   const handleOkDetails = () => {
     setIsModalVisible(false);
@@ -59,52 +47,61 @@ const OrderManagement = () => {
 
   // Delivered order
   const handleDeliver = (record: any) => {
-    handleGetDataDetails();
+    setOrderDetails(record.OrdersProducts);
     setIsModalVisibleDeliver(true);
     setOrderIdSelected(record.id);
+    setStatusOrder("SHIPPING");
   };
 
   const handleOkDeliver = async () => {
-    // try {
-    //   const status = "shipping";
-    //   await orderApi.updateStatusOrder(`${id}?status=${status}`);
-    //   message.success("Deliver order successfully!");
-    //   setIsModalVisibleDeliver(false);
-    //   fetchData();
-    // } catch (error) {
-    //   console.log(error);
-    // }
+    try {
+      await updateStatusOrder();
+      message.success("Đã giao cho đơn vị vận chuyển!");
+      setIsModalVisibleDeliver(false);
+      refetch();
+    } catch (error) {
+      message.error("Không thể hoàn tất đơn hàng! Vui lòng thử lại");
+    }
   };
   const handleCancelDeliver = () => {
     setIsModalVisibleDeliver(false);
   };
 
+  // Delivered done order
+  const handleDeliverDone = async () => {
+    try {
+      await updateStatusOrder();
+      message.success("Đơn hàng đã được giao thành công!");
+      setIsModalVisibleDeliver(false);
+      refetch();
+    } catch (error) {
+      message.error("Không thể hoàn tất đơn hàng! Vui lòng thử lại");
+    }
+  };
+
   // Delete order
   const handleDelete = async (record: any) => {
-    handleGetDataDetails();
+    setOrderDetails(record.OrdersProducts);
     setIsModalVisibleDelete(true);
     setOrderIdSelected(record.id);
+    setStatusOrder("REFAUSE");
   };
 
   const handleOkDelete = async () => {
-    // try {
-    //   await orderApi.deleteOrder(id);
-    //   message.success("Delete order successfully!");
-    //   setIsModalVisibleDelete(false);
-    //   fetchData();
-    // } catch (error) {
-    //   console.log(error);
-    //   message.error("Delete order failed!");
-    // }
+    try {
+      await updateStatusOrder();
+      message.success("Từ chối giao hàng thành công!");
+      setIsModalVisibleDelete(false);
+      refetch();
+    } catch (error) {
+      message.error("Không thể hoàn tất đơn hàng! Vui lòng thử lại");
+    }
   };
 
   const handleCancelDelete = () => {
     setIsModalVisibleDelete(false);
   };
 
-  useEffect(() => {
-    fetchData();
-  }, []);
   const columns = [
     {
       title: "ID",
@@ -112,10 +109,10 @@ const OrderManagement = () => {
       key: "id",
     },
     {
-      title: "Product Name",
+      title: "Sản phẩm",
       dataIndex: "id",
       key: "id",
-      render: (record: any) => {
+      render: (text: number, record: any) => {
         return (
           <div
             style={{ color: "#1677ff", cursor: "pointer" }}
@@ -123,42 +120,37 @@ const OrderManagement = () => {
               handleViewDetails(record);
             }}
           >
-            See more
+            Xem chi tiết
           </div>
         );
       },
     },
     {
-      title: "Price",
-      dataIndex: "amount",
-      key: "amount",
-    },
-
-    {
-      title: "Payment",
-      dataIndex: "payment_method",
-      key: "payment_method",
+      title: "Tổng tiền",
+      dataIndex: "price",
+      key: "price",
     },
     {
-      title: "Status",
+      title: "Trạng thái đơn",
       dataIndex: "status",
       key: "status",
       render: (record: any) => (
         <>
-          {record === "created" && <Tag color="volcano">CREATED</Tag>}
-          {record === "shipping" && <Tag color="blue">SHIPPING</Tag>}
-          {record === "shipped" && <Tag color="green">SHIPPED</Tag>}
+          {record === "CREATED" && <Tag color="volcano">Đã tạo đơn</Tag>}
+          {record === "REFAUSE" && <Tag color="red">Huỷ giao hàng</Tag>}
+          {record === "SHIPPING" && <Tag color="blue">Đang giao hàng</Tag>}
+          {record === "SHIPPED" && <Tag color="green">Đã giao hàng</Tag>}
         </>
       ),
     },
     {
-      title: "Oder by",
+      title: "Người đặt",
       dataIndex: ["ordered_by", "username"],
       key: "oder_by",
     },
     {
-      title: "Address",
-      dataIndex: ["ordered_by", "address"],
+      title: "Địa chỉ",
+      dataIndex: "address",
       key: "address",
       render: (record: any) => (
         <>
@@ -170,24 +162,37 @@ const OrderManagement = () => {
       ),
     },
     {
-      title: "Action",
+      title: "Giao đơn ngay",
       key: "action",
       dataIndex: "id",
       render: (text: any, record: any) => (
         <Space size="middle">
-          {record.status !== "shipped" && record.status !== "shipping" && (
+          {record.status === "CREATED" && (
             <>
               <Button type="primary" onClick={() => handleDeliver(record)}>
-                Deliver
+                Giao Hàng
               </Button>
               <Button onClick={() => handleDelete(record)} danger>
-                Cancel Order
+                Từ Chối Giao Hàng
               </Button>
             </>
           )}
-          {record.status === "shipped" && (
-            <div>The order has been delivered</div>
+          {record.status === "SHIPPING" && (
+            <Button
+              type="primary"
+              onClick={() => {
+                setOrderIdSelected(record.id);
+                setStatusOrder("SHIPPED");
+                setTimeout(() => {
+                  handleDeliverDone();
+                }, 1000);
+              }}
+            >
+              Hoàn tất giao hàng
+            </Button>
           )}
+          {record.status === "SHIPPED" && <div>Đơn hàng đã được giao</div>}
+          {record.status === "REFAUSE" && <div>Đã từ chối giao hàng</div>}
         </Space>
       ),
     },
@@ -195,29 +200,25 @@ const OrderManagement = () => {
 
   const columnsOrderDetail = [
     {
-      title: "ID Order",
+      title: "ID Sản phẩm",
       dataIndex: "id",
       key: "id",
     },
     {
-      title: "Product Name",
-      dataIndex: ["product", "name"],
+      title: "Tên sản phẩm",
+      dataIndex: ["productVariant", "product", "name"],
       key: "id",
     },
     {
-      title: "Quantity",
+      title: "Số lượng",
       dataIndex: "quantity",
       key: "quantity",
     },
     {
-      title: "Price",
-      dataIndex: "price",
+      title: "Tổng tiền",
+      dataIndex: ["productVariant", "product", "price"],
       key: "price",
-    },
-    {
-      title: "Seller",
-      dataIndex: ["product", "seller"],
-      key: "seller",
+      render: (record: any) => <div>{record}VND</div>,
     },
   ];
 
@@ -225,9 +226,13 @@ const OrderManagement = () => {
     setFilterCategory(value);
   };
 
-  const filteredProducts = ordersData.filter(
+  const filteredProducts = orderList?.data?.filter(
     (product: any) => filterCategory === "" || product.status === filterCategory
   );
+
+  if (getListIsLoading || updateStatusIsLoading) {
+    return <Skeleton />;
+  }
 
   return (
     <div className="admin-page-content">
@@ -238,11 +243,11 @@ const OrderManagement = () => {
           onChange={handleCategoryChange}
           value={filterCategory}
         >
-          <Select.Option value="">All</Select.Option>
-          <Select.Option value="processing">Processing</Select.Option>
-          <Select.Option value="created">Created</Select.Option>
-          <Select.Option value="shipping">Shipping</Select.Option>
-          <Select.Option value="shipped">Shipped</Select.Option>
+          <Select.Option value="">Tất cả</Select.Option>
+          <Select.Option value="REFAUSE">Huỷ giao hàng</Select.Option>
+          <Select.Option value="CREATED">Đã tạo đơn</Select.Option>
+          <Select.Option value="SHIPPING">Đang giao hàng</Select.Option>
+          <Select.Option value="SHIPPED">Đã giao hàng</Select.Option>
         </Select>
         <Table
           columns={columns}
@@ -251,7 +256,7 @@ const OrderManagement = () => {
         />
       </div>
       <Modal
-        title="Order Details"
+        title="Chi tiết đơn hàng"
         visible={isModalVisible}
         onOk={handleOkDetails}
         onCancel={handleCancelDetails}
@@ -272,7 +277,7 @@ const OrderManagement = () => {
         onOk={() => handleOkDelete()}
         onCancel={handleCancelDelete}
       >
-        <div>Are you sure you want to delete this order?</div>
+        <div>Bạn muốn từ chối giao đơn hàng này?</div>
         <Table columns={columnsOrderDetail} dataSource={orderDetails} />
       </Modal>
     </div>
