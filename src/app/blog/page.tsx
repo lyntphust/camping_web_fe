@@ -14,8 +14,6 @@ const articles = [
       "Static websites are now used to bootstrap lots of websites and are becoming the basis for a variety of tools that even influence both web designers and developers influence both web designers and developers.",
     author: {
       name: "Jese Leos",
-      avatar:
-        "https://flowbite.s3.amazonaws.com/blocks/marketing-ui/avatars/jese-leos.png",
     },
     readMoreLink: "#",
   },
@@ -28,8 +26,6 @@ const articles = [
       "Static websites are now used to bootstrap lots of websites and are becoming the basis for a variety of tools that even influence both web designers and developers influence both web designers and developers.",
     author: {
       name: "Jese Leos",
-      avatar:
-        "https://flowbite.s3.amazonaws.com/blocks/marketing-ui/avatars/jese-leos.png",
     },
     readMoreLink: "#",
   },
@@ -42,8 +38,6 @@ const articles = [
       "Static websites are now used to bootstrap lots of websites and are becoming the basis for a variety of tools that even influence both web designers and developers influence both web designers and developers. Static websites are now used to bootstrap lots of websites and are becoming the basis for a variety of tools that even influence both web designers and developers influence both web designers and developers.",
     author: {
       name: "Jese Leos",
-      avatar:
-        "https://flowbite.s3.amazonaws.com/blocks/marketing-ui/avatars/jese-leos.png",
     },
     readMoreLink: "#",
   },
@@ -56,8 +50,6 @@ const articles = [
       "Static websites are now used to bootstrap lots of websites and are becoming the basis for a variety of tools that even influence both web designers and developers influence both web designers and developers. Static websites are now used to bootstrap lots of websites and are becoming the basis for a variety of tools that even influence both web designers and developers influence both web designers and developers.",
     author: {
       name: "Jese Leos",
-      avatar:
-        "https://flowbite.s3.amazonaws.com/blocks/marketing-ui/avatars/jese-leos.png",
     },
     readMoreLink: "#",
   },
@@ -70,8 +62,6 @@ const articles = [
       "Static websites are now used to bootstrap lots of websites and are becoming the basis for a variety of tools that even influence both web designers and developers influence both web designers and developers. Static websites are now used to bootstrap lots of websites and are becoming the basis for a variety of tools that even influence both web designers and developers influence both web designers and developers.",
     author: {
       name: "Jese Leos",
-      avatar:
-        "https://flowbite.s3.amazonaws.com/blocks/marketing-ui/avatars/jese-leos.png",
     },
     readMoreLink: "#",
   },
@@ -84,8 +74,6 @@ const articles = [
       "Static websites are now used to bootstrap lots of websites and are becoming the basis for a variety of tools that even influence both web designers and developers influence both web designers and developers. Static websites are now used to bootstrap lots of websites and are becoming the basis for a variety of tools that even influence both web designers and developers influence both web designers and developers.",
     author: {
       name: "Jese Leos",
-      avatar:
-        "https://flowbite.s3.amazonaws.com/blocks/marketing-ui/avatars/jese-leos.png",
     },
     readMoreLink: "#",
   },
@@ -98,8 +86,6 @@ const articles = [
       "Static websites are now used to bootstrap lots of websites and are becoming the basis for a variety of tools that even influence both web designers and developers influence both web designers and developers. Static websites are now used to bootstrap lots of websites and are becoming the basis for a variety of tools that even influence both web designers and developers influence both web designers and developers.",
     author: {
       name: "Jese Leos",
-      avatar:
-        "https://flowbite.s3.amazonaws.com/blocks/marketing-ui/avatars/jese-leos.png",
     },
     readMoreLink: "#",
   },
@@ -112,8 +98,6 @@ const articles = [
       "Static websites are now used to bootstrap lots of websites and are becoming the basis for a variety of tools that even influence both web designers and developers influence both web designers and developers. Static websites are now used to bootstrap lots of websites and are becoming the basis for a variety of tools that even influence both web designers and developers influence both web designers and developers.",
     author: {
       name: "Jese Leos",
-      avatar:
-        "https://flowbite.s3.amazonaws.com/blocks/marketing-ui/avatars/jese-leos.png",
     },
     readMoreLink: "#",
   },
@@ -126,8 +110,6 @@ const articles = [
       "Static websites are now used to bootstrap lots of websites and are becoming the basis for a variety of tools that even influence both web designers and developers influence both web designers and developers. Static websites are now used to bootstrap lots of websites and are becoming the basis for a variety of tools that even influence both web designers and developers influence both web designers and developers.",
     author: {
       name: "Jese Leos",
-      avatar:
-        "https://flowbite.s3.amazonaws.com/blocks/marketing-ui/avatars/jese-leos.png",
     },
     readMoreLink: "#",
   },
@@ -140,8 +122,6 @@ const articles = [
       "Static websites are now used to bootstrap lots of websites and are becoming the basis for a variety of tools that even influence both web designers and developers influence both web designers and developers. Static websites are now used to bootstrap lots of websites and are becoming the basis for a variety of tools that even influence both web designers and developers influence both web designers and developers.",
     author: {
       name: "Jese Leos",
-      avatar:
-        "https://flowbite.s3.amazonaws.com/blocks/marketing-ui/avatars/jese-leos.png",
     },
     readMoreLink: "#",
   },
@@ -154,8 +134,6 @@ const articles = [
       "Static websites are now used to bootstrap lots of websites and are becoming the basis for a variety of tools that even influence both web designers and developers influence both web designers and developers. Static websites are now used to bootstrap lots of websites and are becoming the basis for a variety of tools that even influence both web designers and developers influence both web designers and developers.",
     author: {
       name: "Jese Leos",
-      avatar:
-        "https://flowbite.s3.amazonaws.com/blocks/marketing-ui/avatars/jese-leos.png",
     },
     readMoreLink: "#",
   },
@@ -218,11 +196,6 @@ const Blog = () => {
               </p>
               <div className="flex justify-between items-center">
                 <div className="flex items-center space-x-4">
-                  <Image
-                    className="w-7 h-7 rounded-full"
-                    src={article.author.avatar}
-                    alt={article.author.name}
-                  />
                   <span className="font-medium dark:text-white">Jese Leos</span>
                 </div>
                 <a

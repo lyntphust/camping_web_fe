@@ -1,3 +1,5 @@
+"use client";
+
 import { useCreateProduct, useListProduct } from "@/hooks/catalog/useProduct";
 import productApi from "@/services/product";
 import { CloseCircleFilled, PlusOutlined } from "@ant-design/icons";
@@ -16,7 +18,6 @@ import {
   Upload,
 } from "antd";
 import { useState } from "react";
-import "../../styles/admin.scss";
 import LoadingFallback from "@/components/LoadingFallback";
 
 const ProductAdminPage = () => {
@@ -229,10 +230,10 @@ const ProductAdminPage = () => {
   };
 
   return (
-    <div className="admin-page-product">
+    <div className="admin-page-content">
       <LoadingFallback
         isLoading={getListIsLoading || createProductIsLoading}
-        width={200}
+        width={1000}
         height={800}
       />
       <div className="container">

@@ -1,6 +1,7 @@
+"use client";
+
 import { useState, useEffect } from "react";
 import { Table, Space, Button, Select, message, Modal, Tag } from "antd";
-import "../../styles/admin.scss";
 // import orderApi from "../../services/oder";
 
 const OrderManagement = () => {
@@ -229,7 +230,7 @@ const OrderManagement = () => {
   );
 
   return (
-    <div className="admin-page-product">
+    <div className="admin-page-content">
       <div className="container">
         <Select
           style={{ width: 200, marginBottom: 16, height: 40 }}
