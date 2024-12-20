@@ -1,3 +1,7 @@
+export function kebabCaseToCamelCase(str: string) {
+  return str.replace(/-./g, (x) => x[1].toUpperCase());
+}
+
 export function upsertQueryParam(
   searchParams: URLSearchParams,
   key: string,
@@ -32,4 +36,10 @@ export function formatPrice(price: number, currency = "VND") {
     style: "currency",
     currency,
   }).format(price);
+}
+
+export function parseJwt(token: string) {
+  const base64Url = token.split(".")[1];
+  const base64 = base64Url.replace("-", "+").replace("_", "/");
+  return JSON.parse(window.atob(base64));
 }

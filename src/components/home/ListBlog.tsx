@@ -62,7 +62,7 @@ export default function ListBlog() {
     // </section>
     <section>
       <h2 className="text-center pt-20">BLOG DÃ NGOẠI</h2>
-      <Carousel arrows infinite={false} className="custom-carousel">
+      {/* <Carousel arrows infinite={false} className="custom-carousel">
         {blogData
           ?.reduce((resultArray, item, index) => {
             const chunkIndex = Math.floor(index / 4);
@@ -115,7 +115,7 @@ export default function ListBlog() {
               </div>
             </div>
           ))}
-      </Carousel>
+      </Carousel> */}
     </section>
   );
 }

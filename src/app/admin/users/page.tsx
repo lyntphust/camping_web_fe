@@ -1,3 +1,5 @@
+"use client";
+
 import { useState, useEffect } from "react";
 import {
   Table,
@@ -10,7 +12,6 @@ import {
   message,
   Tag,
 } from "antd";
-import "../../styles/admin.scss";
 // import usersApi from "../../services/users";
 
 const UserMangement = () => {
@@ -135,7 +136,7 @@ const UserMangement = () => {
   );
 
   return (
-    <div className="admin-page-product">
+    <div className="admin-page-content">
       <div className="container">
         <a
           className="w-full px-4 py-3 mr-4 text-center text-gray-100 bg-blue-600 border border-transparent dark:border-gray-700 hover:border-blue-500 hover:text-blue-700 hover:bg-blue-100 dark:text-gray-400 dark:bg-gray-700 dark:hover:bg-gray-900 rounded-xl"
@@ -161,7 +162,7 @@ const UserMangement = () => {
         />
         <Modal
           title="Add Admin"
-          visible={visible}
+          open={visible}
           onOk={handleOk}
           onCancel={handleCancel}
         >
@@ -179,7 +180,7 @@ const UserMangement = () => {
         </Modal>
         <Modal
           title="Confirm Delete"
-          visible={isModalVisible}
+          open={isModalVisible}
           onOk={() => handleOkDelete()}
           onCancel={handleCancelDelete}
         >

@@ -3,11 +3,23 @@ export interface BlogAuthor {
   avatar: string;
 }
 
+export enum BlogStatus {
+  PENDING = "pending",
+  APPROVED = "approve",
+  REJECTED = "reject",
+}
+
 export interface Blog {
   id: number;
-  category: string;
-  date: string;
-  title: string;
-  description: string;
-  author: BlogAuthor;
+  text: string;
+  image: string;
+  bookmark: boolean;
+  location: string;
+  status: BlogStatus;
+}
+
+export enum BlogMenuKey {
+  ALL = "all",
+  SAVED = "saved",
+  MY = "my",
 }

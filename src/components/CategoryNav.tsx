@@ -14,6 +14,14 @@ export default async function CategoryNav({ className = "" }: Props) {
       className={`category-nav w-full bg-gray-100 text-[#333333] ${className}`}
     >
       <ul className="flex flex-col md:flex-row font-semibold md:w-full md:max-w-[1440px] mx-auto">
+        <li className="group relative md:h-16 hover:bg-gray-300 cursor-pointer">
+          <Link
+            href={"/category/what-is-new"}
+            className="flex items-center h-full md:px-8 mb-0 px-12 hover:no-underline"
+          >
+            Có gì hot?
+          </Link>
+        </li>
         {categories.map((category) => (
           <li
             key={category.url_key}
@@ -31,8 +39,7 @@ export default async function CategoryNav({ className = "" }: Props) {
                 </span>
               )}
             </Link>
-
-            {category?.children && category.children.length > 0 && (
+            {/* {category?.children && category.children.length > 0 && (
               <div className="z-20 hidden group-hover:block static md:absolute min-w-[220px] md:top-16 md:left-0 bg-gray-100 border shadow">
                 <ul>
                   {category.children.map((subCate) => (
@@ -75,12 +82,12 @@ export default async function CategoryNav({ className = "" }: Props) {
                   ))}
                 </ul>
               </div>
-            )}
+            )} */}
           </li>
         ))}
         <li className="group relative md:h-16 hover:bg-gray-300 cursor-pointer">
           <Link
-            href={"/blog"}
+            href={"/blogs/all"}
             className="flex items-center h-full md:px-8 mb-0 px-12 hover:no-underline"
           >
             Blog du lịch

@@ -15,6 +15,7 @@ import { Input } from "antd";
 import Image from "next/image";
 import { useState } from "react";
 import { IntlProvider } from "react-intl";
+import ModalAddToCart from "./ModalAddToCart";
 
 interface Props {
   product: ProductDetail;
@@ -26,6 +27,17 @@ export default function ConfigurableProduct({
   className = "",
 }: Props) {
   const [isLiked, setIsLiked] = useState(false);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [action, setAction] = useState<string>("");
+
+  const showModal = (type: string) => {
+    setIsModalVisible(true);
+    setAction(type);
+  };
+
+  const handleClose = () => {
+    setIsModalVisible(false);
+  };
 
   const handleHeartClick = () => {
     setIsLiked(!isLiked);
@@ -33,6 +45,12 @@ export default function ConfigurableProduct({
 
   return (
     <>
+      <ModalAddToCart
+        visible={isModalVisible}
+        onClose={handleClose}
+        product={product}
+        action={action}
+      />
       {product && (
         <>
           <div className="flex flex-wrap mb-8 -mx-4">
@@ -68,6 +86,7 @@ export default function ConfigurableProduct({
                   <a
                     href="#"
                     className="w-full ml-10 px-4 py-3 text-center text-blue-600 bg-blue-100 border border-blue-600 hover:bg-blue-600 hover:text-gray-100 lg:w-1/2 rounded-xl"
+                    onClick={() => showModal("add")}
                   >
                     Thêm vào giỏ hàng
                   </a>
@@ -76,6 +95,7 @@ export default function ConfigurableProduct({
                   <a
                     href="#"
                     className="w-full px-4 py-3 text-center text-gray-100 bg-blue-600 border border-transparent hover:border-blue-500 hover:text-blue-700 hover:bg-blue-100 rounded-xl"
+                    onClick={() => showModal("buy")}
                   >
                     Mua ngay
                   </a>
