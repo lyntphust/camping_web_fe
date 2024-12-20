@@ -27,6 +27,23 @@ import {
 } from "antd";
 import { useMemo, useState } from "react";
 
+interface Variant {
+  color: string;
+  size: string;
+  stock: number;
+  price: number;
+  sold: number;
+}
+
+interface TransformedVariants {
+  [color: string]: Array<{
+    size: string;
+    stock: number;
+    price: number;
+    sold: number;
+  }>;
+}
+
 const ProductAdminPage = () => {
   const [filterCategory, setFilterCategory] = useState("");
   const [filterCategoryId, setFilterCategoryId] = useState<string | number>("");
@@ -224,7 +241,43 @@ const ProductAdminPage = () => {
 
   const fillDataToForm = async (record: any) => {
     form.setFieldsValue(record);
+    console.log(record.variants);
 
+    const transformVariants = (variants: Variant[]): TransformedVariants => {
+      const result: TransformedVariants = {};
+
+      variants.forEach((variant) => {
+        if (!result[variant.color]) {
+          result[variant.color] = [];
+        }
+        result[variant.color].push({
+          size: variant.size,
+          stock: variant.stock,
+          price: variant.price,
+          sold: variant.sold,
+        });
+      });
+
+      return result;
+    };
+
+    const transformedVariants = transformVariants(record.variants);
+
+    const list = Object.keys(transformedVariants).map((color) => ({
+      color,
+      quantity: transformedVariants[color].reduce(
+        (acc, item) => acc + item.stock,
+        0
+      ),
+    }));
+
+    form.setFieldsValue({ list });
+    console.log("transformVariants", transformVariants(record.variants));
+    console.log("list", list);
+
+    // if (initialValues.quantity) {
+    //   form.setFieldsValue({ quantity: initialValues.quantity });
+    // }
     setFileList([
       {
         url: record.image,
