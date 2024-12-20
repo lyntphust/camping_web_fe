@@ -7,7 +7,12 @@ export function useListBlog() {
   return useLazyQuery<Blog[]>();
 }
 
-export function useBlogById(id: number) {
+export function useBlogById(id: number): {
+  data: Blog | undefined;
+  isLoading: boolean;
+  error: unknown;
+  refetch: () => void;
+} {
   const hookResult = useQuery<Blog[]>(
     `/blog/admin?status=${BlogStatus.APPROVED}`
   );

@@ -3,9 +3,12 @@
 import { useAdminBlogs } from "@/hooks/blog/useAdminBlogs";
 import { Blog, BlogStatus } from "@/types";
 import { Button, Image, message, Skeleton, Table, Tag } from "antd";
+import { useRouter } from "next/navigation";
 import { useMemo } from "react";
 
 export default function BlogManagement() {
+  const router = useRouter();
+
   const {
     approveBlog,
     rejectBlog,
@@ -113,7 +116,12 @@ export default function BlogManagement() {
           <Button danger onClick={() => handleReject(record.id)}>
             Từ chối
           </Button>
-          <Button danger onClick={() => {}}>
+          <Button
+            danger
+            onClick={() => {
+              router.push(`/blogs/${record.id}`);
+            }}
+          >
             Xem
           </Button>
         </div>
