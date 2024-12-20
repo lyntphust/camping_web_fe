@@ -1,9 +1,10 @@
+import { Cart } from "@/types/cart";
+import useDelete from "@hooks/useDelete";
 import useMutation from "@hooks/useMutation";
 import useQuery from "@hooks/useQuery";
-import useDelete from "@hooks/useDelete";
 
 export function useCart() {
-  return useQuery("/user/cart");
+  return useQuery<Cart>("/user/cart");
 }
 
 export function useUpdateCartProduct() {

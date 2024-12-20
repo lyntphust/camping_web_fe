@@ -13,7 +13,7 @@ import { Button, Form, Image, Input, message, Skeleton } from "antd";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 
-const Cart = () => {
+const CartComponent = () => {
   const router = useRouter();
 
   const {
@@ -377,5 +377,4 @@ const Cart = () => {
   );
 };
 
-// export default withAuth(Cart);
-export default Cart;
+export default CartComponent;
