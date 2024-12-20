@@ -1,17 +1,25 @@
 "use client";
 
-import LoadingFallback from "@/components/LoadingFallback";
-import { useAuth } from "@/context/AuthContext";
-import { useListBlog } from "@/hooks/blog/useBlogs";
+import { useAdminBlogs } from "@/hooks/blog/useAdminBlogs";
 import { Blog, BlogStatus } from "@/types";
-import { parseJwt } from "@/util";
-import { Button, Image, Table, Tag } from "antd";
-import { useEffect, useMemo } from "react";
+import { Button, Image, message, Skeleton, Table, Tag } from "antd";
+import { useMemo } from "react";
 
 export default function BlogManagement() {
-  const { accessToken } = useAuth();
+  const {
+    approveBlog,
+    rejectBlog,
+    getAllBlogs,
+    isLoading: actionIsLoading,
+  } = useAdminBlogs();
 
-  const { data: listBlog, fetchData, isLoading } = useListBlog();
+  const {
+    data: listBlog,
+    refetch,
+    isLoading: getAllBlogsIsLoading,
+  } = getAllBlogs();
+
+  const isLoading = getAllBlogsIsLoading || actionIsLoading;
 
   const listBlogData = useMemo(
     () =>
@@ -22,15 +30,29 @@ export default function BlogManagement() {
     [listBlog]
   );
 
-  useEffect(() => {
-    if (!accessToken) {
-      return;
+  const handleApprove = async (id: number) => {
+    const result = await approveBlog(id);
+
+    if (result?.data.message) {
+      message.success(result.data.message);
+    } else {
+      message.error("Duyệt blog thất bại");
     }
 
-    const { id } = parseJwt(accessToken);
+    refetch();
+  };
 
-    fetchData(`/blog/admin?userId=${id}`);
-  }, [fetchData, accessToken]);
+  const handleReject = async (id: number) => {
+    const result = await rejectBlog(id);
+
+    if (result?.data.message) {
+      message.success(result.data.message);
+    } else {
+      message.error("Từ chối blog thất bại");
+    }
+
+    refetch();
+  };
 
   const columns = [
     {
@@ -80,11 +102,19 @@ export default function BlogManagement() {
       key: "action",
       render: (record: Blog) => (
         <div className="flex justify-center space-x-2">
-          <Button type="primary" onClick={() => {}}>
-            Sửa
+          <Button
+            type="primary"
+            onClick={() => {
+              handleApprove(record.id);
+            }}
+          >
+            Duyệt
+          </Button>
+          <Button danger onClick={() => handleReject(record.id)}>
+            Từ chối
           </Button>
           <Button danger onClick={() => {}}>
-            Xoá
+            Xem
           </Button>
         </div>
       ),
@@ -94,9 +124,9 @@ export default function BlogManagement() {
 
   return (
     <div className="admin-page-content">
-      <LoadingFallback isLoading={isLoading} width={1000} height={800} />
       <div className="container">
-        <Table columns={columns} dataSource={listBlogData} />
+        <Skeleton loading={isLoading} />
+        {!isLoading && <Table columns={columns} dataSource={listBlogData} />}
       </div>
     </div>
   );

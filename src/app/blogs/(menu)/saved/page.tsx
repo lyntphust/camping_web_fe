@@ -2,7 +2,8 @@
 
 import BlogList from "@/components/blog/BlogList";
 import { useAuth } from "@/context/AuthContext";
-import { useListBlog, useListBlogSaved } from "@/hooks/blog/useBlogs";
+import { useListBlogSaved } from "@/hooks/blog/useBlogs";
+import { BlogStatus } from "@/types";
 import { parseJwt } from "@/util";
 import { Button, Pagination } from "antd";
 import Link from "next/link";
@@ -39,7 +40,7 @@ export default function MyBlogs() {
 
     const { id } = parseJwt(accessToken);
 
-    fetchData(`/blog/admin?userId=${id}`);
+    fetchData(`/blog/admin?userId=${id}&status=${BlogStatus.APPROVED}`);
   }, [fetchData, accessToken]);
 
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);

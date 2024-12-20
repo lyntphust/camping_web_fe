@@ -63,7 +63,7 @@ export default function BlogList({ blogs }: Props) {
               <span className="font-medium dark:text-white">Jese Leos</span>
             </div>
             <a
-              href={`/detailblog`}
+              href={`/blogs/${blog.id}`}
               className="inline-flex items-center font-medium text-primary-600 dark:text-primary-500 hover:underline"
             >
               Read more
