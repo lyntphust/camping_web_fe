@@ -3,9 +3,14 @@
 import { navigationCategories } from "@/data";
 import { useCreateProduct, useListProduct } from "@/hooks/catalog/useProduct";
 import productApi from "@/services/product";
-import { CloseCircleFilled, PlusOutlined } from "@ant-design/icons";
+import {
+  CloseCircleFilled,
+  CloseOutlined,
+  PlusOutlined,
+} from "@ant-design/icons";
 import {
   Button,
+  Card,
   Form,
   Image,
   Input,
@@ -23,7 +28,8 @@ import { useMemo, useState } from "react";
 
 const ProductAdminPage = () => {
   const [filterCategory, setFilterCategory] = useState("");
-  const [filterCategoryForAction, setFilterCategoryForAction] = useState("");
+  const [filterCategoryForAction, setFilterCategoryForAction] =
+    useState<number>(1);
 
   const [visible, setVisible] = useState(false);
   const [visibleEdit, setVisibleEdit] = useState(false);
@@ -132,6 +138,9 @@ const ProductAdminPage = () => {
       color: "",
       img: "",
       description: "",
+      variants: "",
+      list: [],
+      quantity: "",
     });
     setFileList([]);
   };
@@ -141,6 +150,42 @@ const ProductAdminPage = () => {
     if (fileList.length > 0) {
       values.file = fileList[0].originFileObj;
     }
+    if (values.variants) {
+      const flatVariants = values.variants.flatMap(
+        (variant: { list: any[]; color: any }) =>
+          variant.list
+            ? variant.list.map((item) => ({
+                color: variant.color,
+                size: item.size,
+                quantity: item.quantity,
+              }))
+            : []
+      );
+      values.variants = JSON.stringify(flatVariants);
+    }
+    if (values.list) {
+      const flatVariants = values.list.map(
+        (variant: { color: any; quantity: any }) => ({
+          color: variant.color,
+          quantity: variant.quantity,
+          size: "null",
+        })
+      );
+      values.variants = JSON.stringify(flatVariants);
+      delete values.list;
+    }
+
+    if (values.quantity) {
+      values.variants = JSON.stringify([
+        {
+          color: "null",
+          size: "null",
+          quantity: values.quantity,
+        },
+      ]);
+      delete values.quantity;
+    }
+
     try {
       const data = await createProduct(values);
 
@@ -261,7 +306,7 @@ const ProductAdminPage = () => {
         pagination={{ pageSize: 8 }}
       />
       <Modal
-        title="Add Product"
+        title="Thêm mới sản phẩm"
         open={visible}
         onOk={handleOk}
         onCancel={handleCancel}
@@ -269,7 +314,7 @@ const ProductAdminPage = () => {
         <Form form={form} layout="vertical" className="add-form">
           <Form.Item label="Category" name="category">
             <Select
-              style={{ width: 200, marginBottom: 16 }}
+              style={{ width: 250 }}
               placeholder="Select Category"
               onChange={handleCategoryChangeForAction}
               value={filterCategoryForAction}
@@ -281,22 +326,145 @@ const ProductAdminPage = () => {
               ))}
             </Select>
           </Form.Item>
-          <Form.Item label="Name" name="name">
+          <Form.Item label="Tên sản phẩm" name="name">
             <Input />
           </Form.Item>
-          <Form.Item label="Price" name="price">
-            <Input />
-          </Form.Item>
-          <Form.Item label="Discount" name="discount">
-            <Input />
-          </Form.Item>
-          <Form.Item label="Quantity" name="size">
-            <Input />
-          </Form.Item>
-          <Form.Item label="Color" name="color">
-            <Input />
-          </Form.Item>
-          <Form.Item label="Image" name="file">
+          <div className="flex flex-row justify-between">
+            <Form.Item label="Giá" name="price">
+              <Input />
+            </Form.Item>
+            <Form.Item label="Giảm giá" name="discount">
+              <Input />
+            </Form.Item>
+          </div>
+          {(filterCategoryForAction === 1 || filterCategoryForAction == 5) && (
+            <Form.Item label="Danh sách màu sắc" name="variants">
+              <Form.List name="list">
+                {(subFields, subOpt) => (
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      rowGap: 16,
+                    }}
+                  >
+                    {subFields.map((subField) => (
+                      <Space key={subField.key}>
+                        <Form.Item noStyle name={[subField.name, "color"]}>
+                          <Input placeholder="Màu sắc" />
+                        </Form.Item>
+                        <Form.Item noStyle name={[subField.name, "quantity"]}>
+                          <Input placeholder="Số lượng" />
+                        </Form.Item>
+                        <CloseOutlined
+                          onClick={() => {
+                            subOpt.remove(subField.name);
+                          }}
+                        />
+                      </Space>
+                    ))}
+                    <Button type="dashed" onClick={() => subOpt.add()} block>
+                      + Thêm màu sắc sản phẩm
+                    </Button>
+                  </div>
+                )}
+              </Form.List>
+            </Form.Item>
+          )}
+
+          {filterCategoryForAction === 2 && (
+            <Form.Item label="Số lượng" name="quantity">
+              <Input />
+            </Form.Item>
+          )}
+
+          {(filterCategoryForAction === 3 || filterCategoryForAction === 4) && (
+            <Form.Item label="Danh sách màu sắc" name="variants">
+              <Form.List name="variants">
+                {(fields, { add, remove }) => (
+                  <div
+                    style={{
+                      display: "flex",
+                      rowGap: 16,
+                      flexDirection: "column",
+                    }}
+                  >
+                    {fields.map((field) => (
+                      <Card
+                        size="small"
+                        key={field.key}
+                        extra={
+                          <CloseOutlined
+                            onClick={() => {
+                              remove(field.name);
+                            }}
+                          />
+                        }
+                      >
+                        <Form.Item label="Màu sắc" name={[field.name, "color"]}>
+                          <Input />
+                        </Form.Item>
+
+                        <Form.Item
+                          label="Danh sách size"
+                          name={[field.name, "list"]}
+                        >
+                          <Form.List name={[field.name, "list"]}>
+                            {(subFields, subOpt) => (
+                              <div
+                                style={{
+                                  display: "flex",
+                                  flexDirection: "column",
+                                  rowGap: 16,
+                                }}
+                              >
+                                {subFields.map((subField, index) => (
+                                  <Space key={subField.key}>
+                                    <Form.Item
+                                      noStyle
+                                      name={[subField.name, "size"]}
+                                    >
+                                      <Input placeholder="Size" />
+                                    </Form.Item>
+                                    <Form.Item
+                                      noStyle
+                                      name={[subField.name, "quantity"]}
+                                    >
+                                      <Input placeholder="Số lượng" />
+                                    </Form.Item>
+                                    <CloseOutlined
+                                      onClick={() => {
+                                        subOpt.remove(subField.name);
+                                      }}
+                                    />
+                                  </Space>
+                                ))}
+                                {subFields.length < 4 && (
+                                  <Button
+                                    type="dashed"
+                                    onClick={() => subOpt.add()}
+                                    block
+                                  >
+                                    + Thêm size sản phẩm
+                                  </Button>
+                                )}
+                              </div>
+                            )}
+                          </Form.List>
+                        </Form.Item>
+                      </Card>
+                    ))}
+
+                    <Button type="dashed" onClick={() => add()} block>
+                      + Thêm màu sắc sản phẩm
+                    </Button>
+                  </div>
+                )}
+              </Form.List>
+            </Form.Item>
+          )}
+
+          <Form.Item label="Hình ảnh" name="file">
             <Upload
               beforeUpload={() => false}
               className="upload"
@@ -312,47 +480,158 @@ const ProductAdminPage = () => {
               </div>
             </Upload>
           </Form.Item>
-          <Form.Item label="Description" name="description">
+          <Form.Item label="Mô tả" name="description">
             <Input.TextArea />
           </Form.Item>
         </Form>
       </Modal>
       <Modal
-        title="Edit Product"
+        title="Chỉnh sửa sản phẩm"
         open={visibleEdit}
         onOk={() => handleOkEdit()}
         onCancel={handleCancelEdit}
       >
-        <Form form={form} layout="vertical">
-          <Form.Item label="ID Category" name="categoryId">
-            <Select
-              style={{ width: 200, marginBottom: 16 }}
-              placeholder="Select Category"
-              onChange={handleCategoryChangeForAction}
-              value={filterCategoryForAction}
-            >
-              {navigationCategories.map((category) => (
-                <Select.Option key={category.id} value={category.id}>
-                  {category.name}
-                </Select.Option>
-              ))}
-            </Select>
+        <Form form={form} layout="vertical" className="add-form">
+          <Form.Item label="Category" name="category">
+            <Select style={{ width: 250 }} disabled />
           </Form.Item>
-          <Form.Item label="Tên" name="name">
+          <Form.Item label="Tên sản phẩm" name="name">
             <Input />
           </Form.Item>
-          <Form.Item label="Giá cả" name="price">
-            <Input />
-          </Form.Item>
-          <Form.Item label="Giảm giá(%)" name="discount">
-            <InputNumber />
-          </Form.Item>
-          <Form.Item label="Số lượng" name="weight">
-            <InputNumber />
-          </Form.Item>
-          <Form.Item label="Đã bán" name="weight">
-            <InputNumber readOnly disabled={true} />
-          </Form.Item>
+          <div className="flex flex-row justify-between">
+            <Form.Item label="Giá" name="price">
+              <Input />
+            </Form.Item>
+            <Form.Item label="Giảm giá" name="discount">
+              <Input />
+            </Form.Item>
+          </div>
+          {(filterCategoryForAction === 1 || filterCategoryForAction == 5) && (
+            <Form.Item label="Danh sách màu sắc" name="variants">
+              <Form.List name="list">
+                {(subFields, subOpt) => (
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      rowGap: 16,
+                    }}
+                  >
+                    {subFields.map((subField) => (
+                      <Space key={subField.key}>
+                        <Form.Item noStyle name={[subField.name, "color"]}>
+                          <Input placeholder="Màu sắc" />
+                        </Form.Item>
+                        <Form.Item noStyle name={[subField.name, "quantity"]}>
+                          <Input placeholder="Số lượng" />
+                        </Form.Item>
+                        <CloseOutlined
+                          onClick={() => {
+                            subOpt.remove(subField.name);
+                          }}
+                        />
+                      </Space>
+                    ))}
+                    <Button type="dashed" onClick={() => subOpt.add()} block>
+                      + Thêm màu sắc sản phẩm
+                    </Button>
+                  </div>
+                )}
+              </Form.List>
+            </Form.Item>
+          )}
+
+          {filterCategoryForAction === 2 && (
+            <Form.Item label="Số lượng" name="quantity">
+              <Input />
+            </Form.Item>
+          )}
+
+          {(filterCategoryForAction === 3 || filterCategoryForAction === 4) && (
+            <Form.Item label="Danh sách màu sắc" name="variants">
+              <Form.List name="variants">
+                {(fields, { add, remove }) => (
+                  <div
+                    style={{
+                      display: "flex",
+                      rowGap: 16,
+                      flexDirection: "column",
+                    }}
+                  >
+                    {fields.map((field) => (
+                      <Card
+                        size="small"
+                        key={field.key}
+                        extra={
+                          <CloseOutlined
+                            onClick={() => {
+                              remove(field.name);
+                            }}
+                          />
+                        }
+                      >
+                        <Form.Item label="Màu sắc" name={[field.name, "color"]}>
+                          <Input />
+                        </Form.Item>
+
+                        <Form.Item
+                          label="Danh sách size"
+                          name={[field.name, "list"]}
+                        >
+                          <Form.List name={[field.name, "list"]}>
+                            {(subFields, subOpt) => (
+                              <div
+                                style={{
+                                  display: "flex",
+                                  flexDirection: "column",
+                                  rowGap: 16,
+                                }}
+                              >
+                                {subFields.map((subField, index) => (
+                                  <Space key={subField.key}>
+                                    <Form.Item
+                                      noStyle
+                                      name={[subField.name, "size"]}
+                                    >
+                                      <Input placeholder="Size" />
+                                    </Form.Item>
+                                    <Form.Item
+                                      noStyle
+                                      name={[subField.name, "quantity"]}
+                                    >
+                                      <Input placeholder="Số lượng" />
+                                    </Form.Item>
+                                    <CloseOutlined
+                                      onClick={() => {
+                                        subOpt.remove(subField.name);
+                                      }}
+                                    />
+                                  </Space>
+                                ))}
+                                {subFields.length < 4 && (
+                                  <Button
+                                    type="dashed"
+                                    onClick={() => subOpt.add()}
+                                    block
+                                  >
+                                    + Thêm size sản phẩm
+                                  </Button>
+                                )}
+                              </div>
+                            )}
+                          </Form.List>
+                        </Form.Item>
+                      </Card>
+                    ))}
+
+                    <Button type="dashed" onClick={() => add()} block>
+                      + Thêm màu sắc sản phẩm
+                    </Button>
+                  </div>
+                )}
+              </Form.List>
+            </Form.Item>
+          )}
           <Form.Item label="Hình ảnh" name="img">
             <Upload
               beforeUpload={() => false}
@@ -375,13 +654,13 @@ const ProductAdminPage = () => {
         </Form>
       </Modal>
       <Modal
-        title="Confirm Delete"
+        title="Xoá sản phẩm"
         open={isModalVisible}
         onOk={() => handleDelete(selectedRecord?.id as any)}
         onCancel={() => handleCancelDelete()}
       >
         <p>
-          Are you sure you want to delete this product
+          Bạn có chắc chắn muốn xoá sản phẩm
           <div>{selectedRecord?.name || ""} ?</div>
         </p>
       </Modal>
