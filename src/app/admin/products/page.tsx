@@ -1,5 +1,6 @@
 "use client";
 
+import { navigationCategories } from "@/data";
 import { useCreateProduct, useListProduct } from "@/hooks/catalog/useProduct";
 import productApi from "@/services/product";
 import { CloseCircleFilled, PlusOutlined } from "@ant-design/icons";
@@ -28,11 +29,6 @@ const ProductAdminPage = () => {
   const [visibleEdit, setVisibleEdit] = useState(false);
   const [form] = Form.useForm();
 
-  const [categories, setCategories] = useState([
-    { id: "1", name: "Category 1" },
-    { id: "2", name: "Category 2" },
-    { id: "3", name: "Category 3" },
-  ]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedRecord, setSelectedRecord] = useState<any>(null);
   const [selectedProductId, setSelectedProductId] = useState(null);
@@ -253,7 +249,7 @@ const ProductAdminPage = () => {
         value={filterCategory}
       >
         <Select.Option value="">All</Select.Option>
-        {categories.map((category) => (
+        {navigationCategories.map((category) => (
           <Select.Option value={category.name} key={category.id}>
             {category.name}
           </Select.Option>
@@ -278,7 +274,7 @@ const ProductAdminPage = () => {
               onChange={handleCategoryChangeForAction}
               value={filterCategoryForAction}
             >
-              {categories.map((category) => (
+              {navigationCategories.map((category) => (
                 <Select.Option key={category.id} value={category.id}>
                   {category.name}
                 </Select.Option>
@@ -335,7 +331,7 @@ const ProductAdminPage = () => {
               onChange={handleCategoryChangeForAction}
               value={filterCategoryForAction}
             >
-              {categories.map((category) => (
+              {navigationCategories.map((category) => (
                 <Select.Option key={category.id} value={category.id}>
                   {category.name}
                 </Select.Option>
