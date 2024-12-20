@@ -17,3 +17,9 @@ export interface Blog {
   location: string;
   status: BlogStatus;
 }
+
+export enum BlogMenuKey {
+  ALL = "all",
+  SAVED = "saved",
+  MY = "my",
+}

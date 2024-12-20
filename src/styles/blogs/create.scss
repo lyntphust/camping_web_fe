@@ -1,0 +1,30 @@
+.ant-upload-wrapper.ant-upload-picture-card-wrapper {
+  .ant-upload-list.ant-upload-list-picture-card
+    .ant-upload-list-item-container {
+    width: fit-content;
+    height: fit-content;
+  }
+}
+
+.img-item {
+  position: relative;
+
+  .remove-icon {
+    cursor: pointer;
+    width: 14px;
+    height: 14px;
+    position: absolute;
+    top: -5px;
+    right: -2px;
+    z-index: 1;
+    background: #fff;
+    border-radius: 50%;
+    visibility: hidden;
+  }
+
+  &:hover {
+    .remove-icon {
+      visibility: visible;
+    }
+  }
+}

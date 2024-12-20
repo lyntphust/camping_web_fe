@@ -42,7 +42,7 @@ export default function HomeBanner() {
                 className="rounded-md shadow border text-xl uppercase font-bold"
                 size="large"
                 onClick={() => {
-                  router.push("/blog");
+                  router.push("/blogs/all");
                 }}
               >
                 Xem ngay
@@ -65,7 +65,7 @@ export default function HomeBanner() {
                 className="rounded-md shadow border text-xl uppercase font-bold"
                 size="large"
                 onClick={() => {
-                  router.push("/blog");
+                  router.push("/blogs/all");
                 }}
               >
                 Xem ngay
