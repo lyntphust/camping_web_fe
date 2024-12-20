@@ -1,7 +1,9 @@
 "use client";
 
 import { useBlogById } from "@/hooks/blog/useBlogs";
-import { Image } from "antd";
+import { ArrowLeftIcon } from "@heroicons/react/24/solid";
+import { Button, Image } from "antd";
+import { useRouter } from "next/navigation";
 
 interface PageProps {
   params: {
@@ -12,6 +14,8 @@ interface PageProps {
 export default function Page({ params: { id } }: PageProps) {
   const { data: blog } = useBlogById(Number(id));
 
+  const router = useRouter();
+
   if (!blog) {
     return <div>Blog not found</div>;
   }
@@ -20,6 +24,13 @@ export default function Page({ params: { id } }: PageProps) {
 
   return (
     <div>
+      <Button
+        onClick={() => router.back()}
+        className="items-center font-medium pl-8 pr-10 py-2 hover:text-blue-700"
+      >
+        <ArrowLeftIcon className="w-8 h-4" />
+        Quay lại
+      </Button>
       <p>{location}</p>
       <Image src={image} alt="blog-image" />
       <p>{text}</p>
