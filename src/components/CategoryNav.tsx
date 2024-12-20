@@ -87,7 +87,7 @@ export default async function CategoryNav({ className = "" }: Props) {
         ))}
         <li className="group relative md:h-16 hover:bg-gray-300 cursor-pointer">
           <Link
-            href={"/blog"}
+            href={"/blogs/all"}
             className="flex items-center h-full md:px-8 mb-0 px-12 hover:no-underline"
           >
             Blog du lịch

@@ -6,7 +6,6 @@ import { useListBlog } from "@/hooks/blog/useBlogs";
 import { Blog, BlogStatus } from "@/types";
 import { parseJwt } from "@/util";
 import { Button, Image, Table, Tag } from "antd";
-import Link from "next/link";
 import { useEffect, useMemo } from "react";
 
 export default function BlogManagement() {
@@ -97,10 +96,6 @@ export default function BlogManagement() {
     <div className="admin-page-content">
       <LoadingFallback isLoading={isLoading} width={1000} height={800} />
       <div className="container">
-        <Button className="px-4 py-3 mb-2 text-center text-gray-100 bg-blue-600 border border-transparent hover:border-blue-500 hover:text-blue-700 hover:bg-blue-100 rounded-xl">
-          <Link href="/admin/blogs/create">Tạo blog mới</Link>
-        </Button>
-
         <Table columns={columns} dataSource={listBlogData} />
       </div>
     </div>
