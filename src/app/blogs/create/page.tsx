@@ -19,7 +19,7 @@ export default function BlogCreatePage() {
   const [form] = Form.useForm<Blog>();
   const [fileList, setFileList] = useState([]);
 
-  const { mutate: createBlog } = useCreateBlog();
+  const { doMutate: createBlog } = useCreateBlog();
 
   const router = useRouter();
 

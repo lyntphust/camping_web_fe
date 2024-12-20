@@ -1,5 +1,7 @@
+import { useUpdateCartProduct } from "@/hooks/cart/useCart";
+import { Form, InputNumber, message, Modal, Select } from "antd";
+import { useRouter } from "next/navigation";
 import React, { useState } from "react";
-import { Modal, Form, Select, InputNumber, message } from "antd";
 
 const { Option } = Select;
 
@@ -29,6 +31,10 @@ const ModalAddToCart: React.FC<ModalAddToCartProps> = ({
   const [availableSizes, setAvailableSizes] = useState<string[]>([]);
   const [availableStock, setAvailableStock] = useState(0);
 
+  const { doMutate: updateCartProduct } = useUpdateCartProduct();
+
+  const router = useRouter();
+
   const handleColorChange = (color: string) => {
     setSelectedColor(color);
     const sizes = product.variants
@@ -56,14 +62,19 @@ const ModalAddToCart: React.FC<ModalAddToCartProps> = ({
           variant.color === values.color && variant.size === values.size
       );
       if (selectedVariant) {
-        console.log("Selected variant ID:", selectedVariant.id);
-        console.log("Selected quantity:", values.quantity);
+        await updateCartProduct({
+          productId: selectedVariant.id,
+          quantity: values.quantity,
+        });
       } else {
-        console.error("No matching variant found");
+        message.error("Không tìm thấy sản phẩm");
       }
       // Add logic to add the product to the cart
       if (action === "add") {
         message.success("Đã thêm sản phẩm vào giỏ hàng");
+      } else if (action === "buy") {
+        message.success("Đã thêm sản phẩm vào giỏ hàng, chuyển đến giỏ hàng");
+        router.push("/cart");
       }
 
       onClose();

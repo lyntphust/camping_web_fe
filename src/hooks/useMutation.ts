@@ -6,7 +6,7 @@ export default function useMutation(url: string) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<unknown>();
 
-  const doMutate = async (params: any) => {
+  const doMutate = async (params?: any) => {
     setIsLoading(true);
 
     try {

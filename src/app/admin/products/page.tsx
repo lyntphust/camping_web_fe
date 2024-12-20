@@ -44,7 +44,7 @@ const ProductAdminPage = () => {
     isLoading: getListIsLoading,
     refetch,
   } = useListProduct();
-  const { isLoading: createProductIsLoading, mutate: createProduct } =
+  const { isLoading: createProductIsLoading, doMutate: createProduct } =
     useCreateProduct();
 
   const productListData = useMemo(

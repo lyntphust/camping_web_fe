@@ -186,17 +186,30 @@ const Cart = () => {
                     </div>
                     <div className="ml-4 flex flex-1 flex-col">
                       <div>
-                        <div className="flex justify-between text-base font-medium text-gray-900">
-                          <h3>
+                        <div className="flex mb-2 justify-between font-medium text-gray-900">
+                          <span className="text-2xl">
                             <a href="#">{product.name}</a>
-                          </h3>
+                          </span>
                           <p className="ml-4">{formatPrice(product.price)}</p>
                         </div>
-                        <p className="mt-1 text-sm text-gray-500">
-                          {product.color}
-                        </p>
+                        {product.color && (
+                          <div className="text-sm">
+                            <span className="text-lg">Màu:&nbsp;</span>
+                            <span className="font-bold text-xl">
+                              {product.color}
+                            </span>
+                          </div>
+                        )}
+                        {product.size && (
+                          <div className="text-sm">
+                            <span className="text-lg">Size:&nbsp;</span>
+                            <span className="font-bold text-xl">
+                              {product.size}
+                            </span>
+                          </div>
+                        )}
                       </div>
-                      <div className="flex flex-1 items-end justify-between text-sm">
+                      <div className="flex flex-1 items-end justify-between text-sm mt-2">
                         <div className="relative flex items-center max-w-[8rem]">
                           <Button
                             type="default"
