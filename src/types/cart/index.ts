@@ -3,6 +3,7 @@ export interface VariantProduct {
   name: string;
   description: string;
   photo: string;
+  discount: number;
 }
 
 export interface ItemVariant {

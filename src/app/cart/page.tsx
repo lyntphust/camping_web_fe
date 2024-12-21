@@ -1,6 +1,7 @@
 "use client";
 
 import CheckoutModal from "@/components/cart/CheckoutModal";
+import ProductPartialPrice from "@/components/catalog/product/ProductPartialPrice";
 import {
   useCart,
   useDeleteCartProduct,
@@ -92,12 +93,17 @@ const CartComponent = () => {
       const variant = cartItem.productVariant;
       const product = variant.product;
 
+      const basePrice = variant.price * cartItem.quantity;
+      const finalPrice = basePrice * (1 - product.discount / 100);
+
       return {
         id: variant.id,
         name: product.name,
         photo: product.photo,
         description: product.description,
-        price: variant.price,
+        basePrice,
+        finalPrice,
+        discount: product.discount,
         color: variant.color,
         size: variant.size,
         quantity: cartItem.quantity,
@@ -190,7 +196,11 @@ const CartComponent = () => {
                           <span className="text-2xl">
                             <a href="#">{product.name}</a>
                           </span>
-                          <p className="ml-4">{formatPrice(product.price)}</p>
+                          <ProductPartialPrice
+                            price={product.basePrice}
+                            discount={product.discount}
+                            className="flex-row-reverse"
+                          />
                         </div>
                         {product.color && (
                           <div className="text-sm">

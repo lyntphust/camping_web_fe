@@ -2,7 +2,6 @@ import ProductPartialPrice from "@/components/catalog/product/ProductPartialPric
 import { ProductDetail } from "@/types";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { IntlProvider } from "react-intl";
 
 interface Props {
   product: ProductDetail;
@@ -39,13 +38,11 @@ export default function ProductCard({ product, className = "" }: Props) {
           /> */}
         </div>
         <div className="mt-6">
-          <IntlProvider locale="vi">
-            <ProductPartialPrice
-              className="inline-flex"
-              price={product.price}
-              discount={product.discount}
-            />
-          </IntlProvider>
+          <ProductPartialPrice
+            className="inline-flex"
+            price={product.price}
+            discount={product.discount}
+          />
         </div>
       </div>
       <button
