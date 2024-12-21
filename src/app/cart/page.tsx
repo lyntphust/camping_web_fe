@@ -40,7 +40,7 @@ const CartComponent = () => {
   const resetForm = () => {
     form.setFieldsValue({
       address: "",
-      date: "",
+      phone: "",
       products: [],
     });
   };
@@ -51,7 +51,7 @@ const CartComponent = () => {
     try {
       const data = {
         address: values.address,
-        date: values.date,
+        phone: values.phone,
         products: cartProducts.map((product) => ({
           id: product.id,
           quantity: product.quantity,
@@ -59,6 +59,7 @@ const CartComponent = () => {
       };
 
       createOrder(data);
+      cartProducts.forEach((product) => handleDeleteCartProduct(product.id));
 
       setShowCheckoutModal(false);
       message.success("Đặt hàng thành công");
@@ -157,12 +158,27 @@ const CartComponent = () => {
             textBtnOk="Thanh toán"
             textBtnCancel="Hủy"
           >
-            <div>
-              <Form form={form} layout="vertical" className="add-form">
-                <Form.Item label="Địa chỉ" name="address">
+            <div className="w-full">
+              <Form form={form} layout="vertical">
+                <Form.Item
+                  label="Địa chỉ nhận hàng"
+                  name="address"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Vui lòng nhập địa chỉ nhận hàng",
+                    },
+                  ]}
+                >
                   <Input />
                 </Form.Item>
-                <Form.Item label="Ngày" name="date">
+                <Form.Item
+                  label="Số điện thoại"
+                  name="phone"
+                  rules={[
+                    { required: true, message: "Vui lòng nhập số điện thoại" },
+                  ]}
+                >
                   <Input />
                 </Form.Item>
               </Form>
