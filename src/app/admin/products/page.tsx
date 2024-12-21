@@ -1,7 +1,11 @@
 "use client";
 
 import { navigationCategories } from "@/data";
-import { useCreateProduct, useListProduct } from "@/hooks/catalog/useProduct";
+import {
+  useCreateProduct,
+  useListProduct,
+  useUpdateProduct,
+} from "@/hooks/catalog/useProduct";
 import productApi from "@/services/product";
 import { formatPrice } from "@/util";
 import {
@@ -43,20 +47,33 @@ interface TransformedVariants {
     sold: number;
   }>;
 }
+interface TransformedVariantHaveColorSize {
+  size: string;
+  quantity: string;
+}
+
+interface TransformedResponseHaveColorSize {
+  color: string;
+  list: TransformedVariantHaveColorSize[];
+}
 
 const ProductAdminPage = () => {
   const [filterCategory, setFilterCategory] = useState("");
   const [filterCategoryId, setFilterCategoryId] = useState<string | number>("");
   const [filterCategoryForAction, setFilterCategoryForAction] =
     useState<number>(1);
+  const [categoryRecord, setCategoryRecord] = useState<number>(1);
 
   const [visible, setVisible] = useState(false);
   const [visibleEdit, setVisibleEdit] = useState(false);
   const [form] = Form.useForm();
+  const [editForm] = Form.useForm();
 
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedRecord, setSelectedRecord] = useState<any>(null);
-  const [selectedProductId, setSelectedProductId] = useState(null);
+  const [selectedProductId, setSelectedProductId] = useState<number | null>(
+    null
+  );
 
   const {
     data: productList,
@@ -65,6 +82,9 @@ const ProductAdminPage = () => {
   } = useListProduct();
   const { isLoading: createProductIsLoading, doMutate: createProduct } =
     useCreateProduct();
+
+  const { isLoading: updateProductIsLoading, patch: updateProduct } =
+    useUpdateProduct(selectedProductId ?? 0);
 
   const productListData = useMemo(
     () =>
@@ -80,6 +100,10 @@ const ProductAdminPage = () => {
   const filteredProducts = productListData?.filter(
     (product: any) =>
       filterCategoryId == "" || product.category == filterCategoryId
+  );
+
+  const findCategory = navigationCategories.find(
+    (cat) => cat.id == categoryRecord
   );
 
   const columns = [
@@ -176,6 +200,24 @@ const ProductAdminPage = () => {
     setFileList([]);
   };
 
+  const resetEditForm = () => {
+    editForm.setFieldsValue({
+      id: "",
+      category: "",
+      name: "",
+      price: "",
+      size: "",
+      discount: 0,
+      color: "",
+      img: "",
+      description: "",
+      variants: "",
+      list: [],
+      quantity: "",
+    });
+    setFileList([]);
+  };
+
   const handleOk = async () => {
     const values = await form.validateFields();
     if (fileList.length > 0) {
@@ -240,8 +282,8 @@ const ProductAdminPage = () => {
   };
 
   const fillDataToForm = async (record: any) => {
-    form.setFieldsValue(record);
-    console.log(record.variants);
+    editForm.setFieldsValue(record);
+    setCategoryRecord(record.category);
 
     const transformVariants = (variants: Variant[]): TransformedVariants => {
       const result: TransformedVariants = {};
@@ -271,13 +313,40 @@ const ProductAdminPage = () => {
       ),
     }));
 
-    form.setFieldsValue({ list });
-    console.log("transformVariants", transformVariants(record.variants));
-    console.log("list", list);
+    const transformResponseHaveColorSize = (
+      variants: Variant[]
+    ): TransformedResponseHaveColorSize[] => {
+      const result: { [color: string]: TransformedVariantHaveColorSize[] } = {};
 
-    // if (initialValues.quantity) {
-    //   form.setFieldsValue({ quantity: initialValues.quantity });
-    // }
+      variants.forEach((variant) => {
+        if (!result[variant.color]) {
+          result[variant.color] = [];
+        }
+        result[variant.color].push({
+          size: variant.size,
+          quantity: variant.stock.toString(),
+        });
+      });
+
+      return Object.keys(result).map((color) => ({
+        color,
+        list: result[color],
+      }));
+    };
+
+    const transformedVariantsHaveColorSize = transformResponseHaveColorSize(
+      record.variants
+    );
+
+    if (record.category == 1 || record.category == 5) {
+      editForm.setFieldsValue({ list });
+    }
+    if (record.category == 2) {
+      editForm.setFieldsValue({ quantity: record.variants[0].stock });
+    }
+    if (record.category == 3 || record.category == 4) {
+      editForm.setFieldsValue({ variants: transformedVariantsHaveColorSize });
+    }
     setFileList([
       {
         url: record.image,
@@ -293,9 +362,69 @@ const ProductAdminPage = () => {
   };
 
   const handleOkEdit = async () => {
-    const values = await form.validateFields();
+    const values = await editForm.validateFields();
+
     if (fileList.length > 0) {
-      values.img = fileList[0].originFileObj;
+      values.file = fileList[0].originFileObj;
+    }
+
+    if (values.variants) {
+      const flatVariants = values.variants.flatMap(
+        (variant: { list: any[]; color: any }) =>
+          variant.list
+            ? variant.list.map((item) => ({
+                color: variant.color,
+                size: item.size,
+                quantity: Number.parseInt(item.quantity),
+              }))
+            : []
+      );
+      values.variants = flatVariants;
+    }
+    if (values.list) {
+      const flatVariants = values.list.map(
+        (variant: { color: any; quantity: any }) => ({
+          color: variant.color,
+          quantity: variant.quantity,
+          size: "null",
+        })
+      );
+      values.variants = JSON.stringify(flatVariants);
+      delete values.list;
+    }
+
+    if (values.quantity) {
+      values.variants = JSON.stringify([
+        {
+          color: "null",
+          size: "null",
+          quantity: values.quantity,
+        },
+      ]);
+      delete values.quantity;
+    }
+
+    console.log("values", values);
+    console.log("selectedProductId", selectedProductId);
+
+    try {
+      const data = await updateProduct({
+        ...values,
+        discount: String(values.discount),
+      });
+
+      // if (data) {
+      //   setVisible(false);
+      //   message.success("Đã sửa sản phẩm thành công!");
+      // }
+
+      // refetch();
+      // resetEditForm();
+    } catch (error) {
+      if ((error as any).response.data.message === "image is not allowed") {
+        message.error("Vui lòng chọn hình ảnh sản phẩm!");
+      }
+      message.error("Không thể thêm sản phẩm! Vui lòng thử lại sau");
     }
   };
 
@@ -569,12 +698,16 @@ const ProductAdminPage = () => {
       <Modal
         title="Chỉnh sửa sản phẩm"
         open={visibleEdit}
-        onOk={() => handleOkEdit()}
+        onOk={handleOkEdit}
         onCancel={handleCancelEdit}
       >
-        <Form form={form} layout="vertical" className="add-form">
-          <Form.Item label="Category" name="category">
-            <Select style={{ width: 250 }} disabled />
+        <Form form={editForm} layout="vertical" className="add-form">
+          <Form.Item label="Category">
+            <Select
+              value={findCategory?.name}
+              style={{ width: 250 }}
+              disabled
+            />
           </Form.Item>
           <Form.Item label="Tên sản phẩm" name="name">
             <Input />
@@ -595,7 +728,7 @@ const ProductAdminPage = () => {
               <Input />
             </Form.Item>
           </div>
-          {(filterCategoryForAction === 1 || filterCategoryForAction == 5) && (
+          {(categoryRecord == 1 || categoryRecord == 5) && (
             <Form.Item label="Danh sách màu sắc" name="variants">
               <Form.List name="list">
                 {(subFields, subOpt) => (
@@ -630,13 +763,13 @@ const ProductAdminPage = () => {
             </Form.Item>
           )}
 
-          {filterCategoryForAction === 2 && (
+          {categoryRecord == 2 && (
             <Form.Item label="Số lượng" name="quantity">
               <Input />
             </Form.Item>
           )}
 
-          {(filterCategoryForAction === 3 || filterCategoryForAction === 4) && (
+          {(categoryRecord == 3 || categoryRecord == 4) && (
             <Form.Item label="Danh sách màu sắc" name="variants">
               <Form.List name="variants">
                 {(fields, { add, remove }) => (
