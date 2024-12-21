@@ -13,6 +13,7 @@ import {
 import { useMemo, useState } from "react";
 
 import { useListOrder, useUpdateStatusOrder } from "@/hooks/admin/useOrder";
+import { formatPrice } from "@/util";
 // import orderApi from "../../services/oder";
 
 const OrderManagement = () => {
@@ -138,6 +139,7 @@ const OrderManagement = () => {
       title: "Tổng tiền",
       dataIndex: "price",
       key: "price",
+      render: (record: any) => <div>{formatPrice(record)}</div>,
     },
     {
       title: "Trạng thái đơn",
@@ -227,7 +229,7 @@ const OrderManagement = () => {
       title: "Tổng tiền",
       dataIndex: ["productVariant", "product", "price"],
       key: "price",
-      render: (record: any) => <div>{record}VND</div>,
+      render: (record: any) => <div>{formatPrice(record)}</div>,
     },
   ];
 
