@@ -1,7 +1,7 @@
 import { useUpdateCartProduct } from "@/hooks/cart/useCart";
 import { Form, InputNumber, message, Modal, Select } from "antd";
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import React, { useMemo } from "react";
 
 const { Option } = Select;
 
@@ -12,6 +12,12 @@ interface ProductVariant {
   stock: number;
 }
 
+interface AddToCartFormValues {
+  color?: string;
+  size?: string;
+  quantity: number;
+}
+
 interface ModalAddToCartProps {
   visible: boolean;
   onClose: () => void;
@@ -19,109 +25,145 @@ interface ModalAddToCartProps {
   action: string;
 }
 
+const isOptionsArrayEmpty = (options: any[]) => {
+  if (!Array.isArray(options)) {
+    return true;
+  }
+
+  if (options.length === 0) {
+    return true;
+  }
+
+  if (options.length === 1 && options[0] === "null") {
+    return true;
+  }
+
+  return false;
+};
+
 const ModalAddToCart: React.FC<ModalAddToCartProps> = ({
   visible,
   onClose,
   product,
   action,
 }) => {
-  const [form] = Form.useForm();
-  const [selectedColor, setSelectedColor] = useState<string | null>(null);
-  const [selectedSize, setSelectedSize] = useState<string | null>(null);
-  const [availableSizes, setAvailableSizes] = useState<string[]>([]);
-  const [availableStock, setAvailableStock] = useState(0);
+  const [form] = Form.useForm<AddToCartFormValues>();
+
+  const selectedColor = Form.useWatch("color", form);
+  const selectedSize = Form.useWatch("size", form);
 
   const { doMutate: updateCartProduct } = useUpdateCartProduct();
 
-  const router = useRouter();
+  const availableColors = useMemo(() => {
+    return Array.from(
+      new Set<string>(product.variants.map((variant: ProductVariant) => variant.color))
+    );
+  }, [product.variants]);
 
-  const handleColorChange = (color: string) => {
-    setSelectedColor(color);
-    const sizes = product.variants
-      .filter((variant: ProductVariant) => variant.color === color)
+  const availableSizes = useMemo<string[]>(() => {
+    return product.variants
+      .filter((variant: ProductVariant) => variant.color === selectedColor)
       .map((variant: ProductVariant) => variant.size);
-    setAvailableSizes(sizes);
-    form.setFieldsValue({ size: undefined });
-    setAvailableStock(0);
-  };
+  }, [product.variants, selectedColor]);
 
-  const handleSizeChange = (size: string) => {
-    setSelectedSize(size);
-    const stock = product.variants.find(
-      (variant: ProductVariant) =>
-        variant.color === selectedColor && variant.size === size
-    )?.stock;
-    setAvailableStock(stock || 0);
-  };
+  const variantFromSelected = useMemo(() => {
+    function isPropertyValid(
+      variantSize: string,
+      selectedSize?: string | null
+    ) {
+      if (!selectedSize || selectedSize === "null") {
+        return variantSize === "null";
+      }
+
+      return variantSize === selectedSize;
+    }
+
+    return product.variants.find((variant: ProductVariant) => {
+      return (
+        isPropertyValid(variant.color, selectedColor) &&
+        isPropertyValid(variant.size, selectedSize)
+      );
+    });
+  }, [product.variants, selectedColor, selectedSize]);
+
+  const availableStock = useMemo(() => {
+    return variantFromSelected ? variantFromSelected.stock : 0;
+  }, [variantFromSelected]);
+
+  const router = useRouter();
 
   const handleOk = async () => {
     try {
-      const values = await form.validateFields();
-      const selectedVariant = product.variants.find(
-        (variant: ProductVariant) =>
-          variant.color === values.color && variant.size === values.size
-      );
-      if (selectedVariant) {
-        await updateCartProduct({
-          productId: selectedVariant.id,
-          quantity: values.quantity,
-        });
-      } else {
-        message.error("Không tìm thấy sản phẩm");
+      if (!selectedColor) {
+        form.setFieldValue("color", "null");
       }
-      // Add logic to add the product to the cart
-      if (action === "add") {
+
+      if (!selectedSize) {
+        form.setFieldValue("size", "null");
+      }
+
+      const values = await form.validateFields();
+
+      if (!variantFromSelected) {
+        message.error("Không tìm thấy sản phẩm");
+
+        return;
+      }
+
+      const updateResult = await updateCartProduct({
+        productId: variantFromSelected.id,
+        quantity: values.quantity,
+      });
+
+      if (updateResult?.data?.error) {
+        message.error(updateResult.data.error);
+      } else {
         message.success("Đã thêm sản phẩm vào giỏ hàng");
-      } else if (action === "buy") {
-        message.success("Đã thêm sản phẩm vào giỏ hàng, chuyển đến giỏ hàng");
-        router.push("/cart");
+
+        if (action === "buy") {
+          router.push("/cart");
+        }
       }
 
       onClose();
     } catch (error) {
-      message.error("Failed to add product to cart");
+      message.error("Thêm sản phẩm thất bại");
     } finally {
       form.resetFields();
-      setSelectedColor(null);
-      setSelectedSize(null);
     }
   };
 
   return (
     <Modal
       title={`${action === "add" ? "Thêm vào giỏ hàng" : "Mua ngay"} `}
-      visible={visible}
+      open={visible}
       onOk={handleOk}
       onCancel={onClose}
     >
       <Form form={form} layout="vertical">
         <Form.Item
-          label="Màu sắc"
+          label="Color"
           name="color"
-          rules={[{ required: true, message: "Vui lòng chọn màu sắc!" }]}
+          rules={[{ required: true, message: "Vui lòng chọn màu!" }]}
+          hidden={isOptionsArrayEmpty(availableColors)}
         >
-          <Select placeholder="Hãy chọn màu sắc" onChange={handleColorChange}>
-            {Array.from(
-              new Set(
-                product.variants.map((variant: ProductVariant) => variant.color)
-              )
-            ).map((color) => (
-              <Option key={color as string} value={color as string}>
-                {color as string}
-              </Option>
-            ))}
+          <Select placeholder="Hãy chọn màu">
+            {
+              availableColors.map((color) => (
+                <Option key={color} value={color}>
+                  {color}
+                </Option>
+              ))
+            }
           </Select>
         </Form.Item>
         <Form.Item
           label="Size"
           name="size"
           rules={[{ required: true, message: "Vui lòng chọn size!" }]}
+          hidden={isOptionsArrayEmpty(availableSizes)}
         >
-          <Select
-            placeholder="Hãy chọn size"
-            disabled={!selectedColor}
-            onChange={handleSizeChange}
-          >
+          <Select placeholder="Hãy chọn size">
             {availableSizes.map((size) => (
               <Option key={size} value={size}>
                 {size}
@@ -134,11 +176,7 @@ const ModalAddToCart: React.FC<ModalAddToCartProps> = ({
           name="quantity"
           rules={[{ required: true, message: "Vui lòng chọn số lượng!" }]}
         >
-          <InputNumber
-            min={1}
-            max={availableStock}
-            disabled={!selectedColor || !selectedSize}
-          />
+          <InputNumber min={1} max={availableStock} />
         </Form.Item>
       </Form>
     </Modal>

@@ -1,4 +1,3 @@
-import { LOADING_DELAY } from "@/constants";
 import api from "@/services/baseApi";
 import { useState } from "react";
 
@@ -16,7 +15,7 @@ export default function useMutation(url: string) {
     } catch (error) {
       setError(error);
     } finally {
-      setTimeout(() => setIsLoading(false), LOADING_DELAY);
+      setIsLoading(false);
     }
   };
 

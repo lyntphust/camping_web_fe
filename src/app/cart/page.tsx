@@ -11,6 +11,7 @@ import { useCreateOrder } from "@/hooks/order/useOrder";
 import { formatPrice } from "@/util";
 import { QuestionMarkCircleIcon } from "@heroicons/react/24/solid";
 import { Button, Form, Image, Input, message, Skeleton } from "antd";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 
@@ -104,6 +105,7 @@ const CartComponent = () => {
         description: product.description,
         basePrice,
         finalPrice,
+        url: `/product/${product.id}`,
         discount: product.discount,
         color: variant.color,
         size: variant.size,
@@ -130,13 +132,23 @@ const CartComponent = () => {
       quantity,
     });
 
-    refetch();
+    if (updateResult?.data?.error) {
+      message.error(updateResult.data.error);
+    } else {
+      message.success("Cập nhật giỏ hàng thành công");
+      refetch();
+    }
   };
 
   const handleDeleteCartProduct = async (id: Number) => {
     const deleteResult = await deleteCartProduct(`/user/cart/${id}`);
 
-    refetch();
+    if (deleteResult?.data?.error) {
+      message.error(deleteResult.data.error);
+    } else {
+      message.success("Xoá sản phẩm khỏi giỏ hàng thành công");
+      refetch();
+    }
   };
 
   return (
@@ -210,7 +222,9 @@ const CartComponent = () => {
                       <div>
                         <div className="flex mb-2 justify-between font-medium text-gray-900">
                           <span className="text-2xl">
-                            <a href="#">{product.name}</a>
+                            <Link href={product.url}>
+                              {product.name}
+                            </Link>
                           </span>
                           <ProductPartialPrice
                             price={product.basePrice}
@@ -218,22 +232,22 @@ const CartComponent = () => {
                             className="flex-row-reverse"
                           />
                         </div>
-                        {product.color && (
+                        {product.color != "null" ? (
                           <div className="text-sm">
                             <span className="text-lg">Màu:&nbsp;</span>
                             <span className="font-bold text-xl">
                               {product.color}
                             </span>
                           </div>
-                        )}
-                        {product.size && (
+                        ) : null}
+                        {product.size != "null" ? (
                           <div className="text-sm">
                             <span className="text-lg">Size:&nbsp;</span>
                             <span className="font-bold text-xl">
                               {product.size}
                             </span>
                           </div>
-                        )}
+                        ) : null}
                       </div>
                       <div className="flex flex-1 items-end justify-between text-sm mt-2">
                         <div className="relative flex items-center max-w-[8rem]">
