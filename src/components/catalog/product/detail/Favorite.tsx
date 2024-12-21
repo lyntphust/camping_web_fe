@@ -6,7 +6,7 @@ import {
   useRemoveFavoriteProduct,
 } from "@/hooks/user/useFavoriteProduct";
 import { HeartIcon } from "@heroicons/react/24/solid";
-import { message, Skeleton } from "antd";
+import { message } from "antd";
 import { AxiosResponse } from "axios";
 import { useEffect, useState } from "react";
 
@@ -17,13 +17,8 @@ interface Props {
 export default function ProductDetailFavorite({ productId }: Props) {
   const [isLiked, setIsLiked] = useState(false);
 
-  const {
-    data: favProducts,
-    isLoading,
-    error,
-    refetch,
-  } = useListFavoriteProducts();
-  const { mutate: addFavortiteProduct } = useAddFavoriteProduct(productId);
+  const { data: favProducts, refetch } = useListFavoriteProducts();
+  const { doMutate: addFavortiteProduct } = useAddFavoriteProduct(productId);
   const { doDelete: removeFavoriteProduct } =
     useRemoveFavoriteProduct(productId);
 
@@ -74,10 +69,6 @@ export default function ProductDetailFavorite({ productId }: Props) {
 
     refetch();
   };
-
-  if (isLoading) {
-    return <Skeleton />;
-  }
 
   return (
     <HeartIcon

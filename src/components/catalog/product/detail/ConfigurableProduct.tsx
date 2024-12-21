@@ -22,53 +22,6 @@ interface Props {
   className?: string;
 }
 
-const renderConfigurableOptions = (
-  configurableOptions: ConfigurableOption[],
-  variants: ProductVariant[]
-) => {
-  const handleOptionSelect = ({
-    uid,
-    value_index,
-  }: ConfigurableOptionValue) => {};
-
-  return configurableOptions.map((option) => {
-    const { attribute_code, label, values } = option;
-    return (
-      <div key={attribute_code} className="mb-4">
-        <h3 className="mb-2 text-sm font-semibold text-gray-600 uppercase">
-          {label}
-        </h3>
-        <div className="flex flex-wrap">
-          {values.map((value) => {
-            const { uid, label, swatch_data } = value;
-
-            return (
-              <div
-                key={uid}
-                className="flex flex-wrap gap-2 p-2"
-                onClick={() => handleOptionSelect(value)}
-              >
-                {swatch_data ? (
-                  <div className="w-12 h-12 hover:shadow-[0_0_6px_0_rgb(71,139,255)] rounded">
-                    <Swatch {...swatch_data} key={uid} />
-                  </div>
-                ) : (
-                  <div
-                    key={uid}
-                    className="flex items-center justify-center w-12 h-12 mr-4 mb-4 text-sm text-center text-gray-700 bg-gray-100 border rounded-full cursor-pointer hover:shadow-[0_0_4px_0_rgb(71,139,255)]"
-                  >
-                    {label}
-                  </div>
-                )}
-              </div>
-            );
-          })}
-        </div>
-      </div>
-    );
-  });
-};
-
 export default function ConfigurableProduct({
   product,
   className = "",

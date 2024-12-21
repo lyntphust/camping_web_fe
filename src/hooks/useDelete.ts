@@ -1,28 +1,27 @@
-import { LOADING_DELAY } from "@/constants";
-import api from "@/services/baseApiImg";
+import api from "@/services/baseApi";
 import { useState } from "react";
 
-export default function useImageMutation(url: string) {
+export default function useDelete() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<unknown>();
 
-  const doMutate = async (params: any) => {
+  const doDelete = async (url: string, params?: any) => {
     setIsLoading(true);
 
     try {
-      const response = await api.post(url, params);
+      const response = await api.delete(url, params);
 
       return response;
     } catch (error) {
       setError(error);
     } finally {
-      setTimeout(() => setIsLoading(false), LOADING_DELAY);
+      setTimeout(() => setIsLoading(false), 1000);
     }
   };
 
   return {
     isLoading,
     error,
-    doMutate,
+    doDelete,
   };
 }
