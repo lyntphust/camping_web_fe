@@ -3,6 +3,7 @@
 import { navigationCategories } from "@/data";
 import { useCreateProduct, useListProduct } from "@/hooks/catalog/useProduct";
 import productApi from "@/services/product";
+import { formatPrice } from "@/util";
 import {
   CloseCircleFilled,
   CloseOutlined,
@@ -28,6 +29,7 @@ import { useMemo, useState } from "react";
 
 const ProductAdminPage = () => {
   const [filterCategory, setFilterCategory] = useState("");
+  const [filterCategoryId, setFilterCategoryId] = useState<string | number>("");
   const [filterCategoryForAction, setFilterCategoryForAction] =
     useState<number>(1);
 
@@ -58,6 +60,11 @@ const ProductAdminPage = () => {
 
   const [fileList, setFileList] = useState<any>([]);
 
+  const filteredProducts = productListData?.filter(
+    (product: any) =>
+      filterCategoryId == "" || product.category == filterCategoryId
+  );
+
   const columns = [
     {
       title: "ID",
@@ -73,11 +80,18 @@ const ProductAdminPage = () => {
       title: "Price",
       dataIndex: "price",
       key: "price",
+      render: (record: any) => <div>{formatPrice(record)}</div>,
     },
     {
       title: "Category",
-      dataIndex: ["category", "name"],
+      dataIndex: "category",
       key: "category",
+      render: (categoryId: any) => {
+        const category = navigationCategories.find(
+          (cat) => cat.id == categoryId
+        );
+        return <span>{category?.name || "-"}</span>;
+      },
     },
     {
       title: "Quantity",
@@ -238,6 +252,12 @@ const ProductAdminPage = () => {
 
   const handleCategoryChange = (value: any) => {
     setFilterCategory(value);
+    const selectedCategory = navigationCategories.find(
+      (category) => category.name === value
+    );
+    setFilterCategoryId(selectedCategory ? selectedCategory.id : "");
+
+    console.log("selectedCategory", selectedCategory);
   };
 
   const handleCategoryChangeForAction = (value: any) => {
@@ -302,7 +322,7 @@ const ProductAdminPage = () => {
       </Select>
       <Table
         columns={columns}
-        dataSource={productListData}
+        dataSource={filteredProducts}
         pagination={{ pageSize: 8 }}
       />
       <Modal
@@ -330,10 +350,18 @@ const ProductAdminPage = () => {
             <Input />
           </Form.Item>
           <div className="flex flex-row justify-between">
-            <Form.Item label="Giá" name="price">
-              <Input />
+            <Form.Item label="Giá" name="price" style={{ width: "48%" }}>
+              <InputNumber
+                className="w-full"
+                formatter={(value) => formatPrice(Number(value) ?? 0)}
+                controls={false}
+              />
             </Form.Item>
-            <Form.Item label="Giảm giá" name="discount">
+            <Form.Item
+              label="Giảm giá"
+              name="discount"
+              style={{ width: "48%" }}
+            >
               <Input />
             </Form.Item>
           </div>
@@ -499,10 +527,18 @@ const ProductAdminPage = () => {
             <Input />
           </Form.Item>
           <div className="flex flex-row justify-between">
-            <Form.Item label="Giá" name="price">
-              <Input />
+            <Form.Item label="Giá" name="price" style={{ width: "48%" }}>
+              <InputNumber
+                className="w-full"
+                formatter={(value) => formatPrice(Number(value) ?? 0)}
+                controls={false}
+              />
             </Form.Item>
-            <Form.Item label="Giảm giá" name="discount">
+            <Form.Item
+              label="Giảm giá"
+              name="discount"
+              style={{ width: "48%" }}
+            >
               <Input />
             </Form.Item>
           </div>
