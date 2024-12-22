@@ -4,18 +4,23 @@ import { createContext, useContext, useEffect, useState } from "react";
 
 interface AuthContextType {
   accessToken: string | null;
+  userInfo: any;
   updateAccessToken: (token: string | null) => void;
+  updateUserInfo: (info: any) => void;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [accessToken, setAccessToken] = useState<string | null>(null);
+  const [userInfo, setUserInfo] = useState<any>(null);
 
   useEffect(() => {
     if (typeof window !== "undefined" && window.localStorage) {
       const token = localStorage.getItem("access_token");
+      const user = localStorage.getItem("user_info");
       setAccessToken(token);
+      setUserInfo(user ? JSON.parse(user) : null);
     }
   }, []);
 
@@ -30,8 +35,21 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  const updateUserInfo = (info: any) => {
+    setUserInfo(info);
+    if (typeof window !== "undefined" && window.localStorage) {
+      if (info) {
+        localStorage.setItem("user_info", JSON.stringify(info));
+      } else {
+        localStorage.removeItem("user_info");
+      }
+    }
+  };
+
   return (
-    <AuthContext.Provider value={{ accessToken, updateAccessToken }}>
+    <AuthContext.Provider
+      value={{ accessToken, userInfo, updateAccessToken, updateUserInfo }}
+    >
       {children}
     </AuthContext.Provider>
   );
