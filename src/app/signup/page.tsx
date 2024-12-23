@@ -48,7 +48,7 @@ const Register = () => {
       });
       if (response.status === 201) {
         updateAccessToken(response.data.accessToken);
-        updateUserInfo(response.data.user);
+        updateUserInfo(response.data.userInfo);
         message.success("Account registration successful!");
         router.push("/");
       }
