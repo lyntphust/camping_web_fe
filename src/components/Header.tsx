@@ -19,10 +19,12 @@ import { useRouter } from "next/navigation";
 
 export default function Header() {
   const router = useRouter();
-  const { accessToken, updateAccessToken } = useAuth();
+  const { accessToken, updateAccessToken, userInfo, updateUserInfo } =
+    useAuth();
 
   const handleLogout = () => {
     updateAccessToken(null);
+    updateUserInfo(null);
     router.push("/signin");
     window.location.reload();
   };
@@ -32,7 +34,7 @@ export default function Header() {
       key: "1",
       label: (
         <a target="_blank" rel="noopener noreferrer">
-          Hi! User
+          Hi! {userInfo?.name}
         </a>
       ),
       icon: <SmileOutlined />,
@@ -62,14 +64,18 @@ export default function Header() {
         router.push("/changepassword");
       },
     },
-    {
-      key: "5",
-      label: <a>Admin</a>,
-      icon: <UsergroupAddOutlined />,
-      onClick: () => {
-        router.push("/admin");
-      },
-    },
+    ...(userInfo?.role?.name === "admin"
+      ? [
+          {
+            key: "5",
+            label: <a>Admin</a>,
+            icon: <UsergroupAddOutlined />,
+            onClick: () => {
+              router.push("/admin");
+            },
+          },
+        ]
+      : []),
     {
       key: "4",
       danger: true,

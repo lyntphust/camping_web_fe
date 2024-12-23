@@ -14,7 +14,7 @@ const usersApi = {
     return api.put(`/users/update/${id}`, param);
   },
   deleteUsers(id) {
-    return api.delete(`/users/delete/${id}`);
+    return api.delete(`/user/${id}`);
   },
 };
 
