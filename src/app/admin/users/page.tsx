@@ -137,7 +137,7 @@ const UserMangement = () => {
     setFilterCategory(value);
   };
 
-  const filteredUser = usersData?.data?.data.filter(
+  const filteredUser = usersData?.data.filter(
     (user: any) => filterCategory === "" || user.role === filterCategory
   );
 
