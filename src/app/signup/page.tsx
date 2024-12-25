@@ -18,7 +18,8 @@ import { useAuth } from "@/context/AuthContext";
 
 const Register = () => {
   const router = useRouter();
-  const { accessToken, updateAccessToken } = useAuth();
+  const { accessToken, updateAccessToken, userInfo, updateUserInfo } =
+    useAuth();
   const [formData, setFormData] = useState({
     name: "",
     surname: "",
@@ -47,6 +48,7 @@ const Register = () => {
       });
       if (response.status === 201) {
         updateAccessToken(response.data.accessToken);
+        updateUserInfo(response.data.userInfo);
         message.success("Account registration successful!");
         router.push("/");
       }

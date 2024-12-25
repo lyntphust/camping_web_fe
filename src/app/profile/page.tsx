@@ -1,6 +1,41 @@
-import { Input } from "antd";
+"use client";
 
-export default function Profile() {
+import { useAuth } from "@/context/AuthContext";
+import { useUpdateUserInfo, useUserInfo } from "@/hooks/user/useUserInfo";
+import { Form, Input } from "antd";
+import { useEffect, useState } from "react";
+
+const Profile = () => {
+  const [form] = Form.useForm();
+  const { userInfo } = useAuth();
+
+  const { data: userInfoData } = useUserInfo(userInfo?.id);
+  const { putData: updateUserInfo } = useUpdateUserInfo();
+
+  const [isEdit, setIsEdit] = useState(false);
+
+  useEffect(() => {
+    if (userInfoData && userInfoData.data) {
+      form.setFieldsValue({
+        surname: userInfoData.data.surname,
+        name: userInfoData.data.name,
+        email: userInfoData.data.email,
+        phoneNumber: userInfoData.data.phoneNumber,
+        address: userInfoData.data.address,
+      });
+    }
+  }, [userInfoData, form]);
+
+  const handleSubmit = () => {
+    const values = form.getFieldsValue();
+    updateUserInfo(values);
+    setIsEdit(false);
+  };
+
+  const handleChangeMode = () => {
+    setIsEdit(true);
+  };
+
   return (
     <section className="py-10 my-auto dark:bg-gray-900">
       <div className="lg:w-[80%] md:w-[90%] xs:w-[96%] mx-auto flex gap-4">
@@ -54,60 +89,74 @@ export default function Profile() {
                 </div>
               </div>
               <h2 className="text-center mt-1 font-semibold dark:text-gray-300">
-                Upload Profile
+                Cập nhật thông tin cá nhân
               </h2>
-              <div className="flex lg:flex-row md:flex-col sm:flex-col xs:flex-col gap-2 justify-center w-full">
-                <div className="w-full  mb-4 mt-6">
-                  <label className="mb-2 dark:text-gray-300">Full Name</label>
-                  <Input
-                    type="text"
-                    className="mt-2 p-4 w-full border-2 rounded-lg dark:text-gray-200 dark:border-gray-600 dark:bg-gray-800"
-                    placeholder="Full Name"
-                  />
-                </div>
-                <div className="w-full  mb-4 lg:mt-6">
-                  <label className=" dark:text-gray-300">Phone</label>
-                  <Input
-                    type="text"
-                    className="mt-2 p-4 w-full border-2 rounded-lg dark:text-gray-200 dark:border-gray-600 dark:bg-gray-800"
-                    placeholder="Phone"
-                  />
-                </div>
-              </div>
+              <div>
+                <Form form={form} layout="vertical" className="add-form">
+                  <div className="flex lg:flex-row md:flex-col sm:flex-col xs:flex-col gap-2 justify-center w-full">
+                    <div className="w-full">
+                      <Form.Item label="Họ và tên" name="surname">
+                        <Input
+                          type="text"
+                          className="mt-2 p-4 w-full border-2 rounded-lg dark:text-gray-200 dark:border-gray-600 dark:bg-gray-800"
+                          placeholder="Họ và tên"
+                          disabled={!isEdit}
+                        />
+                      </Form.Item>
+                    </div>
+                    <div className="w-full">
+                      <Form.Item label="Username" name="name">
+                        <Input
+                          type="text"
+                          className="mt-2 p-4 w-full border-2 rounded-lg dark:text-gray-200 dark:border-gray-600 dark:bg-gray-800"
+                          placeholder="Username"
+                          disabled={!isEdit}
+                        />
+                      </Form.Item>
+                    </div>
+                  </div>
+                  <div className="flex lg:flex-row md:flex-col sm:flex-col xs:flex-col gap-2 justify-center w-full">
+                    <div className="w-full">
+                      <Form.Item label="Email" name="email">
+                        <Input
+                          type="text"
+                          className="mt-2 p-4 w-full border-2 rounded-lg dark:text-gray-200 dark:border-gray-600 dark:bg-gray-800"
+                          placeholder="Email"
+                          disabled
+                        />
+                      </Form.Item>
+                    </div>
+                    <div className="w-full">
+                      <Form.Item label="Số điện thoại" name="phoneNumber">
+                        <Input
+                          type="text"
+                          className="mt-2 p-4 w-full border-2 rounded-lg dark:text-gray-200 dark:border-gray-600 dark:bg-gray-800"
+                          placeholder="Số điện thoại"
+                          disabled={!isEdit}
+                        />
+                      </Form.Item>
+                    </div>
+                  </div>
+                  <div className="w-full  mb-4 ">
+                    <Form.Item label="Địa chỉ" name="address">
+                      <Input
+                        type="text"
+                        className="mt-2 p-4 w-full border-2 rounded-lg dark:text-gray-200 dark:border-gray-600 dark:bg-gray-800"
+                        placeholder="Địa chỉ"
+                        disabled={!isEdit}
+                      />
+                    </Form.Item>
+                  </div>
+                </Form>
 
-              <div className=" mb-4 flex lg:flex-row md:flex-col sm:flex-col xs:flex-col gap-2 justify-center w-full">
-                <div className="w-full">
-                  <label className="dark:text-gray-300 mb-2">Sex</label>
-                  <select className="w-full text-grey border-2 rounded-lg mt-2 p-4 dark:text-gray-200 dark:border-gray-600 dark:bg-gray-800">
-                    <option disabled value="">
-                      Select Sex
-                    </option>
-                    <option value="Male">Male</option>
-                    <option value="Female">Female</option>
-                  </select>
+                <div
+                  className="flex mt-2"
+                  onClick={isEdit ? handleSubmit : handleChangeMode}
+                >
+                  <a className="w-full px-4 py-3 text-center text-gray-100 bg-blue-600 border border-transparent dark:border-gray-700 hover:border-blue-500 hover:text-blue-700 hover:bg-blue-100 dark:text-gray-400 dark:bg-gray-700 dark:hover:bg-gray-900 rounded-xl">
+                    {isEdit ? "Lưu" : "Chỉnh sửa thông tin"}
+                  </a>
                 </div>
-                <div className="w-full">
-                  <label className="dark:text-gray-300 mb-2">
-                    Date Of Birth
-                  </label>
-                  <Input
-                    type="date"
-                    className="text-grey p-4 mt-2 w-full border-2 rounded-lg dark:text-gray-200 dark:border-gray-600 dark:bg-gray-800"
-                  />
-                </div>
-              </div>
-              <div className="w-full  mb-4 ">
-                <label className=" dark:text-gray-300">Address</label>
-                <Input
-                  type="text"
-                  className="mt-2 p-4 w-full border-2 rounded-lg dark:text-gray-200 dark:border-gray-600 dark:bg-gray-800"
-                  placeholder="Adress"
-                />
-              </div>
-              <div className="flex mt-2">
-                <a className="w-full px-4 py-3 text-center text-gray-100 bg-blue-600 border border-transparent dark:border-gray-700 hover:border-blue-500 hover:text-blue-700 hover:bg-blue-100 dark:text-gray-400 dark:bg-gray-700 dark:hover:bg-gray-900 rounded-xl">
-                  Submmit
-                </a>
               </div>
             </form>
           </div>
@@ -115,4 +164,6 @@ export default function Profile() {
       </div>
     </section>
   );
-}
+};
+
+export default Profile;

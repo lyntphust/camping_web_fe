@@ -19,7 +19,8 @@ const SignIn = () => {
   const [modalForgotPassword, setModalForgotPassword] = useState(false);
   const [loadingSendEmail, setLoadingSendEmail] = useState(false);
   const [emailSent, setEmailSent] = useState(false);
-  const { accessToken, updateAccessToken } = useAuth();
+  const { accessToken, updateAccessToken, userInfo, updateUserInfo } =
+    useAuth();
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
@@ -39,6 +40,7 @@ const SignIn = () => {
         const response = await authApi.signin({ email, password });
         if (response.status === 201) {
           updateAccessToken(response.data.accessToken);
+          updateUserInfo(response.data.user);
           message.success("Đăng nhập thành công!");
           router.push("/");
         }
@@ -46,7 +48,7 @@ const SignIn = () => {
         if (axios.isAxiosError(error)) {
           if (error.response?.status === 404) {
             message.error("Email không tồn tại! Vui lòng thử lại.");
-          } else if (error.message === "Incorrect password") {
+          } else if (error.response?.data.message === "Incorrect password") {
             message.error("Mật khẩu không đúng! Vui lòng thử lại.");
           } else message.error("Đăng nhập không thành công! Vui lòng thử lại.");
         }

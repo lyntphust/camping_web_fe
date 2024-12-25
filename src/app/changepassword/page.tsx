@@ -1,5 +1,6 @@
 "use client";
 
+import { useChangePassword } from "@/hooks/user/useUserInfo";
 import { Input } from "antd";
 import { useEffect, useState } from "react";
 
@@ -9,6 +10,8 @@ export default function ChangePassword() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [passwordMismatch, setPasswordMismatch] = useState(true);
   const [changedPassword, setChangedPassword] = useState(false);
+
+  const { putData: changePassword } = useChangePassword();
 
   const handleNewPasswordChange = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -23,7 +26,13 @@ export default function ChangePassword() {
   };
 
   const handleChangePassword = () => {
-    setChangedPassword(true);
+    changePassword({ currentPassword: oldPassword, newPassword: password })
+      .then(() => {
+        setChangedPassword(true);
+      })
+      .catch((error) => {
+        console.error("Failed to change password:", error);
+      });
   };
 
   useEffect(() => {
@@ -37,33 +46,33 @@ export default function ChangePassword() {
           <div className="">
             <form>
               <h2 className="text-center mt-1 font-semibold dark:text-gray-300">
-                Change your password
+                Thay đổi mật khẩu
               </h2>
               {!changedPassword && (
                 <div>
-                  <div className="w-full  mb-4 ">
-                    <label className=" dark:text-gray-300">Old password</label>
+                  <div className="w-full mb-4">
+                    <label className="dark:text-gray-300">Mật khẩu cũ</label>
                     <Input.Password
                       className="mt-2 p-4 w-full border-2 rounded-lg dark:text-gray-200 dark:border-gray-600 dark:bg-gray-800"
-                      placeholder="Old password"
+                      placeholder="Mật khẩu cũ"
                       onChange={(e) => setOldPassword(e.target.value)}
                     />
                   </div>
-                  <div className="w-full  mb-4 ">
-                    <label className=" dark:text-gray-300">New password</label>
+                  <div className="w-full mb-4">
+                    <label className="dark:text-gray-300">Mật khẩu mới</label>
                     <Input.Password
                       className="mt-2 p-4 w-full border-2 rounded-lg dark:text-gray-200 dark:border-gray-600 dark:bg-gray-800"
-                      placeholder="New password"
+                      placeholder="Mật khẩu mới"
                       onChange={handleNewPasswordChange}
                     />
                   </div>
-                  <div className="w-full  mb-4 ">
-                    <label className=" dark:text-gray-300">
-                      Confirm new password
+                  <div className="w-full mb-4">
+                    <label className="dark:text-gray-300">
+                      Xác nhận mật khẩu mới
                     </label>
                     <Input.Password
                       className="mt-2 p-4 w-full border-2 rounded-lg dark:text-gray-200 dark:border-gray-600 dark:bg-gray-800"
-                      placeholder="Confirm new password"
+                      placeholder="Xác nhận mật khẩu mới"
                       onChange={handleConfirmPasswordChange}
                     />
                   </div>
@@ -75,22 +84,35 @@ export default function ChangePassword() {
                         marginBottom: "10px",
                       }}
                     >
-                      Password mismatch!
+                      Mật khẩu không trùng khớp
                     </span>
                   )}
-                  <div
-                    className="flex mt-2"
-                    onClick={() => handleChangePassword()}
-                  >
-                    <a className="w-full px-4 py-3 text-center cursor-pointer text-gray-100 bg-blue-600 border border-transparent dark:border-gray-700 hover:border-blue-500 hover:text-blue-700 hover:bg-blue-100 dark:text-gray-400 dark:bg-gray-700 dark:hover:bg-gray-900 rounded-xl">
-                      Change Password
+                  <div className="flex mt-2">
+                    <a
+                      className={`w-full px-4 py-3 text-center cursor-pointer text-gray-100 bg-blue-600 border border-transparent dark:border-gray-700 hover:border-blue-500 hover:text-blue-700 hover:bg-blue-100 dark:text-gray-400 dark:bg-gray-700 dark:hover:bg-gray-900 rounded-xl ${
+                        passwordMismatch ||
+                        !oldPassword ||
+                        !password ||
+                        !confirmPassword
+                          ? "opacity-50 cursor-not-allowed"
+                          : ""
+                      }`}
+                      onClick={() =>
+                        !passwordMismatch &&
+                        oldPassword &&
+                        password &&
+                        confirmPassword &&
+                        handleChangePassword()
+                      }
+                    >
+                      Lưu
                     </a>
                   </div>
                 </div>
               )}
               {changedPassword && (
                 <div className="text-center my-16">
-                  Ban da thay đổi mật khẩu thành công!
+                  Ban đã thay đổi mật khẩu thành công!
                 </div>
               )}
             </form>
