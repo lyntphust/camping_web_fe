@@ -385,27 +385,24 @@ const ProductAdminPage = () => {
       const flatVariants = values.list.map(
         (variant: { color: any; quantity: any }) => ({
           color: variant.color,
-          quantity: variant.quantity,
+          quantity: Number.parseInt(variant.quantity),
           size: "null",
         })
       );
-      values.variants = JSON.stringify(flatVariants);
+      values.variants = flatVariants;
       delete values.list;
     }
 
     if (values.quantity) {
-      values.variants = JSON.stringify([
+      values.variants = [
         {
           color: "null",
           size: "null",
-          quantity: values.quantity,
+          quantity: Number.parseInt(values.quantity),
         },
-      ]);
+      ];
       delete values.quantity;
     }
-
-    console.log("values", values);
-    console.log("selectedProductId", selectedProductId);
 
     try {
       const data = await updateProduct({
@@ -413,13 +410,15 @@ const ProductAdminPage = () => {
         discount: String(values.discount),
       });
 
-      // if (data) {
-      //   setVisible(false);
-      //   message.success("Đã sửa sản phẩm thành công!");
-      // }
-
-      // refetch();
-      // resetEditForm();
+      if (data) {
+        setVisible(false);
+        message.success("Đã sửa sản phẩm thành công!");
+        refetch();
+        resetEditForm();
+        setVisibleEdit(false);
+      } else {
+        message.error("Không thể sửa sản phẩm! Vui lòng kiểm tra dữ liệu và thử lại!");
+      }
     } catch (error) {
       if ((error as any).response.data.message === "image is not allowed") {
         message.error("Vui lòng chọn hình ảnh sản phẩm!");
