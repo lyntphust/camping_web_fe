@@ -48,7 +48,7 @@ const SignIn = () => {
         if (axios.isAxiosError(error)) {
           if (error.response?.status === 404) {
             message.error("Email không tồn tại! Vui lòng thử lại.");
-          } else if (error.message === "Incorrect password") {
+          } else if (error.response?.data.message === "Incorrect password") {
             message.error("Mật khẩu không đúng! Vui lòng thử lại.");
           } else message.error("Đăng nhập không thành công! Vui lòng thử lại.");
         }

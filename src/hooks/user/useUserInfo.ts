@@ -11,3 +11,7 @@ export function useUserInfo(userId: number) {
 export function useUpdateUserInfo() {
   return usePut("user/update");
 }
+
+export function useChangePassword() {
+  return usePut("user/update-password");
+}
