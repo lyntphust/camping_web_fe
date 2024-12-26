@@ -6,6 +6,10 @@ export function useListOrder() {
   return useQuery<Order[]>("/order");
 }
 
+export function useAllOrder() {
+  return useQuery<Order[]>("/order/all");
+}
+
 export function useUpdateStatusOrder(id: number, status: string) {
   return usePatch(`/order/${id}/${status}`);
 }

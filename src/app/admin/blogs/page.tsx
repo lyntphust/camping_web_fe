@@ -64,11 +64,11 @@ export default function BlogManagement() {
       render: (record: BlogStatus) => {
         switch (record) {
           case BlogStatus.PENDING:
-            return <Tag color="blue">Pending</Tag>;
+            return <Tag color="blue">Chờ duyệt</Tag>;
           case BlogStatus.APPROVED:
-            return <Tag color="green">Approved</Tag>;
+            return <Tag color="green">Đã duyệt</Tag>;
           case BlogStatus.REJECTED:
-            return <Tag color="red">Rejected</Tag>;
+            return <Tag color="red">Từ chối</Tag>;
           default:
             return null;
         }

@@ -53,7 +53,7 @@ export default function RootLayout({
           ) : (
             <></>
           )}
-          <div className="md:w-full md:max-w-[1440px] mx-auto px-[15px] md:px-[20px] mt-6">
+          <div className="md:w-full md:max-w-[1600px] mx-auto px-[15px] md:px-[20px] mt-6">
             {children}
           </div>
           <ChatBot />

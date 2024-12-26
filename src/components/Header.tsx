@@ -36,7 +36,7 @@ export default function Header() {
       key: "1",
       label: (
         <a target="_blank" rel="noopener noreferrer">
-          Hi! {userInfo?.name}
+          Chào mừng! {userInfo?.name}
         </a>
       ),
       icon: <SmileOutlined />,
@@ -46,7 +46,7 @@ export default function Header() {
       key: "2",
       label: (
         <a target="_blank" rel="noopener noreferrer">
-          Change Infomation
+          Thay đổi thông tin
         </a>
       ),
       icon: <UserOutlined />,
@@ -58,7 +58,7 @@ export default function Header() {
       key: "3",
       label: (
         <a target="_blank" rel="noopener noreferrer">
-          Change Password
+          Thay đổi mật khẩu
         </a>
       ),
       icon: <SettingFilled />,
@@ -81,7 +81,7 @@ export default function Header() {
     {
       key: "4",
       danger: true,
-      label: <a>Logout</a>,
+      label: <a>Đăng xuất</a>,
       icon: <LogoutOutlined />,
       onClick: handleLogout,
     },
@@ -135,7 +135,7 @@ export default function Header() {
               href="/signup"
               className="w-full px-4 py-3 text-center text-gray-100 bg-blue-600 border border-transparent dark:border-gray-700 hover:border-blue-500 hover:text-blue-700 hover:bg-blue-100 dark:text-gray-400 dark:bg-gray-700 dark:hover:bg-gray-900 rounded-xl"
             >
-              Creat Account
+              Tạo tài khoản
             </Link>
           </div>
           <div className="mr-4 flow-root lg:ml-6">
@@ -143,7 +143,7 @@ export default function Header() {
               href="/signin"
               className="w-full text-center text-blue-600 lg:w-1/2 rounded-xl"
             >
-              Sign In
+              Đăng nhập
             </Link>
           </div>
         </>

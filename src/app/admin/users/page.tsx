@@ -117,7 +117,7 @@ const UserMangement = () => {
       render: (record: any) => record !== "/0" && <div>{record}</div>,
     },
     {
-      title: "Action",
+      title: "Thao tác",
       key: "id",
       render: (record: any) => (
         <Space size="middle">
@@ -138,7 +138,7 @@ const UserMangement = () => {
   };
 
   const filteredUser = usersData?.data.filter(
-    (user: any) => filterCategory === "" || user.role === filterCategory
+    (user: any) => filterCategory === "" || user.role.name === filterCategory
   );
 
   return (
@@ -156,7 +156,7 @@ const UserMangement = () => {
           onChange={handleCategoryChange}
           value={filterCategory}
         >
-          <Select.Option value="">All</Select.Option>
+          <Select.Option value="">Tất cả</Select.Option>
           <Select.Option value="user">User</Select.Option>
           <Select.Option value="admin">Admin</Select.Option>
         </Select>
