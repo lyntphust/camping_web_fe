@@ -11,6 +11,7 @@ import {
 import {
   HeartIcon,
   ShoppingBagIcon,
+  TruckIcon,
   UserIcon,
 } from "@heroicons/react/24/solid";
 import type { MenuProps } from "antd";
@@ -108,6 +109,12 @@ export default function Header() {
           <div className="ml-4 flow-root lg:ml-6">
             <Link href="/listlike" className="group -m-2 flex items-center p-2">
               <HeartIcon className="h-10 w-10 flex-shrink-0 text-gray-400 group-hover:text-gray-500" />
+            </Link>
+          </div>
+
+          <div className="ml-4 flow-root lg:ml-6">
+            <Link href="/order" className="group -m-2 flex items-center p-2">
+              <TruckIcon className="h-10 w-10 flex-shrink-0 text-gray-400 group-hover:text-gray-500" />
             </Link>
           </div>
           <Dropdown menu={{ items }}>
