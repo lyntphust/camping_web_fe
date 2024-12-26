@@ -15,6 +15,7 @@ import {
 } from "@heroicons/react/24/solid";
 import type { MenuProps } from "antd";
 import { Dropdown, Input, Space } from "antd";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 export default function Header() {
@@ -96,24 +97,18 @@ export default function Header() {
       {accessToken ? (
         <>
           <div className="ml-4 flow-root lg:ml-6">
-            <a href="/cart" className="group -m-2 flex items-center p-2">
+            <Link href="/cart" className="group -m-2 flex items-center p-2">
               <ShoppingBagIcon
                 className="h-10 w-10 pb-2 flex-shrink-0 text-gray-400 group-hover:text-gray-500"
                 aria-hidden="true"
               />
-              <span className="ml-2 text-sm font-medium text-gray-700 group-hover:text-gray-800">
-                0
-              </span>
-            </a>
+            </Link>
           </div>
 
           <div className="ml-4 flow-root lg:ml-6">
-            <a href="/listlike" className="group -m-2 flex items-center p-2">
+            <Link href="/listlike" className="group -m-2 flex items-center p-2">
               <HeartIcon className="h-10 w-10 flex-shrink-0 text-gray-400 group-hover:text-gray-500" />
-              <span className="ml-2 text-sm font-medium text-gray-700 group-hover:text-gray-800">
-                0
-              </span>
-            </a>
+            </Link>
           </div>
           <Dropdown menu={{ items }}>
             <a onClick={(e) => e.preventDefault()}>
@@ -129,20 +124,20 @@ export default function Header() {
       ) : (
         <>
           <div className="ml-4 flow-root lg:ml-6">
-            <a
+            <Link
               href="/signup"
               className="w-full px-4 py-3 text-center text-gray-100 bg-blue-600 border border-transparent dark:border-gray-700 hover:border-blue-500 hover:text-blue-700 hover:bg-blue-100 dark:text-gray-400 dark:bg-gray-700 dark:hover:bg-gray-900 rounded-xl"
             >
               Creat Account
-            </a>
+            </Link>
           </div>
           <div className="mr-4 flow-root lg:ml-6">
-            <a
+            <Link
               href="/signin"
               className="w-full text-center text-blue-600 lg:w-1/2 rounded-xl"
             >
               Sign In
-            </a>
+            </Link>
           </div>
         </>
       )}

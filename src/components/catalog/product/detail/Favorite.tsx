@@ -33,26 +33,26 @@ export default function ProductDetailFavorite({ productId }: Props) {
   }, [favProducts, productId]);
 
   const handleAddFavoriteResult = (result: AxiosResponse | undefined) => {
-    const defaultMessage = `Product with ID ${productId} has been added to your favorites.`;
+    const defaultMessage = `Đã thêm sản phẩm ID ${productId} vào danh sách yêu thích của bạn.`;
 
     if (result?.status === 201) {
       message.success(result.data.message || defaultMessage);
     } else if (result?.data.message) {
       message.error(result.data.message);
     } else {
-      message.error("Something went wrong");
+      message.error("Có lỗi xảy ra! Vui lòng thử lại sau.");
     }
   };
 
   const handleRemoveFavoriteResult = (result: AxiosResponse | undefined) => {
-    const defaultMessage = `Product with ID ${productId} has been removed from your favorites.`;
+    const defaultMessage = `Đã xoá sản phẩm ID ${productId} khỏi danh sách yêu thích của bạn.`;
 
     if (result?.status === 200 && result?.data.message) {
-      message.success(result.data.message || defaultMessage);
+      message.success( defaultMessage);
     } else if (result?.data.message) {
       message.error(result.data.message);
     } else {
-      message.error("Something went wrong");
+      message.error("Có lỗi xảy ra! Vui lòng thử lại sau.");
     }
   };
 
