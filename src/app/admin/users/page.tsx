@@ -104,7 +104,7 @@ const UserMangement = () => {
       dataIndex: "role",
       key: "role",
       render: (record: any) =>
-        record === "admin" ? (
+        record.name === "admin" ? (
           <Tag color="volcano">ADMIN</Tag>
         ) : (
           <Tag color="blue">USER</Tag>
@@ -121,7 +121,7 @@ const UserMangement = () => {
       key: "id",
       render: (record: any) => (
         <Space size="middle">
-          {record.role === "admin" ? null : (
+          {record.role.name === "admin" ? null : (
             <>
               <Button type="primary" danger onClick={() => showModal(record)}>
                 Xóa user

@@ -221,6 +221,17 @@ const OrderManagement = () => {
       key: "id",
     },
     {
+      title: "Màu sắc",
+      dataIndex: ["productVariant", "color"],
+      key: "color",
+    },
+    {
+      title: "Kích thước",
+      dataIndex: ["productVariant", "size"],
+      key: "size",
+      render: (record: any) => <div>{record === "null" ? "" : record}</div>,
+    },
+    {
       title: "Số lượng",
       dataIndex: "quantity",
       key: "quantity",
