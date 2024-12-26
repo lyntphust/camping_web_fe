@@ -12,7 +12,8 @@ import {
 } from "antd";
 import { useMemo, useState } from "react";
 
-import { useListOrder, useUpdateStatusOrder } from "@/hooks/admin/useOrder";
+import { useAllOrder, useUpdateStatusOrder } from "@/hooks/admin/useOrder";
+import { useListUsers } from "@/hooks/admin/useUser";
 import { formatPrice } from "@/util";
 // import orderApi from "../../services/oder";
 
@@ -29,7 +30,9 @@ const OrderManagement = () => {
     data: orderList,
     isLoading: getListIsLoading,
     refetch,
-  } = useListOrder();
+  } = useAllOrder();
+
+  const { data: listUser } = useListUsers();
 
   const orderListData = useMemo(
     () =>
@@ -156,8 +159,13 @@ const OrderManagement = () => {
     },
     {
       title: "Người đặt",
-      dataIndex: ["ordered_by", "username"],
       key: "oder_by",
+      render: (record: any) => {
+        const user = listUser?.data?.find(
+          (user: any) => user.id === record.userId
+        );
+        return <div>{user ? user.name : "User không xác định"}</div>;
+      },
     },
     {
       title: "Địa chỉ",
@@ -171,6 +179,11 @@ const OrderManagement = () => {
           )}
         </>
       ),
+    },
+    {
+      title: "Số điện thoại",
+      dataIndex: "phone",
+      key: "phone",
     },
     {
       title: "Giao đơn ngay",
@@ -219,6 +232,17 @@ const OrderManagement = () => {
       title: "Tên sản phẩm",
       dataIndex: ["productVariant", "product", "name"],
       key: "id",
+    },
+    {
+      title: "Màu sắc",
+      dataIndex: ["productVariant", "color"],
+      key: "color",
+    },
+    {
+      title: "Kích thước",
+      dataIndex: ["productVariant", "size"],
+      key: "size",
+      render: (record: any) => <div>{record === "null" ? "" : record}</div>,
     },
     {
       title: "Số lượng",
@@ -275,7 +299,7 @@ const OrderManagement = () => {
         <Table columns={columnsOrderDetail} dataSource={orderDetails} />
       </Modal>
       <Modal
-        title="Deliver Order"
+        title="Chi tiết đơn hàng"
         open={isModalVisibleDeliver}
         onOk={() => handleOkDeliver()}
         onCancel={handleCancelDeliver}
@@ -283,7 +307,7 @@ const OrderManagement = () => {
         <Table columns={columnsOrderDetail} dataSource={orderDetails} />
       </Modal>
       <Modal
-        title="Delete Order"
+        title="Từ chối đơn hàng"
         open={isModalVisibleDelete}
         onOk={() => handleOkDelete()}
         onCancel={handleCancelDelete}

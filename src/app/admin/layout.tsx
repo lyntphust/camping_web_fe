@@ -18,22 +18,22 @@ const { Content } = Layout;
 const menus = [
   {
     key: "products",
-    label: <Link href={`/admin/products`}>Products</Link>,
+    label: <Link href={`/admin/products`}>Sản phẩm</Link>,
     icon: <SquaresPlusIcon className="h-8 w-8 mr-2" />,
   },
   {
     key: "orders",
-    label: <Link href={`/admin/orders`}>Orders</Link>,
+    label: <Link href={`/admin/orders`}>Đơn hàng</Link>,
     icon: <ShoppingCartIcon className="h-8 w-8 mr-2" />,
   },
   {
     key: "users",
-    label: <Link href={`/admin/users`}>Users</Link>,
+    label: <Link href={`/admin/users`}>Người dùng</Link>,
     icon: <UserIcon className="h-8 w-8 mr-2" />,
   },
   {
     key: "blogs",
-    label: <Link href={`/admin/blogs`}>Blogs</Link>,
+    label: <Link href={`/admin/blogs`}>Blog</Link>,
     icon: <HeartIcon className="h-8 w-8 mr-2" />,
   },
 ];
@@ -47,7 +47,7 @@ export default function AdminLayout({
   const authInfo = useAuth();
   const router = useRouter();
 
-  const userRole = authInfo?.userInfo?.role?.name
+  const userRole = authInfo?.userInfo?.role?.name;
 
   useEffect(() => {
     if (userRole !== "admin") {

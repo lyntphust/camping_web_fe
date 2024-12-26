@@ -137,12 +137,12 @@ const ProductAdminPage = () => {
       key: "id",
     },
     {
-      title: "Name",
+      title: "Tên sản phẩm",
       dataIndex: "name",
       key: "name",
     },
     {
-      title: "Price",
+      title: "Giá",
       dataIndex: "price",
       key: "price",
       render: (record: any) => <div>{formatPrice(record)}</div>,
@@ -159,7 +159,7 @@ const ProductAdminPage = () => {
       },
     },
     {
-      title: "Quantity",
+      title: "Số lượng",
       dataIndex: "id",
       key: "id",
       render: (text: Number, record: any) => {
@@ -169,15 +169,15 @@ const ProductAdminPage = () => {
       },
     },
     {
-      title: "Action",
+      title: "Thao tác",
       key: "action",
       render: (record: any) => (
         <Space size="middle">
           <Button type="primary" onClick={() => handleEdit(record)}>
-            Edit
+            Sửa
           </Button>
           <Button type="primary" danger onClick={() => showModalDelete(record)}>
-            Delete
+            Xóa
           </Button>
         </Space>
       ),
@@ -513,7 +513,7 @@ const ProductAdminPage = () => {
         className="w-full px-4 py-3 mr-4 text-center text-gray-100 bg-blue-600 border border-transparent dark:border-gray-700 hover:border-blue-500 hover:text-blue-700 hover:bg-blue-100 dark:text-gray-400 dark:bg-gray-700 dark:hover:bg-gray-900 rounded-xl"
         onClick={() => openAddForm()}
       >
-        Add product
+        Thêm sản phẩm
       </a>
       <Select
         style={{ width: 200, marginBottom: 16, height: 40 }}
@@ -521,7 +521,7 @@ const ProductAdminPage = () => {
         onChange={handleCategoryChange}
         value={filterCategory}
       >
-        <Select.Option value="">All</Select.Option>
+        <Select.Option value="">Tất cả</Select.Option>
         {navigationCategories.map((category) => (
           <Select.Option value={category.name} key={category.id}>
             {category.name}

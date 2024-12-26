@@ -171,9 +171,9 @@ export default function ConfigurableProduct({
                         src="/user_default.png"
                         width={24}
                         height={24}
-                        alt={comment.user.name}
+                        alt={comment.user?.name || "User không xác định"}
                       />
-                      {comment.user.name}
+                      {comment.user?.name || "User không xác định"}
                     </p>
                     <p className="text-sm text-gray-600 dark:text-gray-400">
                       <time dateTime={comment.date} title={comment.date}>
