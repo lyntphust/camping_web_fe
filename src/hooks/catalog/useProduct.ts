@@ -1,4 +1,4 @@
-import { ProductDetail } from "@/types";
+import { ListCommentProduct, ProductDetail } from "@/types";
 import useQuery from "@hooks/useQuery";
 import useImageMutation from "@hooks/useImageMutation";
 import useImagePatch from "../useImagePatch";
@@ -14,4 +14,8 @@ export function useCreateProduct() {
 
 export function useUpdateProduct(id: number) {
   return usePatch(`/product/${id}`);
+}
+
+export function useListProductComments(id: number) {
+  return useQuery<ListCommentProduct[]>(`/comments/product/${id}`);
 }
