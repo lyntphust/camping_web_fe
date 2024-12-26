@@ -95,6 +95,8 @@ export interface ProductDetail {
   description: string;
   size: string;
   category: string;
+  variants: any;
+  totalSold: number;
 }
 
 export interface FavProduct {

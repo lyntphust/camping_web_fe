@@ -63,6 +63,7 @@ const ProductAdminPage = () => {
   const [filterCategoryForAction, setFilterCategoryForAction] =
     useState<number>(1);
   const [categoryRecord, setCategoryRecord] = useState<number>(1);
+  const [productRecord, setProductRecord] = useState<any>(null);
 
   const [visible, setVisible] = useState(false);
   const [visibleEdit, setVisibleEdit] = useState(false);
@@ -94,6 +95,29 @@ const ProductAdminPage = () => {
       })) || [],
     [productList]
   );
+  const calculateTotalStock = (product: any) => {
+    const acc = 0;
+    return (
+      acc +
+      product?.variants?.reduce(
+        (variantAcc: number, variant: { stock: number }) =>
+          variantAcc + variant.stock,
+        0
+      )
+    );
+  };
+
+  const calculateTotalSold = (product: any) => {
+    const acc = 0;
+    return (
+      acc +
+      product?.variants?.reduce(
+        (variantAcc: number, variant: { sold: number }) =>
+          variantAcc + variant.sold,
+        0
+      )
+    );
+  };
 
   const [fileList, setFileList] = useState<any>([]);
 
@@ -136,11 +160,13 @@ const ProductAdminPage = () => {
     },
     {
       title: "Quantity",
-      dataIndex: "stock",
-      key: "quantity",
-      render: (record: any) => (
-        <span>{record ? record : <Tag color="volcano">SOLD</Tag>}</span>
-      ),
+      dataIndex: "id",
+      key: "id",
+      render: (text: Number, record: any) => {
+        const total = calculateTotalStock(record);
+
+        return <span>{total ? total : <Tag color="volcano">SOLD</Tag>}</span>;
+      },
     },
     {
       title: "Action",
@@ -284,6 +310,7 @@ const ProductAdminPage = () => {
   const fillDataToForm = async (record: any) => {
     editForm.setFieldsValue(record);
     setCategoryRecord(record.category);
+    setProductRecord(record);
 
     const transformVariants = (variants: Variant[]): TransformedVariants => {
       const result: TransformedVariants = {};
@@ -417,7 +444,9 @@ const ProductAdminPage = () => {
         resetEditForm();
         setVisibleEdit(false);
       } else {
-        message.error("Không thể sửa sản phẩm! Vui lòng kiểm tra dữ liệu và thử lại!");
+        message.error(
+          "Không thể sửa sản phẩm! Vui lòng kiểm tra dữ liệu và thử lại!"
+        );
       }
     } catch (error) {
       if ((error as any).response.data.message === "image is not allowed") {
@@ -437,8 +466,6 @@ const ProductAdminPage = () => {
       (category) => category.name === value
     );
     setFilterCategoryId(selectedCategory ? selectedCategory.id : "");
-
-    console.log("selectedCategory", selectedCategory);
   };
 
   const handleCategoryChangeForAction = (value: any) => {
@@ -712,7 +739,7 @@ const ProductAdminPage = () => {
             <Input />
           </Form.Item>
           <div className="flex flex-row justify-between">
-            <Form.Item label="Giá" name="price" style={{ width: "48%" }}>
+            <Form.Item label="Giá" name="price" style={{ width: "38%" }}>
               <InputNumber
                 className="w-full"
                 formatter={(value) => formatPrice(Number(value) ?? 0)}
@@ -722,9 +749,12 @@ const ProductAdminPage = () => {
             <Form.Item
               label="Giảm giá"
               name="discount"
-              style={{ width: "48%" }}
+              style={{ width: "38%" }}
             >
               <Input />
+            </Form.Item>
+            <Form.Item label="Đã bán">
+              <InputNumber value={calculateTotalSold(productRecord)} disabled />
             </Form.Item>
           </div>
           {(categoryRecord == 1 || categoryRecord == 5) && (
