@@ -1,20 +1,20 @@
 "use client";
 
 import { useAuth } from "@/context/AuthContext";
-import useChatBot from "@/hooks/chatbot/useChatbot";
-import useOutsideClickHandler from "@/hooks/useOutsideAlerter";
+import useChatbot from "@/hooks/chatbot/useChatbot";
+import useOutsideClickHandler from "@/hooks/useOutsideClickHandler";
 import { CloseCircleFilled } from "@ant-design/icons";
 import { Button, Form, Input, Skeleton } from "antd";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import MessageView from "./Message";
 
-const ChatBot = () => {
+const Chatbot = () => {
   const [openChat, setOpenChat] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  const authData = useAuth();
-  const sessionId = authData?.userInfo?.id?.toString();
-  const { history, refetch, sendMessage } = useChatBot(sessionId);
+  const { chatbotSessionId } = useAuth();
+
+  const { history, refetch, sendMessage } = useChatbot(chatbotSessionId || "");
   const messages = history?.data;
 
   const messageListRef = useRef<HTMLDivElement>(null);
@@ -52,7 +52,7 @@ const ChatBot = () => {
   const handleSendMessage = async (values: { message: string }) => {
     setIsLoading(true);
 
-    await sendMessage({ content: values.message, sessionId });
+    await sendMessage({ content: values.message, sessionId: chatbotSessionId });
 
     refetch();
 
@@ -136,4 +136,4 @@ const ChatBot = () => {
   );
 };
 
-export default ChatBot;
+export default Chatbot;

@@ -6,7 +6,7 @@ interface Message {
   content: string | React.ReactNode;
 }
 
-export default function useChatBot(sessionId?: string) {
+export default function useChatbot(sessionId?: string) {
   const { data, refetch } = useQuery<Message[]>(`/chatbot/${sessionId}`);
   const { doMutate: sendMessage } = useMutation("/chatbot");
 
