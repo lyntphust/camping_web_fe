@@ -102,3 +102,15 @@ export interface FavProduct {
   userId: number;
   productId: number;
 }
+
+export interface ListCommentProduct {
+  id: number;
+  user: {
+    name: string;
+    avatar: string;
+  };
+  date: string;
+  createdAt: string;
+  rating: number;
+  comment: string;
+}
