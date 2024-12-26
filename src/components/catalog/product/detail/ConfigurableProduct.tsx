@@ -45,6 +45,14 @@ export default function ConfigurableProduct({
     );
   }, [listComment]);
 
+  const totalSold = useMemo(() => {
+    return product.variants.reduce(
+      (acc: number, variant: { sold: number }) => acc + variant.sold,
+      0
+    );
+  }, [product.variants]);
+  product.totalSold = totalSold;
+
   const showModal = (type: string) => {
     setIsModalVisible(true);
     setAction(type);
@@ -90,6 +98,9 @@ export default function ConfigurableProduct({
                     ratingSummary={ratingCount}
                     reviewCount={listComment?.data.length}
                   />
+                  <div className="text-gray-500 mt-2" style={{ fontSize: 14 }}>
+                    Đã bán: {product.totalSold} sản phẩm
+                  </div>
                 </div>
                 <div className="flex flex-wrap items-center mb-6">
                   <div className="mb-4 lg:mb-0">
