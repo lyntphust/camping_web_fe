@@ -12,13 +12,14 @@ import {
   ProductDetail,
   ProductVariant,
 } from "@/types";
-import { Input } from "antd";
+import { Input, message } from "antd";
 import Image from "next/image";
 import { useMemo, useState } from "react";
 import { IntlProvider } from "react-intl";
 import ModalAddToCart from "./ModalAddToCart";
 import { useListProductComments } from "@/hooks/catalog/useProduct";
 import dayjs from "dayjs";
+import { useAuth } from "@/context/AuthContext";
 
 interface Props {
   product: ProductDetail;
@@ -33,6 +34,7 @@ export default function ConfigurableProduct({
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [action, setAction] = useState<string>("");
   const { data: listComment } = useListProductComments(product.id);
+  const { userInfo } = useAuth();
 
   const ratingCount = useMemo(() => {
     return (
@@ -96,7 +98,15 @@ export default function ConfigurableProduct({
                   <a
                     href="#"
                     className="w-full ml-10 px-4 py-3 text-center text-blue-600 bg-blue-100 border border-blue-600 hover:bg-blue-600 hover:text-gray-100 lg:w-1/2 rounded-xl"
-                    onClick={() => showModal("add")}
+                    onClick={() => {
+                      if (userInfo) {
+                        showModal("add");
+                      } else {
+                        message.error(
+                          "Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng!"
+                        );
+                      }
+                    }}
                   >
                     Thêm vào giỏ hàng
                   </a>
@@ -105,7 +115,15 @@ export default function ConfigurableProduct({
                   <a
                     href="#"
                     className="w-full px-4 py-3 text-center text-gray-100 bg-blue-600 border border-transparent hover:border-blue-500 hover:text-blue-700 hover:bg-blue-100 rounded-xl"
-                    onClick={() => showModal("buy")}
+                    onClick={() => {
+                      if (userInfo) {
+                        showModal("buy");
+                      } else {
+                        message.error(
+                          "Vui lòng đăng nhập để mua sản phẩm này!"
+                        );
+                      }
+                    }}
                   >
                     Mua ngay
                   </a>
