@@ -58,7 +58,19 @@ const Register = () => {
           error.response?.data.message === "User with this email already exists"
         ) {
           message.error("Email đã tồn tại! Vui lòng chọn email khác.");
-        } else message.error("Account registration failed! Please try again.");
+        } else if (
+          error.response?.data.message.includes(
+            "password must be longer than or equal to 8 characters"
+          )
+        ) {
+          message.error("Vui lòng nhập mật khẩu lớn hơn hoặc bằng 8 ký tự.");
+        } else if (
+          error.response?.data.message.includes(
+            "phoneNumber must be longer than or equal to 10 characters"
+          )
+        ) {
+          message.error("Vui lòng nhập số điện thoại lớn hơn hoặc bằng 10 số.");
+        } else message.error("Vui lòng kiểm tra dữ liệu và thử lại sau!");
       }
     }
   };
