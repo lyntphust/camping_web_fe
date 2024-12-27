@@ -20,10 +20,14 @@ const Blog = () => {
       return [];
     }
 
+    const approvedBlogs = listBlog.data.filter(
+      (blog) => blog.status === "approve"
+    );
+
     const indexOfLastPost = currentPage * postsPerPage;
     const indexOfFirstPost = indexOfLastPost - postsPerPage;
 
-    return listBlog.data
+    return approvedBlogs
       ?.map((blog) => ({
         key: blog.id,
         ...blog,
