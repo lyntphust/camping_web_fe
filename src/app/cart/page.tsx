@@ -226,7 +226,7 @@ const CartComponent = () => {
                             </span>
                           </div>
                         )}
-                        {product.size && (
+                        {product.size !== "null" && (
                           <div className="text-sm">
                             <span className="text-lg">Size:&nbsp;</span>
                             <span className="font-bold text-xl">
