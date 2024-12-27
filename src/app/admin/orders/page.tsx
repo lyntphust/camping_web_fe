@@ -15,6 +15,7 @@ import { useMemo, useState } from "react";
 import { useAllOrder, useUpdateStatusOrder } from "@/hooks/admin/useOrder";
 import { useListUsers } from "@/hooks/admin/useUser";
 import { formatPrice } from "@/util";
+import { OrderStatus } from "@/types/order";
 // import orderApi from "../../services/oder";
 
 const OrderManagement = () => {
@@ -23,7 +24,6 @@ const OrderManagement = () => {
   const [isModalVisibleDelete, setIsModalVisibleDelete] = useState(false);
   const [orderIdSelected, setOrderIdSelected] = useState<number>(0);
 
-  const [statusOrder, setStatusOrder] = useState<string>("");
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [orderDetails, setOrderDetails] = useState([]);
   const {
@@ -43,8 +43,8 @@ const OrderManagement = () => {
     [orderList]
   );
 
-  const { patch: updateStatusOrder, isLoading: updateStatusIsLoading } =
-    useUpdateStatusOrder(orderIdSelected, statusOrder);
+  const { doEdit: updateStatusOrder, isLoading: updateStatusIsLoading } =
+    useUpdateStatusOrder();
 
   const handleViewDetails = (record: any) => {
     setIsModalVisible(true);
@@ -63,12 +63,13 @@ const OrderManagement = () => {
     setOrderDetails(record.OrdersProducts);
     setIsModalVisibleDeliver(true);
     setOrderIdSelected(record.id);
-    setStatusOrder("SHIPPING");
   };
 
   const handleOkDeliver = async () => {
     try {
-      await updateStatusOrder();
+      await updateStatusOrder(
+        `/order/${orderIdSelected}/${OrderStatus.SHIPPING}`
+      );
       message.success("Đã giao cho đơn vị vận chuyển!");
       setIsModalVisibleDeliver(false);
       refetch();
@@ -83,7 +84,9 @@ const OrderManagement = () => {
   // Delivered done order
   const handleDeliverDone = async () => {
     try {
-      await updateStatusOrder();
+      await updateStatusOrder(
+        `/order/${orderIdSelected}/${OrderStatus.SHIPPED}`
+      );
       message.success("Đơn hàng đã được giao thành công!");
       setIsModalVisibleDeliver(false);
       refetch();
@@ -97,12 +100,13 @@ const OrderManagement = () => {
     setOrderDetails(record.OrdersProducts);
     setIsModalVisibleDelete(true);
     setOrderIdSelected(record.id);
-    setStatusOrder("REFAUSE");
   };
 
   const handleOkDelete = async () => {
     try {
-      await updateStatusOrder();
+      await updateStatusOrder(
+        `/order/${orderIdSelected}/${OrderStatus.REFAUSE}`
+      );
       message.success("Từ chối giao hàng thành công!");
       setIsModalVisibleDelete(false);
       refetch();
@@ -145,19 +149,6 @@ const OrderManagement = () => {
       render: (record: any) => <div>{formatPrice(record)}</div>,
     },
     {
-      title: "Trạng thái đơn",
-      dataIndex: "status",
-      key: "status",
-      render: (record: any) => (
-        <>
-          {record === "CREATED" && <Tag color="volcano">Đã tạo đơn</Tag>}
-          {record === "REFAUSE" && <Tag color="red">Huỷ giao hàng</Tag>}
-          {record === "SHIPPING" && <Tag color="blue">Đang giao hàng</Tag>}
-          {record === "SHIPPED" && <Tag color="green">Đã giao hàng</Tag>}
-        </>
-      ),
-    },
-    {
       title: "Người đặt",
       key: "oder_by",
       render: (record: any) => {
@@ -186,6 +177,19 @@ const OrderManagement = () => {
       key: "phone",
     },
     {
+      title: "Trạng thái đơn",
+      dataIndex: "status",
+      key: "status",
+      render: (record: any) => (
+        <>
+          {record === "CREATED" && <Tag color="volcano">Đã tạo đơn</Tag>}
+          {record === "REFAUSE" && <Tag color="red">Huỷ giao hàng</Tag>}
+          {record === "SHIPPING" && <Tag color="blue">Đang giao hàng</Tag>}
+          {record === "SHIPPED" && <Tag color="green">Đã giao hàng</Tag>}
+        </>
+      ),
+    },
+    {
       title: "Giao đơn ngay",
       key: "action",
       dataIndex: "id",
@@ -206,7 +210,6 @@ const OrderManagement = () => {
               type="primary"
               onClick={() => {
                 setOrderIdSelected(record.id);
-                setStatusOrder("SHIPPED");
                 setTimeout(() => {
                   handleDeliverDone();
                 }, 1000);
@@ -215,8 +218,6 @@ const OrderManagement = () => {
               Hoàn tất giao hàng
             </Button>
           )}
-          {record.status === "SHIPPED" && <div>Đơn hàng đã được giao</div>}
-          {record.status === "REFAUSE" && <div>Đã từ chối giao hàng</div>}
         </Space>
       ),
     },

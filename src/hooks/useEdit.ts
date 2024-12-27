@@ -9,7 +9,7 @@ export default function useEdit() {
     setIsLoading(true);
 
     try {
-      const response = await api.post(url, params);
+      const response = await api.patch(url, params);
 
       return response;
     } catch (error) {
