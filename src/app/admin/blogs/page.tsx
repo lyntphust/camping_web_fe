@@ -9,7 +9,7 @@ import {
 } from "@/hooks/blog/useBlogs";
 import { Blog, BlogStatus } from "@/types";
 import { parseJwt } from "@/util";
-import { Button, Image, Table, Tag, Modal } from "antd";
+import { Button, Image, Table, Tag, Modal, Tooltip } from "antd";
 import { useEffect, useMemo, useState } from "react";
 
 export default function BlogManagement() {
@@ -57,6 +57,16 @@ export default function BlogManagement() {
       title: "Nội dung",
       dataIndex: "text",
       key: "text",
+      render: (text: string) => {
+        if (text.length > 200) {
+          return (
+            <Tooltip title={text} style={{ width: 500 }}>
+              <span>{text.slice(0, 200)}...</span>
+            </Tooltip>
+          );
+        }
+        return text;
+      },
     },
     {
       title: "Trạng thái",
