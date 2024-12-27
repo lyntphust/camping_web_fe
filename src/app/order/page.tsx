@@ -129,7 +129,7 @@ const OrderComponent = () => {
                                   </span>
                                 </div>
                               )}
-                              {product.productVariant?.size && (
+                              {product.productVariant?.size !== "null" && (
                                 <div className="text-sm">
                                   <span className="text-l">Size:&nbsp;</span>
                                   <span className="font-bold text-l">
