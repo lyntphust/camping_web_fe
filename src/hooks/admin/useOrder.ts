@@ -1,6 +1,6 @@
 import { Order } from "@/types/order";
 import useQuery from "@hooks/useQuery";
-import usePatch from "../usePatch";
+import useEdit from "../useEdit";
 
 export function useListOrder() {
   return useQuery<Order[]>("/order");
@@ -10,6 +10,6 @@ export function useAllOrder() {
   return useQuery<Order[]>("/order/all");
 }
 
-export function useUpdateStatusOrder(id: number, status: string) {
-  return usePatch(`/order/${id}/${status}`);
+export function useUpdateStatusOrder() {
+  return useEdit();
 }

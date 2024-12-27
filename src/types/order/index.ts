@@ -33,3 +33,10 @@ export interface Order {
   OrdersProducts: OrderProduct[];
   phone: string;
 }
+
+export enum OrderStatus {
+  CREATED = "CREATED",
+  REFAUSE = "REFAUSE",
+  SHIPPING = "SHIPPING",
+  SHIPPED = "SHIPPED",
+}

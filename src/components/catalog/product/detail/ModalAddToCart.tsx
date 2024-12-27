@@ -40,6 +40,10 @@ const ModalAddToCart: React.FC<ModalAddToCartProps> = ({
     const sizes = product.variants
       .filter((variant: ProductVariant) => variant.color === color)
       .map((variant: ProductVariant) => variant.size);
+    if (sizes.includes("null")) {
+      sizes[sizes.indexOf("null")] = "Mặc định";
+    }
+
     setAvailableSizes(sizes);
     form.setFieldsValue({ size: undefined });
     setAvailableStock(0);
@@ -52,6 +56,13 @@ const ModalAddToCart: React.FC<ModalAddToCartProps> = ({
         variant.color === selectedColor && variant.size === size
     )?.stock;
     setAvailableStock(stock || 0);
+  };
+
+  const handleClose = () => {
+    form.resetFields();
+    setSelectedColor(null);
+    setSelectedSize(null);
+    onClose();
   };
 
   const handleOk = async () => {
@@ -77,7 +88,7 @@ const ModalAddToCart: React.FC<ModalAddToCartProps> = ({
         router.push("/cart");
       }
 
-      onClose();
+      handleClose();
     } catch (error) {
       message.error("Failed to add product to cart");
     } finally {
@@ -92,7 +103,7 @@ const ModalAddToCart: React.FC<ModalAddToCartProps> = ({
       title={`${action === "add" ? "Thêm vào giỏ hàng" : "Mua ngay"} `}
       visible={visible}
       onOk={handleOk}
-      onCancel={onClose}
+      onCancel={handleClose}
     >
       <Form form={form} layout="vertical">
         <Form.Item
