@@ -18,6 +18,7 @@ export interface Blog {
   status: BlogStatus;
   user: BlogAuthor;
   createdAt: string;
+  title: string;
 }
 
 export enum BlogMenuKey {
