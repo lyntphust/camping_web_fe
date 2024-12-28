@@ -1,5 +1,6 @@
 "use client";
 
+import { useAuth } from "@/context/AuthContext";
 import BlogMenuContextProvider, {
   useBlogMenuContext,
 } from "@/context/blog/BlogMenuContext";
@@ -12,15 +13,18 @@ interface Props {
   children?: React.ReactNode;
 }
 
-const tabs = [
-  { label: "Tất cả", key: BlogMenuKey.ALL },
-  { label: "Đã lưu", key: BlogMenuKey.SAVED },
-  { label: "Của tôi", key: BlogMenuKey.MY },
-];
-
 function BlogComponent({ children }: Props) {
+  const { accessToken } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
+
+  const tabs = accessToken
+    ? [
+        { label: "Tất cả", key: BlogMenuKey.ALL },
+        { label: "Đã lưu", key: BlogMenuKey.SAVED },
+        { label: "Của tôi", key: BlogMenuKey.MY },
+      ]
+    : [{ label: "Tất cả", key: BlogMenuKey.ALL }];
 
   const { activeKey, setActiveKey } = useBlogMenuContext();
 
