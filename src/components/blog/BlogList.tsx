@@ -63,8 +63,7 @@ export default function BlogList({ blogs, hiddenBookMark }: Props) {
             {dayjs(blog.createdAt).format("DD/MM/YYYY")}
           </span>
           <h2 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-            {/* <a href="#">{blog.title}</a> */}
-            Tiêu đề blog
+            <a href="#">{blog.title}</a>
           </h2>
           <p
             style={{

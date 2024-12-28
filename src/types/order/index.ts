@@ -16,6 +16,7 @@ export interface ProductVariant {
 }
 
 export interface OrderProduct {
+  image: string;
   id: number;
   quantity: number;
   productVariant: ProductVariant;

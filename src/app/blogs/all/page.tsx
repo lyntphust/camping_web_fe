@@ -39,9 +39,11 @@ const Blog = () => {
 
   return (
     <>
-      <Button className="px-8 py-3 mb-6 text-center text-lg h-fit w-fit text-gray-100 bg-blue-600 border border-transparent hover:border-blue-500 hover:text-blue-700 hover:bg-blue-100 rounded-xl">
-        <Link href="/blogs/create">Tạo blog mới</Link>
-      </Button>
+      {accessToken && (
+        <Button className="px-8 py-3 mb-6 text-center text-lg h-fit w-fit text-gray-100 bg-blue-600 border border-transparent hover:border-blue-500 hover:text-blue-700 hover:bg-blue-100 rounded-xl">
+          <Link href="/blogs/create">Tạo blog mới</Link>
+        </Button>
+      )}
       <BlogList blogs={blogs} />
       <Pagination
         className="mt-10 text-center"
