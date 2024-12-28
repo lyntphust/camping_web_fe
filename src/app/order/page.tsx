@@ -4,6 +4,7 @@ import ProductPartialPrice from "@/components/catalog/product/ProductPartialPric
 import { useAuth } from "@/context/AuthContext";
 import { useListOrder } from "@/hooks/admin/useOrder";
 import { useCreateProductComment } from "@/hooks/catalog/useProduct";
+import { formatPrice } from "@/util";
 import { Form, Image, Input, message, Modal, Rate, Skeleton, Tag } from "antd";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -94,11 +95,15 @@ const OrderComponent = () => {
                     <li
                       className="flex pb-4"
                       key={product.id}
-                      onClick={() => router.push(`/product/${product.id}`)}
+                      onClick={() =>
+                        router.push(
+                          `/product/${product.productVariant.product.id}`
+                        )
+                      }
                     >
                       <div className="h-48 w-48 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
                         <Image
-                          src={product.photo}
+                          src={product.image}
                           width={192}
                           height={192}
                           alt={product.name}
@@ -178,7 +183,9 @@ const OrderComponent = () => {
                     <div>
                       <p className="text-md">
                         Tổng tiền:&nbsp;
-                        <span className="text-md">0 đ</span>
+                        <span className="text-md">
+                          {formatPrice(order.price)}
+                        </span>
                       </p>
                       <p className="text-md">
                         Trạng thái đơn hàng:&nbsp;
