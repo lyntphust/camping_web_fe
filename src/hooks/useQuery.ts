@@ -25,7 +25,11 @@ export default function useQuery<T>(
         setData(response);
       }
     } catch (error) {
-      setError(error);
+      if (url === "/user/cart") {
+        setData([] as any);
+      } else {
+        setError(error);
+      }
     } finally {
       setTimeout(() => setIsLoading(false), LOADING_DELAY);
     }

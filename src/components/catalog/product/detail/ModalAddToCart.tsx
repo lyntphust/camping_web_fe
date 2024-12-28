@@ -40,9 +40,6 @@ const ModalAddToCart: React.FC<ModalAddToCartProps> = ({
     const sizes = product.variants
       .filter((variant: ProductVariant) => variant.color === color)
       .map((variant: ProductVariant) => variant.size);
-    if (sizes.includes("null")) {
-      sizes[sizes.indexOf("null")] = "Mặc định";
-    }
 
     setAvailableSizes(sizes);
     form.setFieldsValue({ size: undefined });
@@ -135,7 +132,7 @@ const ModalAddToCart: React.FC<ModalAddToCartProps> = ({
           >
             {availableSizes.map((size) => (
               <Option key={size} value={size}>
-                {size}
+                {size === "null" ? "Mặc định" : size}
               </Option>
             ))}
           </Select>
