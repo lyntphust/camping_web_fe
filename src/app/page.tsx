@@ -2,12 +2,17 @@
 
 import { Banner, FeaturedProducts } from "@/components/home";
 import ListBlog from "@/components/home/ListBlog";
+import { useListBlogAll } from "@/hooks/blog/useBlogs";
 import productApi from "@/services/product";
 import { message } from "antd";
 import { useEffect, useState } from "react";
 
 export default function Home() {
   const [products, setProducts] = useState([]);
+
+  const { data: listBlog } = useListBlogAll();
+  const blogData =
+    listBlog?.data?.filter((blog) => blog.status === "approve") || [];
 
   useEffect(() => {
     const fetchData = async () => {
@@ -25,7 +30,7 @@ export default function Home() {
     <main>
       <Banner />
       <FeaturedProducts />
-      <ListBlog />
+      <ListBlog blogData={blogData} />
     </main>
   );
 }

@@ -14,7 +14,7 @@ export default function DetailBlog() {
                   <div className="inline-flex items-center">
                     <Image
                       className="mr-4 w-16 h-16 rounded-full"
-                      src="https://flowbite.com/docs/images/people/profile-picture-2.jpg"
+                      src="/user_default.png"
                       width={192}
                       height={192}
                       alt="Jese Leos"
@@ -68,13 +68,14 @@ export default function DetailBlog() {
               of components based on Tailwind CSS that you can just copy-paste
               from the documentation.
             </p>
-            <Image
-              className="mr-4"
-              src="https://flowbite.com/docs/images/people/profile-picture-2.jpg"
-              width={300}
-              height={300}
-              alt="Jese Leos"
-            />
+            <div className="mt-6 flex justify-center">
+              <Image
+                src="/about_img.png"
+                width={600}
+                height={400}
+                alt="blog-image"
+              />
+            </div>
           </article>
         </div>
       </main>
