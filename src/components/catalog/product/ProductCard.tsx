@@ -14,7 +14,7 @@ export default function ProductCard({ product, className = "" }: Props) {
 
   const totalSold = useMemo(() => {
     return product.variants.reduce(
-      (acc: number, variant: { sold: number }) => acc + variant.sold,
+      (acc, variant) => acc + (variant?.sold || 0),
       0
     );
   }, [product.variants]);
