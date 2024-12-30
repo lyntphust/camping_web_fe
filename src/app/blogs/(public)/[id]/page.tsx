@@ -1,8 +1,25 @@
 "use client";
 
+import { useBlogById } from "@/hooks/blog/useBlogs";
+import { MapPinIcon } from "@heroicons/react/24/solid";
+import dayjs from "dayjs";
 import Image from "next/image";
 
-export default function DetailBlog() {
+interface Props {
+  params: {
+    id: string;
+  };
+}
+
+export default function DetailBlog({ params: { id } }: Props) {
+  const { data: blog } = useBlogById(Number(id));
+
+  if (!blog) {
+    return <div>Blog not found</div>;
+  }
+
+  const { title, image, location, text, user, createdAt } = blog;
+
   return (
     <>
       <main className="pt-8 pb-16 lg:pt-16 lg:pb-24 bg-white dark:bg-gray-900 antialiased">
@@ -17,7 +34,7 @@ export default function DetailBlog() {
                       src="/user_default.png"
                       width={192}
                       height={192}
-                      alt="Jese Leos"
+                      alt={title}
                     />
                     <div>
                       <a
@@ -25,14 +42,17 @@ export default function DetailBlog() {
                         rel="author"
                         className="text-xl font-bold text-gray-900 dark:text-white"
                       >
-                        User name
+                        {user.name}
                       </a>
                       <p className="text-base text-gray-500 dark:text-gray-400">
-                        User@gmail.com
+                        {user.email}
                       </p>
                       <p className="text-base text-gray-500 dark:text-gray-400">
-                        <time dateTime="2022-02-08" title="February 8th, 2022">
-                          Feb. 8, 2024
+                        <time
+                          dateTime={createdAt}
+                          title={dayjs(createdAt).format("DD/MM/YYYY")}
+                        >
+                          {dayjs(createdAt).format("DD/MM/YYYY")}
                         </time>
                       </p>
                     </div>
@@ -58,16 +78,14 @@ export default function DetailBlog() {
                 </div>
               </address>
               <h1 className="mb-4 text-3xl font-extrabold leading-tight text-gray-900 lg:mb-6 lg:text-4xl dark:text-white">
-                Tiêu đề blog
+                {title}
               </h1>
             </header>
-            <h2>Địa điểm</h2>
-            <p>
-              Nội dung blog. First of all you need to understand how Flowbite
-              works. This library is not another framework. Rather, it is a set
-              of components based on Tailwind CSS that you can just copy-paste
-              from the documentation.
-            </p>
+            <div className="flex items-center gap-2">
+              <MapPinIcon width={24} height={24} />
+              <span className="font-bold text-lg">{location}</span>
+            </div>
+            <div className="indent-6 mt-4">{text}</div>
             <div className="mt-6 flex justify-center">
               <Image
                 src="/about_img.png"

@@ -84,7 +84,7 @@ export default function BlogList({ blogs, hiddenBookMark }: Props) {
               </span>
             </div>
             <Link
-              href={`/detailblog/${blog.id}`}
+              href={`/blogs/${blog.id}`}
               className="inline-flex items-center font-medium text-primary-600 dark:text-primary-500 hover:underline"
             >
               Đọc thêm

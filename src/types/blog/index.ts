@@ -1,6 +1,7 @@
 export interface BlogAuthor {
   name: string;
   avatar: string;
+  email: string;
 }
 
 export enum BlogStatus {
