@@ -12,7 +12,10 @@ import {
 } from "antd";
 import { useMemo, useState } from "react";
 
-import { useListOrder, useUpdateStatusOrder } from "@/hooks/admin/useOrder";
+import { useAllOrder, useUpdateStatusOrder } from "@/hooks/admin/useOrder";
+import { useListUsers } from "@/hooks/admin/useUser";
+import { formatPrice } from "@/util";
+import { OrderStatus } from "@/types/order";
 // import orderApi from "../../services/oder";
 
 const OrderManagement = () => {
@@ -21,14 +24,15 @@ const OrderManagement = () => {
   const [isModalVisibleDelete, setIsModalVisibleDelete] = useState(false);
   const [orderIdSelected, setOrderIdSelected] = useState<number>(0);
 
-  const [statusOrder, setStatusOrder] = useState<string>("");
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [orderDetails, setOrderDetails] = useState([]);
   const {
     data: orderList,
     isLoading: getListIsLoading,
     refetch,
-  } = useListOrder();
+  } = useAllOrder();
+
+  const { data: listUser } = useListUsers();
 
   const orderListData = useMemo(
     () =>
@@ -39,8 +43,8 @@ const OrderManagement = () => {
     [orderList]
   );
 
-  const { patch: updateStatusOrder, isLoading: updateStatusIsLoading } =
-    useUpdateStatusOrder(orderIdSelected, statusOrder);
+  const { doEdit: updateStatusOrder, isLoading: updateStatusIsLoading } =
+    useUpdateStatusOrder();
 
   const handleViewDetails = (record: any) => {
     setIsModalVisible(true);
@@ -59,12 +63,13 @@ const OrderManagement = () => {
     setOrderDetails(record.OrdersProducts);
     setIsModalVisibleDeliver(true);
     setOrderIdSelected(record.id);
-    setStatusOrder("SHIPPING");
   };
 
   const handleOkDeliver = async () => {
     try {
-      await updateStatusOrder();
+      await updateStatusOrder(
+        `/order/${orderIdSelected}/${OrderStatus.SHIPPING}`
+      );
       message.success("Đã giao cho đơn vị vận chuyển!");
       setIsModalVisibleDeliver(false);
       refetch();
@@ -79,7 +84,9 @@ const OrderManagement = () => {
   // Delivered done order
   const handleDeliverDone = async () => {
     try {
-      await updateStatusOrder();
+      await updateStatusOrder(
+        `/order/${orderIdSelected}/${OrderStatus.SHIPPED}`
+      );
       message.success("Đơn hàng đã được giao thành công!");
       setIsModalVisibleDeliver(false);
       refetch();
@@ -93,12 +100,13 @@ const OrderManagement = () => {
     setOrderDetails(record.OrdersProducts);
     setIsModalVisibleDelete(true);
     setOrderIdSelected(record.id);
-    setStatusOrder("REFAUSE");
   };
 
   const handleOkDelete = async () => {
     try {
-      await updateStatusOrder();
+      await updateStatusOrder(
+        `/order/${orderIdSelected}/${OrderStatus.REFAUSE}`
+      );
       message.success("Từ chối giao hàng thành công!");
       setIsModalVisibleDelete(false);
       refetch();
@@ -138,24 +146,17 @@ const OrderManagement = () => {
       title: "Tổng tiền",
       dataIndex: "price",
       key: "price",
-    },
-    {
-      title: "Trạng thái đơn",
-      dataIndex: "status",
-      key: "status",
-      render: (record: any) => (
-        <>
-          {record === "CREATED" && <Tag color="volcano">Đã tạo đơn</Tag>}
-          {record === "REFAUSE" && <Tag color="red">Huỷ giao hàng</Tag>}
-          {record === "SHIPPING" && <Tag color="blue">Đang giao hàng</Tag>}
-          {record === "SHIPPED" && <Tag color="green">Đã giao hàng</Tag>}
-        </>
-      ),
+      render: (record: any) => <div>{formatPrice(record)}</div>,
     },
     {
       title: "Người đặt",
-      dataIndex: ["ordered_by", "username"],
       key: "oder_by",
+      render: (record: any) => {
+        const user = listUser?.data?.find(
+          (user: any) => user.id === record.userId
+        );
+        return <div>{user ? user.name : "User không xác định"}</div>;
+      },
     },
     {
       title: "Địa chỉ",
@@ -167,6 +168,24 @@ const OrderManagement = () => {
           {!record && (
             <div style={{ width: "250px" }}>KTX Đại Học Bách Khoa Hà Nội</div>
           )}
+        </>
+      ),
+    },
+    {
+      title: "Số điện thoại",
+      dataIndex: "phone",
+      key: "phone",
+    },
+    {
+      title: "Trạng thái đơn",
+      dataIndex: "status",
+      key: "status",
+      render: (record: any) => (
+        <>
+          {record === "CREATED" && <Tag color="volcano">Đã tạo đơn</Tag>}
+          {record === "REFAUSE" && <Tag color="red">Huỷ giao hàng</Tag>}
+          {record === "SHIPPING" && <Tag color="blue">Đang giao hàng</Tag>}
+          {record === "SHIPPED" && <Tag color="green">Đã giao hàng</Tag>}
         </>
       ),
     },
@@ -191,7 +210,6 @@ const OrderManagement = () => {
               type="primary"
               onClick={() => {
                 setOrderIdSelected(record.id);
-                setStatusOrder("SHIPPED");
                 setTimeout(() => {
                   handleDeliverDone();
                 }, 1000);
@@ -200,8 +218,6 @@ const OrderManagement = () => {
               Hoàn tất giao hàng
             </Button>
           )}
-          {record.status === "SHIPPED" && <div>Đơn hàng đã được giao</div>}
-          {record.status === "REFAUSE" && <div>Đã từ chối giao hàng</div>}
         </Space>
       ),
     },
@@ -219,6 +235,17 @@ const OrderManagement = () => {
       key: "id",
     },
     {
+      title: "Màu sắc",
+      dataIndex: ["productVariant", "color"],
+      key: "color",
+    },
+    {
+      title: "Kích thước",
+      dataIndex: ["productVariant", "size"],
+      key: "size",
+      render: (record: any) => <div>{record === "null" ? "" : record}</div>,
+    },
+    {
       title: "Số lượng",
       dataIndex: "quantity",
       key: "quantity",
@@ -227,7 +254,7 @@ const OrderManagement = () => {
       title: "Tổng tiền",
       dataIndex: ["productVariant", "product", "price"],
       key: "price",
-      render: (record: any) => <div>{record}VND</div>,
+      render: (record: any) => <div>{formatPrice(record)}</div>,
     },
   ];
 
@@ -273,7 +300,7 @@ const OrderManagement = () => {
         <Table columns={columnsOrderDetail} dataSource={orderDetails} />
       </Modal>
       <Modal
-        title="Deliver Order"
+        title="Chi tiết đơn hàng"
         open={isModalVisibleDeliver}
         onOk={() => handleOkDeliver()}
         onCancel={handleCancelDeliver}
@@ -281,7 +308,7 @@ const OrderManagement = () => {
         <Table columns={columnsOrderDetail} dataSource={orderDetails} />
       </Modal>
       <Modal
-        title="Delete Order"
+        title="Từ chối đơn hàng"
         open={isModalVisibleDelete}
         onOk={() => handleOkDelete()}
         onCancel={handleCancelDelete}

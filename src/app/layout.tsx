@@ -1,6 +1,6 @@
 import "@/app/globals.scss";
 import CategoryNav from "@/components/CategoryNav";
-import ChatBot from "@/components/ChatBot";
+import Chatbot from "@/components/Chatbot";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import { AuthProvider } from "@context/AuthContext";
@@ -53,10 +53,10 @@ export default function RootLayout({
           ) : (
             <></>
           )}
-          <div className="md:w-full md:max-w-[1440px] mx-auto px-[15px] md:px-[20px] mt-6">
+          <div className="md:w-full md:max-w-[1600px] mx-auto px-[15px] md:px-[20px] mt-6">
             {children}
           </div>
-          <ChatBot />
+          <Chatbot />
           {showHeaderFooter ? (
             <footer className="mt-20 text-white text-center py-4">
               <Footer />

@@ -1,3 +1,29 @@
+export interface Product {
+  id: number;
+  name: string;
+  photo: string;
+  description: string;
+  discount: number;
+  price: number;
+}
+
+export interface ProductVariant {
+  id: number;
+  color: string;
+  size: string;
+  price: number;
+  product: Product;
+}
+
+export interface OrderProduct {
+  image: string;
+  id: number;
+  quantity: number;
+  productVariant: ProductVariant;
+  photo: string;
+  name: string;
+}
+
 export interface Order {
   id: number;
   address: string;
@@ -5,5 +31,13 @@ export interface Order {
   date: string;
   status: string;
   userId: number;
-  OrdersProducts: any;
+  OrdersProducts: OrderProduct[];
+  phone: string;
+}
+
+export enum OrderStatus {
+  CREATED = "CREATED",
+  REFAUSE = "REFAUSE",
+  SHIPPING = "SHIPPING",
+  SHIPPED = "SHIPPED",
 }

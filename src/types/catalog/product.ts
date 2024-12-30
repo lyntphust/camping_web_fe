@@ -83,22 +83,44 @@ export interface ProductVariant {
   };
 }
 
+export interface ProductVariant {
+  id: number;
+  product_id: number;
+  stock?: number;
+  sold?: number;
+  size?: string;
+  color?: string;
+  price: string;
+}
+
 export interface ProductDetail {
   id: number;
   name: string;
-  color: string;
   discount: number;
   weight: string;
   price: number;
   photo: string;
   image: string;
   description: string;
-  size: string;
   category: string;
+  variants: ProductVariant[];
+  totalSold: number;
 }
 
 export interface FavProduct {
   id: number;
   userId: number;
   productId: number;
+}
+
+export interface ListCommentProduct {
+  id: number;
+  user: {
+    name: string;
+    avatar: string;
+  };
+  date: string;
+  createdAt: string;
+  rating: number;
+  comment: string;
 }

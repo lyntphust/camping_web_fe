@@ -22,18 +22,18 @@ export default async function CategoryNav({ className = "" }: Props) {
             Có gì hot?
           </Link>
         </li>
-        {categories.map((category) => (
+        {categories.map(({ url_key = "", name, children }) => (
           <li
-            key={category.url_key}
+            key={url_key}
             className="group relative md:h-16 hover:bg-gray-300 cursor-pointer"
           >
             <Link
-              href={`/category/${category.url_key}`}
+              href={`/category/${url_key}`}
               className="flex items-center h-full md:px-8 mb-0 px-12 hover:no-underline"
             >
-              {category.name}
+              {name}
 
-              {category?.children && category.children.length > 0 && (
+              {children && children.length > 0 && (
                 <span className="ml-2 w-5 h-5 group-hover:rotate-180 transition-all">
                   <ChevronDownIcon />
                 </span>

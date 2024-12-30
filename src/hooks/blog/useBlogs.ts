@@ -2,6 +2,8 @@ import { Blog, BlogStatus } from "@/types";
 import useLazyQuery from "../useLazyQuery";
 import useMutation from "../useMutation";
 import useQuery from "../useQuery";
+import useEdit from "../useEdit";
+import useDelete from "../useDelete";
 
 export function useListBlog() {
   return useLazyQuery<Blog[]>();
@@ -44,4 +46,12 @@ export function useListBlogSaved() {
 
 export function useCreateBlog() {
   return useMutation("/blog");
+}
+
+export function useUpdateBlog() {
+  return useEdit();
+}
+
+export function useDeleteBlog() {
+  return useDelete();
 }

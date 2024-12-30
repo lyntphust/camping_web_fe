@@ -1,11 +1,21 @@
 "use client";
 
 import { navigationCategories } from "@/data";
-import { useCreateProduct, useListProduct } from "@/hooks/catalog/useProduct";
+import {
+  useCreateProduct,
+  useListProduct,
+  useUpdateProduct,
+} from "@/hooks/catalog/useProduct";
 import productApi from "@/services/product";
-import { CloseCircleFilled, PlusOutlined } from "@ant-design/icons";
+import { formatPrice } from "@/util";
+import {
+  CloseCircleFilled,
+  CloseOutlined,
+  PlusOutlined,
+} from "@ant-design/icons";
 import {
   Button,
+  Card,
   Form,
   Image,
   Input,
@@ -21,25 +31,61 @@ import {
 } from "antd";
 import { useMemo, useState } from "react";
 
+interface Variant {
+  color: string;
+  size: string;
+  stock: number;
+  price: number;
+  sold: number;
+}
+
+interface TransformedVariants {
+  [color: string]: Array<{
+    size: string;
+    stock: number;
+    price: number;
+    sold: number;
+  }>;
+}
+interface TransformedVariantHaveColorSize {
+  size: string;
+  quantity: string;
+}
+
+interface TransformedResponseHaveColorSize {
+  color: string;
+  list: TransformedVariantHaveColorSize[];
+}
+
 const ProductAdminPage = () => {
   const [filterCategory, setFilterCategory] = useState("");
-  const [filterCategoryForAction, setFilterCategoryForAction] = useState("");
+  const [filterCategoryId, setFilterCategoryId] = useState<string | number>("");
+  const [filterCategoryForAction, setFilterCategoryForAction] =
+    useState<number>(1);
+  const [categoryRecord, setCategoryRecord] = useState<number>(1);
+  const [productRecord, setProductRecord] = useState<any>(null);
 
   const [visible, setVisible] = useState(false);
   const [visibleEdit, setVisibleEdit] = useState(false);
   const [form] = Form.useForm();
+  const [editForm] = Form.useForm();
 
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedRecord, setSelectedRecord] = useState<any>(null);
-  const [selectedProductId, setSelectedProductId] = useState(null);
+  const [selectedProductId, setSelectedProductId] = useState<number | null>(
+    null
+  );
 
   const {
     data: productList,
     isLoading: getListIsLoading,
     refetch,
   } = useListProduct();
-  const { isLoading: createProductIsLoading, mutate: createProduct } =
+  const { isLoading: createProductIsLoading, doMutate: createProduct } =
     useCreateProduct();
+
+  const { isLoading: updateProductIsLoading, patch: updateProduct } =
+    useUpdateProduct(selectedProductId ?? 0);
 
   const productListData = useMemo(
     () =>
@@ -49,8 +95,40 @@ const ProductAdminPage = () => {
       })) || [],
     [productList]
   );
+  const calculateTotalStock = (product: any) => {
+    const acc = 0;
+    return (
+      acc +
+      product?.variants?.reduce(
+        (variantAcc: number, variant: { stock: number }) =>
+          variantAcc + variant.stock,
+        0
+      )
+    );
+  };
+
+  const calculateTotalSold = (product: any) => {
+    const acc = 0;
+    return (
+      acc +
+      product?.variants?.reduce(
+        (variantAcc: number, variant: { sold: number }) =>
+          variantAcc + variant.sold,
+        0
+      )
+    );
+  };
 
   const [fileList, setFileList] = useState<any>([]);
+
+  const filteredProducts = productListData?.filter(
+    (product: any) =>
+      filterCategoryId == "" || product.category == filterCategoryId
+  );
+
+  const findCategory = navigationCategories.find(
+    (cat) => cat.id == categoryRecord
+  );
 
   const columns = [
     {
@@ -59,38 +137,47 @@ const ProductAdminPage = () => {
       key: "id",
     },
     {
-      title: "Name",
+      title: "Tên sản phẩm",
       dataIndex: "name",
       key: "name",
     },
     {
-      title: "Price",
+      title: "Giá",
       dataIndex: "price",
       key: "price",
+      render: (record: any) => <div>{formatPrice(record)}</div>,
     },
     {
       title: "Category",
-      dataIndex: ["category", "name"],
+      dataIndex: "category",
       key: "category",
+      render: (categoryId: any) => {
+        const category = navigationCategories.find(
+          (cat) => cat.id == categoryId
+        );
+        return <span>{category?.name || "-"}</span>;
+      },
     },
     {
-      title: "Quantity",
-      dataIndex: "stock",
-      key: "quantity",
-      render: (record: any) => (
-        <span>{record ? record : <Tag color="volcano">SOLD</Tag>}</span>
-      ),
+      title: "Số lượng",
+      dataIndex: "id",
+      key: "id",
+      render: (text: Number, record: any) => {
+        const total = calculateTotalStock(record);
+
+        return <span>{total ? total : <Tag color="volcano">SOLD</Tag>}</span>;
+      },
     },
     {
-      title: "Action",
+      title: "Thao tác",
       key: "action",
       render: (record: any) => (
         <Space size="middle">
           <Button type="primary" onClick={() => handleEdit(record)}>
-            Edit
+            Sửa
           </Button>
           <Button type="primary" danger onClick={() => showModalDelete(record)}>
-            Delete
+            Xóa
           </Button>
         </Space>
       ),
@@ -132,6 +219,27 @@ const ProductAdminPage = () => {
       color: "",
       img: "",
       description: "",
+      variants: "",
+      list: [],
+      quantity: "",
+    });
+    setFileList([]);
+  };
+
+  const resetEditForm = () => {
+    editForm.setFieldsValue({
+      id: "",
+      category: "",
+      name: "",
+      price: "",
+      size: "",
+      discount: 0,
+      color: "",
+      img: "",
+      description: "",
+      variants: "",
+      list: [],
+      quantity: "",
     });
     setFileList([]);
   };
@@ -141,6 +249,42 @@ const ProductAdminPage = () => {
     if (fileList.length > 0) {
       values.file = fileList[0].originFileObj;
     }
+    if (values.variants) {
+      const flatVariants = values.variants.flatMap(
+        (variant: { list: any[]; color: any }) =>
+          variant.list
+            ? variant.list.map((item) => ({
+                color: variant.color,
+                size: item.size,
+                quantity: item.quantity,
+              }))
+            : []
+      );
+      values.variants = JSON.stringify(flatVariants);
+    }
+    if (values.list) {
+      const flatVariants = values.list.map(
+        (variant: { color: any; quantity: any }) => ({
+          color: variant.color,
+          quantity: variant.quantity,
+          size: "null",
+        })
+      );
+      values.variants = JSON.stringify(flatVariants);
+      delete values.list;
+    }
+
+    if (values.quantity) {
+      values.variants = JSON.stringify([
+        {
+          color: "null",
+          size: "null",
+          quantity: values.quantity,
+        },
+      ]);
+      delete values.quantity;
+    }
+
     try {
       const data = await createProduct(values);
 
@@ -164,8 +308,72 @@ const ProductAdminPage = () => {
   };
 
   const fillDataToForm = async (record: any) => {
-    form.setFieldsValue(record);
+    editForm.setFieldsValue(record);
+    setCategoryRecord(record.category);
+    setProductRecord(record);
 
+    const transformVariants = (variants: Variant[]): TransformedVariants => {
+      const result: TransformedVariants = {};
+
+      variants.forEach((variant) => {
+        if (!result[variant.color]) {
+          result[variant.color] = [];
+        }
+        result[variant.color].push({
+          size: variant.size,
+          stock: variant.stock,
+          price: variant.price,
+          sold: variant.sold,
+        });
+      });
+
+      return result;
+    };
+
+    const transformedVariants = transformVariants(record.variants);
+
+    const list = Object.keys(transformedVariants).map((color) => ({
+      color,
+      quantity: transformedVariants[color].reduce(
+        (acc, item) => acc + item.stock,
+        0
+      ),
+    }));
+
+    const transformResponseHaveColorSize = (
+      variants: Variant[]
+    ): TransformedResponseHaveColorSize[] => {
+      const result: { [color: string]: TransformedVariantHaveColorSize[] } = {};
+
+      variants.forEach((variant) => {
+        if (!result[variant.color]) {
+          result[variant.color] = [];
+        }
+        result[variant.color].push({
+          size: variant.size,
+          quantity: variant.stock.toString(),
+        });
+      });
+
+      return Object.keys(result).map((color) => ({
+        color,
+        list: result[color],
+      }));
+    };
+
+    const transformedVariantsHaveColorSize = transformResponseHaveColorSize(
+      record.variants
+    );
+
+    if (record.category == 1 || record.category == 5) {
+      editForm.setFieldsValue({ list });
+    }
+    if (record.category == 2) {
+      editForm.setFieldsValue({ quantity: record.variants[0].stock });
+    }
+    if (record.category == 3 || record.category == 4) {
+      editForm.setFieldsValue({ variants: transformedVariantsHaveColorSize });
+    }
     setFileList([
       {
         url: record.image,
@@ -181,9 +389,70 @@ const ProductAdminPage = () => {
   };
 
   const handleOkEdit = async () => {
-    const values = await form.validateFields();
+    const values = await editForm.validateFields();
+
     if (fileList.length > 0) {
-      values.img = fileList[0].originFileObj;
+      values.file = fileList[0].originFileObj;
+    }
+
+    if (values.variants) {
+      const flatVariants = values.variants.flatMap(
+        (variant: { list: any[]; color: any }) =>
+          variant.list
+            ? variant.list.map((item) => ({
+                color: variant.color,
+                size: item.size,
+                quantity: Number.parseInt(item.quantity),
+              }))
+            : []
+      );
+      values.variants = flatVariants;
+    }
+    if (values.list) {
+      const flatVariants = values.list.map(
+        (variant: { color: any; quantity: any }) => ({
+          color: variant.color,
+          quantity: Number.parseInt(variant.quantity),
+          size: "null",
+        })
+      );
+      values.variants = flatVariants;
+      delete values.list;
+    }
+
+    if (values.quantity) {
+      values.variants = [
+        {
+          color: "null",
+          size: "null",
+          quantity: Number.parseInt(values.quantity),
+        },
+      ];
+      delete values.quantity;
+    }
+
+    try {
+      const data = await updateProduct({
+        ...values,
+        discount: String(values.discount),
+      });
+
+      if (data) {
+        setVisible(false);
+        message.success("Đã sửa sản phẩm thành công!");
+        refetch();
+        resetEditForm();
+        setVisibleEdit(false);
+      } else {
+        message.error(
+          "Không thể sửa sản phẩm! Vui lòng kiểm tra dữ liệu và thử lại!"
+        );
+      }
+    } catch (error) {
+      if ((error as any).response.data.message === "image is not allowed") {
+        message.error("Vui lòng chọn hình ảnh sản phẩm!");
+      }
+      message.error("Không thể thêm sản phẩm! Vui lòng thử lại sau");
     }
   };
 
@@ -193,6 +462,10 @@ const ProductAdminPage = () => {
 
   const handleCategoryChange = (value: any) => {
     setFilterCategory(value);
+    const selectedCategory = navigationCategories.find(
+      (category) => category.name === value
+    );
+    setFilterCategoryId(selectedCategory ? selectedCategory.id : "");
   };
 
   const handleCategoryChangeForAction = (value: any) => {
@@ -240,7 +513,7 @@ const ProductAdminPage = () => {
         className="w-full px-4 py-3 mr-4 text-center text-gray-100 bg-blue-600 border border-transparent dark:border-gray-700 hover:border-blue-500 hover:text-blue-700 hover:bg-blue-100 dark:text-gray-400 dark:bg-gray-700 dark:hover:bg-gray-900 rounded-xl"
         onClick={() => openAddForm()}
       >
-        Add product
+        Thêm sản phẩm
       </a>
       <Select
         style={{ width: 200, marginBottom: 16, height: 40 }}
@@ -248,7 +521,7 @@ const ProductAdminPage = () => {
         onChange={handleCategoryChange}
         value={filterCategory}
       >
-        <Select.Option value="">All</Select.Option>
+        <Select.Option value="">Tất cả</Select.Option>
         {navigationCategories.map((category) => (
           <Select.Option value={category.name} key={category.id}>
             {category.name}
@@ -257,11 +530,11 @@ const ProductAdminPage = () => {
       </Select>
       <Table
         columns={columns}
-        dataSource={productListData}
+        dataSource={filteredProducts}
         pagination={{ pageSize: 8 }}
       />
       <Modal
-        title="Add Product"
+        title="Thêm mới sản phẩm"
         open={visible}
         onOk={handleOk}
         onCancel={handleCancel}
@@ -269,7 +542,7 @@ const ProductAdminPage = () => {
         <Form form={form} layout="vertical" className="add-form">
           <Form.Item label="Category" name="category">
             <Select
-              style={{ width: 200, marginBottom: 16 }}
+              style={{ width: 250 }}
               placeholder="Select Category"
               onChange={handleCategoryChangeForAction}
               value={filterCategoryForAction}
@@ -281,22 +554,153 @@ const ProductAdminPage = () => {
               ))}
             </Select>
           </Form.Item>
-          <Form.Item label="Name" name="name">
+          <Form.Item label="Tên sản phẩm" name="name">
             <Input />
           </Form.Item>
-          <Form.Item label="Price" name="price">
-            <Input />
-          </Form.Item>
-          <Form.Item label="Discount" name="discount">
-            <Input />
-          </Form.Item>
-          <Form.Item label="Quantity" name="size">
-            <Input />
-          </Form.Item>
-          <Form.Item label="Color" name="color">
-            <Input />
-          </Form.Item>
-          <Form.Item label="Image" name="file">
+          <div className="flex flex-row justify-between">
+            <Form.Item label="Giá" name="price" style={{ width: "48%" }}>
+              <InputNumber
+                className="w-full"
+                formatter={(value) => formatPrice(Number(value) ?? 0)}
+                controls={false}
+              />
+            </Form.Item>
+            <Form.Item
+              label="Giảm giá"
+              name="discount"
+              style={{ width: "48%" }}
+            >
+              <Input />
+            </Form.Item>
+          </div>
+          {(filterCategoryForAction === 1 || filterCategoryForAction == 5) && (
+            <Form.Item label="Danh sách màu sắc" name="variants">
+              <Form.List name="list">
+                {(subFields, subOpt) => (
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      rowGap: 16,
+                    }}
+                  >
+                    {subFields.map((subField) => (
+                      <Space key={subField.key}>
+                        <Form.Item noStyle name={[subField.name, "color"]}>
+                          <Input placeholder="Màu sắc" />
+                        </Form.Item>
+                        <Form.Item noStyle name={[subField.name, "quantity"]}>
+                          <Input placeholder="Số lượng" />
+                        </Form.Item>
+                        <CloseOutlined
+                          onClick={() => {
+                            subOpt.remove(subField.name);
+                          }}
+                        />
+                      </Space>
+                    ))}
+                    <Button type="dashed" onClick={() => subOpt.add()} block>
+                      + Thêm màu sắc sản phẩm
+                    </Button>
+                  </div>
+                )}
+              </Form.List>
+            </Form.Item>
+          )}
+
+          {filterCategoryForAction === 2 && (
+            <Form.Item label="Số lượng" name="quantity">
+              <Input />
+            </Form.Item>
+          )}
+
+          {(filterCategoryForAction === 3 || filterCategoryForAction === 4) && (
+            <Form.Item label="Danh sách màu sắc" name="variants">
+              <Form.List name="variants">
+                {(fields, { add, remove }) => (
+                  <div
+                    style={{
+                      display: "flex",
+                      rowGap: 16,
+                      flexDirection: "column",
+                    }}
+                  >
+                    {fields.map((field) => (
+                      <Card
+                        size="small"
+                        key={field.key}
+                        extra={
+                          <CloseOutlined
+                            onClick={() => {
+                              remove(field.name);
+                            }}
+                          />
+                        }
+                      >
+                        <Form.Item label="Màu sắc" name={[field.name, "color"]}>
+                          <Input />
+                        </Form.Item>
+
+                        <Form.Item
+                          label="Danh sách size"
+                          name={[field.name, "list"]}
+                        >
+                          <Form.List name={[field.name, "list"]}>
+                            {(subFields, subOpt) => (
+                              <div
+                                style={{
+                                  display: "flex",
+                                  flexDirection: "column",
+                                  rowGap: 16,
+                                }}
+                              >
+                                {subFields.map((subField, index) => (
+                                  <Space key={subField.key}>
+                                    <Form.Item
+                                      noStyle
+                                      name={[subField.name, "size"]}
+                                    >
+                                      <Input placeholder="Size" />
+                                    </Form.Item>
+                                    <Form.Item
+                                      noStyle
+                                      name={[subField.name, "quantity"]}
+                                    >
+                                      <Input placeholder="Số lượng" />
+                                    </Form.Item>
+                                    <CloseOutlined
+                                      onClick={() => {
+                                        subOpt.remove(subField.name);
+                                      }}
+                                    />
+                                  </Space>
+                                ))}
+                                {subFields.length < 4 && (
+                                  <Button
+                                    type="dashed"
+                                    onClick={() => subOpt.add()}
+                                    block
+                                  >
+                                    + Thêm size sản phẩm
+                                  </Button>
+                                )}
+                              </div>
+                            )}
+                          </Form.List>
+                        </Form.Item>
+                      </Card>
+                    ))}
+
+                    <Button type="dashed" onClick={() => add()} block>
+                      + Thêm màu sắc sản phẩm
+                    </Button>
+                  </div>
+                )}
+              </Form.List>
+            </Form.Item>
+          )}
+
+          <Form.Item label="Hình ảnh" name="file">
             <Upload
               beforeUpload={() => false}
               className="upload"
@@ -312,47 +716,173 @@ const ProductAdminPage = () => {
               </div>
             </Upload>
           </Form.Item>
-          <Form.Item label="Description" name="description">
+          <Form.Item label="Mô tả" name="description">
             <Input.TextArea />
           </Form.Item>
         </Form>
       </Modal>
       <Modal
-        title="Edit Product"
+        title="Chỉnh sửa sản phẩm"
         open={visibleEdit}
-        onOk={() => handleOkEdit()}
+        onOk={handleOkEdit}
         onCancel={handleCancelEdit}
       >
-        <Form form={form} layout="vertical">
-          <Form.Item label="ID Category" name="categoryId">
+        <Form form={editForm} layout="vertical" className="add-form">
+          <Form.Item label="Category">
             <Select
-              style={{ width: 200, marginBottom: 16 }}
-              placeholder="Select Category"
-              onChange={handleCategoryChangeForAction}
-              value={filterCategoryForAction}
+              value={findCategory?.name}
+              style={{ width: 250 }}
+              disabled
+            />
+          </Form.Item>
+          <Form.Item label="Tên sản phẩm" name="name">
+            <Input />
+          </Form.Item>
+          <div className="flex flex-row justify-between">
+            <Form.Item label="Giá" name="price" style={{ width: "38%" }}>
+              <InputNumber
+                className="w-full"
+                formatter={(value) => formatPrice(Number(value) ?? 0)}
+                controls={false}
+              />
+            </Form.Item>
+            <Form.Item
+              label="Giảm giá"
+              name="discount"
+              style={{ width: "38%" }}
             >
-              {navigationCategories.map((category) => (
-                <Select.Option key={category.id} value={category.id}>
-                  {category.name}
-                </Select.Option>
-              ))}
-            </Select>
-          </Form.Item>
-          <Form.Item label="Tên" name="name">
-            <Input />
-          </Form.Item>
-          <Form.Item label="Giá cả" name="price">
-            <Input />
-          </Form.Item>
-          <Form.Item label="Giảm giá(%)" name="discount">
-            <InputNumber />
-          </Form.Item>
-          <Form.Item label="Số lượng" name="weight">
-            <InputNumber />
-          </Form.Item>
-          <Form.Item label="Đã bán" name="weight">
-            <InputNumber readOnly disabled={true} />
-          </Form.Item>
+              <Input />
+            </Form.Item>
+            <Form.Item label="Đã bán">
+              <InputNumber value={calculateTotalSold(productRecord)} disabled />
+            </Form.Item>
+          </div>
+          {(categoryRecord == 1 || categoryRecord == 5) && (
+            <Form.Item label="Danh sách màu sắc" name="variants">
+              <Form.List name="list">
+                {(subFields, subOpt) => (
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      rowGap: 16,
+                    }}
+                  >
+                    {subFields.map((subField) => (
+                      <Space key={subField.key}>
+                        <Form.Item noStyle name={[subField.name, "color"]}>
+                          <Input placeholder="Màu sắc" />
+                        </Form.Item>
+                        <Form.Item noStyle name={[subField.name, "quantity"]}>
+                          <Input placeholder="Số lượng" />
+                        </Form.Item>
+                        <CloseOutlined
+                          onClick={() => {
+                            subOpt.remove(subField.name);
+                          }}
+                        />
+                      </Space>
+                    ))}
+                    <Button type="dashed" onClick={() => subOpt.add()} block>
+                      + Thêm màu sắc sản phẩm
+                    </Button>
+                  </div>
+                )}
+              </Form.List>
+            </Form.Item>
+          )}
+
+          {categoryRecord == 2 && (
+            <Form.Item label="Số lượng" name="quantity">
+              <Input />
+            </Form.Item>
+          )}
+
+          {(categoryRecord == 3 || categoryRecord == 4) && (
+            <Form.Item label="Danh sách màu sắc" name="variants">
+              <Form.List name="variants">
+                {(fields, { add, remove }) => (
+                  <div
+                    style={{
+                      display: "flex",
+                      rowGap: 16,
+                      flexDirection: "column",
+                    }}
+                  >
+                    {fields.map((field) => (
+                      <Card
+                        size="small"
+                        key={field.key}
+                        extra={
+                          <CloseOutlined
+                            onClick={() => {
+                              remove(field.name);
+                            }}
+                          />
+                        }
+                      >
+                        <Form.Item label="Màu sắc" name={[field.name, "color"]}>
+                          <Input />
+                        </Form.Item>
+
+                        <Form.Item
+                          label="Danh sách size"
+                          name={[field.name, "list"]}
+                        >
+                          <Form.List name={[field.name, "list"]}>
+                            {(subFields, subOpt) => (
+                              <div
+                                style={{
+                                  display: "flex",
+                                  flexDirection: "column",
+                                  rowGap: 16,
+                                }}
+                              >
+                                {subFields.map((subField, index) => (
+                                  <Space key={subField.key}>
+                                    <Form.Item
+                                      noStyle
+                                      name={[subField.name, "size"]}
+                                    >
+                                      <Input placeholder="Size" />
+                                    </Form.Item>
+                                    <Form.Item
+                                      noStyle
+                                      name={[subField.name, "quantity"]}
+                                    >
+                                      <Input placeholder="Số lượng" />
+                                    </Form.Item>
+                                    <CloseOutlined
+                                      onClick={() => {
+                                        subOpt.remove(subField.name);
+                                      }}
+                                    />
+                                  </Space>
+                                ))}
+                                {subFields.length < 4 && (
+                                  <Button
+                                    type="dashed"
+                                    onClick={() => subOpt.add()}
+                                    block
+                                  >
+                                    + Thêm size sản phẩm
+                                  </Button>
+                                )}
+                              </div>
+                            )}
+                          </Form.List>
+                        </Form.Item>
+                      </Card>
+                    ))}
+
+                    <Button type="dashed" onClick={() => add()} block>
+                      + Thêm màu sắc sản phẩm
+                    </Button>
+                  </div>
+                )}
+              </Form.List>
+            </Form.Item>
+          )}
           <Form.Item label="Hình ảnh" name="img">
             <Upload
               beforeUpload={() => false}
@@ -375,13 +905,13 @@ const ProductAdminPage = () => {
         </Form>
       </Modal>
       <Modal
-        title="Confirm Delete"
+        title="Xoá sản phẩm"
         open={isModalVisible}
         onOk={() => handleDelete(selectedRecord?.id as any)}
         onCancel={() => handleCancelDelete()}
       >
         <p>
-          Are you sure you want to delete this product
+          Bạn có chắc chắn muốn xoá sản phẩm
           <div>{selectedRecord?.name || ""} ?</div>
         </p>
       </Modal>

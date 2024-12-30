@@ -1,12 +1,13 @@
-'use client'
+"use client";
 
-import { ProductAggregation } from '@/types'
-import { useEffect, useState } from 'react'
+import { FilterCode, RangeFilter, StringFilter } from "@/types";
+import { useEffect, useState } from "react";
+import SliderFilter from "./filter/Slider";
 
 interface Props {
-  attributeFilters: ProductAggregation[]
-  onFilterChange: (filterValues: Record<string, string>) => void
-  initialFilter?: Record<string, any>
+  attributeFilters: (StringFilter | RangeFilter)[];
+  onFilterChange: (filterValues: Record<string, string>) => void;
+  initialFilter?: Record<string, any>;
 }
 
 export default function ProductFilter({
@@ -15,17 +16,27 @@ export default function ProductFilter({
   initialFilter: initialFilterValues = {},
 }: Props) {
   const [filterValues, setFilterValues] =
-    useState<Record<string, string>>(initialFilterValues)
+    useState<Record<string, string>>(initialFilterValues);
 
   useEffect(() => {
-    onFilterChange(filterValues)
-  }, [filterValues, onFilterChange])
+    onFilterChange(filterValues);
+  }, [filterValues, onFilterChange]);
 
-  const handleInputChange = (attribute: string, value: string) => {
-    let finalFilterValues
+  const stringFilters = attributeFilters.filter(
+    (filter) => filter.code !== FilterCode.PRICE
+  ) as StringFilter[];
+
+  const rangeFilters = attributeFilters.filter(
+    (filter) => filter.code === FilterCode.PRICE
+  ) as RangeFilter[];
+
+  const handleRangeInputChange = (values: number[]) => {};
+
+  const handleStringInputChange = (attribute: string, value: string) => {
+    let finalFilterValues;
 
     if (filterValues[attribute]) {
-      const prevAttribute = JSON.parse(filterValues[attribute])
+      const prevAttribute = JSON.parse(filterValues[attribute]);
 
       if (prevAttribute.includes(value)) {
         finalFilterValues = {
@@ -33,38 +44,50 @@ export default function ProductFilter({
           [attribute]: JSON.stringify(
             prevAttribute.filter((v: string) => v !== value)
           ),
-        }
+        };
       } else {
         finalFilterValues = {
           ...filterValues,
           [attribute]: JSON.stringify([...prevAttribute, value]),
-        }
+        };
       }
     } else {
       finalFilterValues = {
         ...filterValues,
         [attribute]: JSON.stringify([value]),
-      }
+      };
     }
 
-    setFilterValues(finalFilterValues)
-  }
+    setFilterValues(finalFilterValues);
+  };
 
   return (
     <div>
-      {attributeFilters.map((filter) => (
-        <div key={filter.attribute_code} className="border-t py-8">
-          <p className="font-semibold">{filter.label}</p>
+      {/* {rangeFilters.map((filter) => {
+        return (
+          <div key={filter.code} className="border-t py-8">
+            <p className="font-semibold">{filter.name}</p>
+            <SliderFilter
+              min={filter.min}
+              max={filter.max}
+              onChangeComplete={handleRangeInputChange}
+            />
+          </div>
+        );
+      })} */}
+      {stringFilters.map((filter) => (
+        <div key={filter.code} className="border-t py-8">
+          <p className="font-semibold">{filter.name}</p>
           <ul className="mt-2">
-            {filter.options.map((option) => (
-              <li key={option.value} className="pt-3">
+            {filter.values.map((option) => (
+              <li key={`${filter.code}_${option.value}`} className="pt-3">
                 <label>
                   <input
                     type="checkbox"
                     name={option.value}
                     value={option.value}
                     onChange={() => {
-                      handleInputChange(filter.attribute_code, option.value)
+                      handleStringInputChange(filter.code, option.value);
                     }}
                   />
                   <span className="pl-2">{option.label}</span>
@@ -75,5 +98,5 @@ export default function ProductFilter({
         </div>
       ))}
     </div>
-  )
+  );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
   Table,
   Space,
@@ -12,35 +12,20 @@ import {
   message,
   Tag,
 } from "antd";
+import { useListUsers } from "@/hooks/admin/useUser";
+import authApi from "@/services/auth";
+import usersApi from "@/services/users";
+import axios from "axios";
 // import usersApi from "../../services/users";
 
 const UserMangement = () => {
-  const [usersData, setUsersData] = useState([]);
   const [filterCategory, setFilterCategory] = useState("");
 
   const [visible, setVisible] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedUsertId, setSelectedUserId] = useState<any>(null);
 
-  const fetchData = async () => {
-    // try {
-    //   const response = await usersApi.getListUsers();
-    //   setUsersData(response.data.data);
-    // } catch (error) {
-    //   message.error(error);
-    //   if (error.response.message === "Unauthorized") {
-    //     message.error(
-    //       "You are not authorized to view this page! Please login again"
-    //     );
-    //   } else {
-    //     message.error("An error occurred while fetching products");
-    //   }
-    // }
-  };
-
-  useEffect(() => {
-    fetchData();
-  }, []);
+  const { data: usersData, isLoading, refetch } = useListUsers();
 
   const showModal = (record: any) => {
     setIsModalVisible(true);
@@ -48,21 +33,43 @@ const UserMangement = () => {
   };
 
   const handleOkDelete = async () => {
-    // try {
-    //   await usersApi.deleteUsers(id);
-    //   message.success("Delete user successfully!");
-    //   setIsModalVisible(false);
-    //   fetchData();
-    // } catch (error) {
-    //   message.error("Delete user failed!");
-    // }
+    try {
+      await usersApi.deleteUsers(selectedUsertId.id);
+      message.success("Delete user successfully!");
+      setIsModalVisible(false);
+      refetch();
+    } catch (error) {
+      message.error("Delete user failed!");
+    }
   };
 
   const handleCancelDelete = () => {
     setIsModalVisible(false);
   };
   const handleOk = async () => {
-    setVisible(false);
+    const values = form.getFieldsValue();
+    console.log("values", values);
+
+    try {
+      const response = await authApi.signup({
+        ...values,
+        roleName: "admin",
+      });
+      if (response.status === 201) {
+        message.success("Tạo admin thành công!");
+        setVisible(false);
+        form.resetFields();
+        refetch();
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        if (
+          error.response?.data.message === "User with this email already exists"
+        ) {
+          message.error("Email đã tồn tại! Vui lòng chọn email khác.");
+        } else message.error("Tạo admin thất bại! Vui lòng thử lại.");
+      }
+    }
   };
 
   const handleCancel = () => {
@@ -79,8 +86,8 @@ const UserMangement = () => {
     },
     {
       title: "User Name",
-      dataIndex: "username",
-      key: "username",
+      dataIndex: "name",
+      key: "name",
     },
     {
       title: "Email",
@@ -88,37 +95,36 @@ const UserMangement = () => {
       key: "email",
     },
     {
+      title: "Họ và tên",
+      dataIndex: "surname",
+      key: "surname",
+    },
+    {
       title: "Role",
       dataIndex: "role",
       key: "role",
       render: (record: any) =>
-        record === "admin" ? (
+        record.name === "admin" ? (
           <Tag color="volcano">ADMIN</Tag>
         ) : (
           <Tag color="blue">USER</Tag>
         ),
     },
     {
-      title: "Phone",
-      dataIndex: "phone",
-      key: "phone",
+      title: "Số điện thoại",
+      dataIndex: "phoneNumber",
+      key: "phoneNumber",
       render: (record: any) => record !== "/0" && <div>{record}</div>,
     },
     {
-      title: "Created At",
-      dataIndex: "created_at",
-      key: "created_at",
-      render: (record: any) => <div>{new Date(record).toLocaleString()}</div>,
-    },
-    {
-      title: "Action",
+      title: "Thao tác",
       key: "id",
       render: (record: any) => (
         <Space size="middle">
-          {record.role === "admin" ? null : (
+          {record.role.name === "admin" ? null : (
             <>
               <Button type="primary" danger onClick={() => showModal(record)}>
-                Delete
+                Xóa user
               </Button>
             </>
           )}
@@ -131,8 +137,8 @@ const UserMangement = () => {
     setFilterCategory(value);
   };
 
-  const filteredUser = usersData.filter(
-    (user: any) => filterCategory === "" || user.role === filterCategory
+  const filteredUser = usersData?.data.filter(
+    (user: any) => filterCategory === "" || user.role.name === filterCategory
   );
 
   return (
@@ -142,7 +148,7 @@ const UserMangement = () => {
           className="w-full px-4 py-3 mr-4 text-center text-gray-100 bg-blue-600 border border-transparent dark:border-gray-700 hover:border-blue-500 hover:text-blue-700 hover:bg-blue-100 dark:text-gray-400 dark:bg-gray-700 dark:hover:bg-gray-900 rounded-xl"
           onClick={() => setVisible(true)}
         >
-          Add admin
+          Thêm mới admin
         </a>
         <Select
           style={{ width: 200, marginBottom: 16, height: 40 }}
@@ -150,7 +156,7 @@ const UserMangement = () => {
           onChange={handleCategoryChange}
           value={filterCategory}
         >
-          <Select.Option value="">All</Select.Option>
+          <Select.Option value="">Tất cả</Select.Option>
           <Select.Option value="user">User</Select.Option>
           <Select.Option value="admin">Admin</Select.Option>
         </Select>
@@ -161,32 +167,58 @@ const UserMangement = () => {
           pagination={{ pageSize: 8 }}
         />
         <Modal
-          title="Add Admin"
+          title="Thêm mới Admin"
           open={visible}
           onOk={handleOk}
           onCancel={handleCancel}
         >
           <Form form={form}>
-            <Form.Item label="Name" name="name">
+            <Form.Item
+              label="Họ và tên"
+              name="surname"
+              rules={[{ required: true, message: "Họ và tên là bắt buộc" }]}
+            >
               <Input />
             </Form.Item>
-            <Form.Item label="User Email" name="email">
+            <Form.Item
+              label="User Name"
+              name="name"
+              rules={[{ required: true, message: "User Name là bắt buộc" }]}
+            >
               <Input />
             </Form.Item>
-            <Form.Item label="Password" name="password">
+            <Form.Item
+              label="Email"
+              name="email"
+              rules={[{ required: true, message: "Email là bắt buộc" }]}
+            >
+              <Input />
+            </Form.Item>
+            <Form.Item
+              label="Số điện thoại"
+              name="phoneNumber"
+              rules={[{ required: true, message: "Số điện thoại là bắt buộc" }]}
+            >
+              <Input />
+            </Form.Item>
+            <Form.Item
+              label="Mật khẩu"
+              name="password"
+              rules={[{ required: true, message: "Mật khẩu là bắt buộc" }]}
+            >
               <Input />
             </Form.Item>
           </Form>
         </Modal>
         <Modal
-          title="Confirm Delete"
+          title="Xác nhận xóa user"
           open={isModalVisible}
           onOk={() => handleOkDelete()}
           onCancel={handleCancelDelete}
         >
           <p>
-            Are you sure you want to delete this user?
-            <div>{selectedUsertId?.username}</div>
+            Bạn có chắc chắn muốn xóa user?
+            <div>{selectedUsertId?.name}</div>
           </p>
         </Modal>
       </div>

@@ -1,3 +1,4 @@
+import { LOADING_DELAY } from "@/constants";
 import api from "@services/baseApi";
 import { AxiosRequestConfig, AxiosResponse } from "axios";
 import { useCallback, useEffect, useState } from "react";
@@ -24,9 +25,13 @@ export default function useQuery<T>(
         setData(response);
       }
     } catch (error) {
-      setError(error);
+      if (url === "/user/cart") {
+        setData([] as any);
+      } else {
+        setError(error);
+      }
     } finally {
-      setIsLoading(false);
+      setTimeout(() => setIsLoading(false), LOADING_DELAY);
     }
   }, [params, url]);
 

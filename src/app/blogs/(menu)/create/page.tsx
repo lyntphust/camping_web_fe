@@ -19,7 +19,7 @@ export default function BlogCreatePage() {
   const [form] = Form.useForm<Blog>();
   const [fileList, setFileList] = useState([]);
 
-  const { mutate: createBlog } = useCreateBlog();
+  const { doMutate: createBlog } = useCreateBlog();
 
   const router = useRouter();
 
@@ -107,13 +107,22 @@ export default function BlogCreatePage() {
                 </div>
               </Upload>
             </Form.Item>
-            <Form.Item
-              label="Địa điểm"
-              name="location"
-              className="w-1/2 font-bold text-lg mt-3"
-            >
-              <Input />
-            </Form.Item>
+            <div className="w-1/2 ml-4">
+              <Form.Item
+                label="Tiêu đề"
+                name="title"
+                className="w-full font-bold text-lg mt-3"
+              >
+                <Input />
+              </Form.Item>
+              <Form.Item
+                label="Địa điểm"
+                name="location"
+                className="w-full font-bold text-lg mt-3"
+              >
+                <Input />
+              </Form.Item>
+            </div>
           </div>
           <Form.Item
             label="Nội dung"

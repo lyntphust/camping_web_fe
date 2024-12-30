@@ -31,8 +31,27 @@ export function upsertQueryParams(
   return result.toString();
 }
 
+export function formatPrice(price: number, currency = "VND") {
+  return new Intl.NumberFormat(currency, {
+    style: "currency",
+    currency,
+  }).format(price);
+}
+
 export function parseJwt(token: string) {
   const base64Url = token.split(".")[1];
   const base64 = base64Url.replace("-", "+").replace("_", "/");
   return JSON.parse(window.atob(base64));
+}
+
+export function generateRandomString(length = 10) {
+  const characters =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  let result = "";
+
+  for (let i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * characters.length));
+  }
+
+  return result;
 }

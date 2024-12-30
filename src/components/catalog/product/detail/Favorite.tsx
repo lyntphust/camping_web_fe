@@ -6,7 +6,7 @@ import {
   useRemoveFavoriteProduct,
 } from "@/hooks/user/useFavoriteProduct";
 import { HeartIcon } from "@heroicons/react/24/solid";
-import { message, Skeleton } from "antd";
+import { message } from "antd";
 import { AxiosResponse } from "axios";
 import { useEffect, useState } from "react";
 
@@ -17,13 +17,8 @@ interface Props {
 export default function ProductDetailFavorite({ productId }: Props) {
   const [isLiked, setIsLiked] = useState(false);
 
-  const {
-    data: favProducts,
-    isLoading,
-    error,
-    refetch,
-  } = useListFavoriteProducts();
-  const { mutate: addFavortiteProduct } = useAddFavoriteProduct(productId);
+  const { data: favProducts, refetch } = useListFavoriteProducts();
+  const { doMutate: addFavortiteProduct } = useAddFavoriteProduct(productId);
   const { doDelete: removeFavoriteProduct } =
     useRemoveFavoriteProduct(productId);
 
@@ -38,26 +33,26 @@ export default function ProductDetailFavorite({ productId }: Props) {
   }, [favProducts, productId]);
 
   const handleAddFavoriteResult = (result: AxiosResponse | undefined) => {
-    const defaultMessage = `Product with ID ${productId} has been added to your favorites.`;
+    const defaultMessage = `Đã thêm sản phẩm ID ${productId} vào danh sách yêu thích của bạn.`;
 
     if (result?.status === 201) {
       message.success(result.data.message || defaultMessage);
     } else if (result?.data.message) {
       message.error(result.data.message);
     } else {
-      message.error("Something went wrong");
+      message.error("Có lỗi xảy ra! Vui lòng thử lại sau.");
     }
   };
 
   const handleRemoveFavoriteResult = (result: AxiosResponse | undefined) => {
-    const defaultMessage = `Product with ID ${productId} has been removed from your favorites.`;
+    const defaultMessage = `Đã xoá sản phẩm ID ${productId} khỏi danh sách yêu thích của bạn.`;
 
     if (result?.status === 200 && result?.data.message) {
-      message.success(result.data.message || defaultMessage);
+      message.success( defaultMessage);
     } else if (result?.data.message) {
       message.error(result.data.message);
     } else {
-      message.error("Something went wrong");
+      message.error("Có lỗi xảy ra! Vui lòng thử lại sau.");
     }
   };
 
@@ -74,10 +69,6 @@ export default function ProductDetailFavorite({ productId }: Props) {
 
     refetch();
   };
-
-  if (isLoading) {
-    return <Skeleton />;
-  }
 
   return (
     <HeartIcon

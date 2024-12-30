@@ -2,7 +2,7 @@ import ProductPartialPrice from "@/components/catalog/product/ProductPartialPric
 import { ProductDetail } from "@/types";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { IntlProvider } from "react-intl";
+import { useMemo } from "react";
 
 interface Props {
   product: ProductDetail;
@@ -11,6 +11,14 @@ interface Props {
 
 export default function ProductCard({ product, className = "" }: Props) {
   const router = useRouter();
+
+  const totalSold = useMemo(() => {
+    return product.variants.reduce(
+      (acc, variant) => acc + (variant?.sold || 0),
+      0
+    );
+  }, [product.variants]);
+  product.totalSold = totalSold;
 
   return (
     <div
@@ -39,14 +47,15 @@ export default function ProductCard({ product, className = "" }: Props) {
           /> */}
         </div>
         <div className="mt-6">
-          <IntlProvider locale="vi">
-            <ProductPartialPrice
-              className="inline-flex"
-              price={product.price}
-              discount={product.discount}
-            />
-          </IntlProvider>
+          <ProductPartialPrice
+            className="inline-flex"
+            price={product.price}
+            discount={product.discount}
+          />
         </div>
+        <p className="text-gray-500" style={{ fontSize: 14 }}>
+          Đã bán: {product.totalSold}
+        </p>
       </div>
       <button
         type="submit"

@@ -1,5 +1,6 @@
 "use client";
 
+import { useAuth } from "@/context/AuthContext";
 import {
   HeartIcon,
   ShoppingCartIcon,
@@ -7,31 +8,32 @@ import {
   UserIcon,
 } from "@heroicons/react/24/solid";
 import "@styles/admin.scss";
-import { Layout, Menu } from "antd";
+import { Layout, Menu, message } from "antd";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 const { Content } = Layout;
 
 const menus = [
   {
     key: "products",
-    label: <Link href={`/admin/products`}>Products</Link>,
+    label: <Link href={`/admin/products`}>Sản phẩm</Link>,
     icon: <SquaresPlusIcon className="h-8 w-8 mr-2" />,
   },
   {
     key: "orders",
-    label: <Link href={`/admin/orders`}>Orders</Link>,
+    label: <Link href={`/admin/orders`}>Đơn hàng</Link>,
     icon: <ShoppingCartIcon className="h-8 w-8 mr-2" />,
   },
   {
     key: "users",
-    label: <Link href={`/admin/users`}>Users</Link>,
+    label: <Link href={`/admin/users`}>Người dùng</Link>,
     icon: <UserIcon className="h-8 w-8 mr-2" />,
   },
   {
     key: "blogs",
-    label: <Link href={`/admin/blogs`}>Blogs</Link>,
+    label: <Link href={`/admin/blogs`}>Blog</Link>,
     icon: <HeartIcon className="h-8 w-8 mr-2" />,
   },
 ];
@@ -42,6 +44,18 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const authInfo = useAuth();
+  const router = useRouter();
+
+  const userRole = authInfo?.userInfo?.role?.name;
+
+  useEffect(() => {
+    if (userRole !== "admin") {
+      message.error("Bạn không có quyền truy cập vào trang này");
+
+      router.push("/");
+    }
+  }, [userRole, router]);
 
   const selectedKey = pathname.split("/").pop() || menus[0].key;
 

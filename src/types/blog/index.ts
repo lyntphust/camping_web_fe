@@ -16,6 +16,9 @@ export interface Blog {
   bookmark: boolean;
   location: string;
   status: BlogStatus;
+  user: BlogAuthor;
+  createdAt: string;
+  title: string;
 }
 
 export enum BlogMenuKey {
