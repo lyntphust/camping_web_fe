@@ -1,7 +1,10 @@
 "use client";
 
+import ProductCard from "@/components/catalog/product/ProductCard";
 import { useBlogById } from "@/hooks/blog/useBlogs";
+import { useListProduct } from "@/hooks/catalog/useProduct";
 import { MapPinIcon } from "@heroicons/react/24/solid";
+import { Button } from "antd";
 import dayjs from "dayjs";
 import Image from "next/image";
 
@@ -13,6 +16,7 @@ interface Props {
 
 export default function DetailBlog({ params: { id } }: Props) {
   const { data: blog } = useBlogById(Number(id));
+  const { data: listProduct } = useListProduct();
 
   if (!blog) {
     return <div>Blog not found</div>;
@@ -24,7 +28,7 @@ export default function DetailBlog({ params: { id } }: Props) {
     <>
       <main className="pt-8 pb-16 lg:pt-16 lg:pb-24 bg-white dark:bg-gray-900 antialiased">
         <div className="flex justify-between px-4 mx-auto max-w-screen-xl ">
-          <article className="mx-auto w-full max-w-2xl format format-sm sm:format-base lg:format-lg format-blue dark:format-invert">
+          <article className="mx-auto w-full format format-sm sm:format-base lg:format-lg format-blue dark:format-invert">
             <header className="mb-4 lg:mb-6 not-format">
               <address className="flex items-center mb-6 not-italic">
                 <div className="w-full flex justify-between items-center mr-3 text-sm text-gray-900 dark:text-white">
@@ -94,6 +98,24 @@ export default function DetailBlog({ params: { id } }: Props) {
                 alt="blog-image"
               />
             </div>
+          </article>
+        </div>
+        <div className="flex justify-between px-4 mx-auto max-w-screen-xl my-16">
+          <article className="mx-auto w-full format format-sm sm:format-base lg:format-lg format-blue dark:format-invert">
+            <div className="flex justify-between">
+              <span>Các sản phẩm được gắn trong bài</span>
+              <Button>Thêm tất cả vào giỏ hàng</Button>
+            </div>
+            <ul role="list" className="">
+              {listProduct &&
+                listProduct.data &&
+                listProduct.data.length > 0 && (
+                  <ProductCard
+                    product={listProduct.data[0]}
+                    className="w-1/4"
+                  />
+                )}
+            </ul>
           </article>
         </div>
       </main>

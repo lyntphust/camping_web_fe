@@ -1,8 +1,9 @@
 "use client";
 
+import ProductPartialPrice from "@/components/catalog/product/ProductPartialPrice";
 import { useCreateBlog } from "@/hooks/blog/useBlogs";
 import { CloseCircleFilled, PlusOutlined } from "@ant-design/icons";
-import { ArrowLeftIcon } from "@heroicons/react/24/solid";
+import { ArrowLeftIcon, XMarkIcon } from "@heroicons/react/24/solid";
 import "@styles/blogs/create.scss";
 import { Button, Form, Image, Input, message, Upload } from "antd";
 import TextArea from "antd/es/input/TextArea";
@@ -124,6 +125,47 @@ export default function BlogCreatePage() {
               </Form.Item>
             </div>
           </div>
+          <Form.Item
+            label="Sản phẩm gợi ý"
+            name="text"
+            className="font-bold text-lg mt-3"
+          >
+            <Input.Search
+              placeholder="Tìm kiếm sản phẩm trong trang"
+              // suffix={SearchOutlined}
+            />
+          </Form.Item>
+          {[1, 2, 3].map((index) => (
+            <li
+              className=" m-2 px-4 rounded-lg flex py-4 transition-all shadow shadow-lg "
+              key={index}
+            >
+              <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
+                <Image
+                  src="/about_img.png"
+                  alt=""
+                  className="h-full w-full object-cover object-center"
+                />
+              </div>
+              <div className="ml-4 flex flex-1 flex-col">
+                <div>
+                  <div className="flex justify-between text-base font-medium text-gray-900">
+                    <h3>
+                      <a href="#">name</a>
+                    </h3>
+                    <ProductPartialPrice
+                      price={100}
+                      discount={20}
+                      className="flex-row-reverse"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div>
+                <XMarkIcon height={24} width={24} />
+              </div>
+            </li>
+          ))}
           <Form.Item
             label="Nội dung"
             name="text"
