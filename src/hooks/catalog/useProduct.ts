@@ -1,12 +1,16 @@
-import { ListCommentProduct, ProductDetail } from "@/types";
-import useQuery from "@hooks/useQuery";
+import { ListCommentProduct, ProductDetail, ProductVariant } from "@/types";
 import useImageMutation from "@hooks/useImageMutation";
-import useImagePatch from "../useImagePatch";
-import usePatch from "../usePatch";
+import useQuery from "@hooks/useQuery";
+import useLazyQuery from "../useLazyQuery";
 import useMutation from "../useMutation";
+import usePatch from "../usePatch";
 
 export function useListProduct() {
   return useQuery<ProductDetail[]>("/product");
+}
+
+export function useListProductVariant() {
+  return useLazyQuery<ProductVariant[]>();
 }
 
 export function useCreateProduct() {

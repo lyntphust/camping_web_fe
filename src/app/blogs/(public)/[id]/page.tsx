@@ -1,12 +1,13 @@
 "use client";
 
-import ProductCard from "@/components/catalog/product/ProductCard";
+import ProductVariantCard from "@/components/catalog/product/ProductVariantCard";
 import { useBlogById } from "@/hooks/blog/useBlogs";
-import { useListProduct } from "@/hooks/catalog/useProduct";
+import { useListProductVariant } from "@/hooks/catalog/useProduct";
 import { MapPinIcon } from "@heroicons/react/24/solid";
 import { Button } from "antd";
 import dayjs from "dayjs";
 import Image from "next/image";
+import { useEffect, useMemo } from "react";
 
 interface Props {
   params: {
@@ -16,7 +17,29 @@ interface Props {
 
 export default function DetailBlog({ params: { id } }: Props) {
   const { data: blog } = useBlogById(Number(id));
-  const { data: listProduct } = useListProduct();
+  const { data: productVariantData, fetchData } = useListProductVariant();
+
+  const productIds = useMemo(
+    () => blog?.products.map((product) => product.id),
+    [blog]
+  );
+
+  console.log(productIds);
+
+  useEffect(() => {
+    fetchData("product/variant", {
+      ids: productIds,
+    });
+  }, [fetchData, productIds]);
+
+  const productList = useMemo(
+    () =>
+      productVariantData?.data?.map((variant) => ({
+        key: variant.id,
+        ...variant,
+      })),
+    [productVariantData]
+  );
 
   if (!blog) {
     return <div>Blog not found</div>;
@@ -107,9 +130,9 @@ export default function DetailBlog({ params: { id } }: Props) {
               <Button>Thêm tất cả vào giỏ hàng</Button>
             </div>
             <ul role="list" className="flex flex-wrap gap-4 mt-4">
-              {listProduct?.data?.map((product) => (
+              {productList?.map((product) => (
                 <li key={product.id}>
-                  <ProductCard product={product} />
+                  <ProductVariantCard variant={product} />
                 </li>
               ))}
             </ul>

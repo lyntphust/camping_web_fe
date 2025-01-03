@@ -2,17 +2,17 @@
 
 import { navigationCategories } from "@/data";
 import { useCreateBlog } from "@/hooks/blog/useBlogs";
-import { useListProduct } from "@/hooks/catalog/useProduct";
-import { ProductDetail } from "@/types";
+import { useListProductVariant } from "@/hooks/catalog/useProduct";
+import { ProductVariant as ProductVariantType } from "@/types";
 import { formatPrice } from "@/util";
 import { CloseCircleFilled, PlusOutlined } from "@ant-design/icons";
 import { ArrowLeftIcon } from "@heroicons/react/24/solid";
 import "@styles/blogs/create.scss";
-import { Button, Form, Image, Input, message, Table, Tag, Upload } from "antd";
+import { Button, Form, Image, Input, message, Table, Upload } from "antd";
 import TextArea from "antd/es/input/TextArea";
 import { ColumnsType, TableProps } from "antd/es/table";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 interface Blog {
   content: string;
@@ -21,12 +21,9 @@ interface Blog {
   productIds: number[];
 }
 
-const calculateTotalStock = (product: ProductDetail) => {
-  return product?.variants?.reduce(
-    (acc, variant) => acc + (variant.stock || 0),
-    0
-  );
-};
+interface ProductVariant extends ProductVariantType {
+  key: number;
+}
 
 export default function BlogCreatePage() {
   const [form] = Form.useForm<Blog>();
@@ -85,15 +82,35 @@ export default function BlogCreatePage() {
     }
   };
 
-  const { data: productData } = useListProduct();
+  const { data: productVariantData, fetchData } = useListProductVariant();
 
-  const productList =
-    productData?.data.map((product) => ({
-      ...product,
-      key: product.id,
-    })) || [];
+  const productList = useMemo(() => {
+    return (
+      productVariantData?.data?.map((variant) => ({
+        ...variant,
+        image: variant.product?.image,
+        category: variant.product?.category,
+        key: variant.id,
+      })) || []
+    );
+  }, [productVariantData]);
 
-  const columns: ColumnsType<ProductDetail> = [
+  const productIds = Form.useWatch("productIds", form);
+
+  const handleProductSearch = useCallback(
+    (value: string) => {
+      fetchData("product/variant", {
+        query: value,
+      });
+    },
+    [fetchData]
+  );
+
+  useEffect(() => {
+    fetchData("product/variant");
+  }, [fetchData]);
+
+  const columns: ColumnsType<ProductVariant> = [
     {
       title: "ID",
       dataIndex: "id",
@@ -111,6 +128,18 @@ export default function BlogCreatePage() {
       title: "Tên sản phẩm",
       dataIndex: "name",
       key: "name",
+    },
+    {
+      title: "Màu",
+      dataIndex: "color",
+      key: "color",
+      render: (color: any) => <span>{color === "null" ? "-" : color}</span>,
+    },
+    {
+      title: "Size",
+      dataIndex: "size",
+      key: "size",
+      render: (size: any) => <span>{size === "null" ? "-" : size}</span>,
     },
     {
       title: "Giá",
@@ -131,22 +160,35 @@ export default function BlogCreatePage() {
     },
     {
       title: "Số lượng",
-      dataIndex: "id",
-      key: "id",
-      render: (text: Number, record: any) => {
-        const total = calculateTotalStock(record);
-
-        return <span>{total ? total : <Tag color="volcano">SOLD</Tag>}</span>;
-      },
+      dataIndex: "stock",
+      key: "stock",
     },
   ];
 
-  const rowSelection: TableProps<ProductDetail>["rowSelection"] = {
+  const rowSelection: TableProps<ProductVariant>["rowSelection"] = {
+    selectedRowKeys: productIds,
     onChange: (selectedRowKeys: React.Key[]) => {
       form.setFieldsValue({
         productIds: selectedRowKeys as number[],
       });
     },
+  };
+
+  const handleRowClick = (record: ProductVariant) => {
+    const selectedIndex = productIds.indexOf(record.key as number);
+    if (selectedIndex >= 0) {
+      const newSelectedRowKeys = [...productIds];
+      newSelectedRowKeys.splice(selectedIndex, 1);
+      form.setFieldValue("productIds", newSelectedRowKeys);
+    } else {
+      form.setFieldValue("productIds", [...productIds, record.key]);
+    }
+  };
+
+  const handleFormKeyDown = (e: React.KeyboardEvent<HTMLFormElement>) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+    }
   };
 
   return (
@@ -163,6 +205,7 @@ export default function BlogCreatePage() {
         layout="vertical"
         className="add-form pt-6"
         onFinish={onFinish}
+        onKeyDown={handleFormKeyDown}
       >
         <div className="flex flex-col w-full">
           <div className="flex w-full">
@@ -207,12 +250,21 @@ export default function BlogCreatePage() {
           <Form.Item
             label="Sản phẩm gợi ý"
             name="productIds"
-            className="text-lg mt-3"
+            className="text-xl mt-3 font-bold"
           >
+            <Input.Search
+              placeholder="Tìm kiếm sản phẩm trong trang"
+              className="pt-2 pb-6"
+              onSearch={handleProductSearch}
+            />
             <Table
               dataSource={productList}
               columns={columns}
               rowSelection={{ ...rowSelection }}
+              onRow={(record) => ({
+                onClick: () => handleRowClick(record),
+              })}
+              className="font-normal"
             />
           </Form.Item>
           <Form.Item

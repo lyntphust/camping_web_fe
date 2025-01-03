@@ -1,3 +1,5 @@
+import { ProductDetail } from "../catalog";
+
 export interface BlogAuthor {
   name: string;
   avatar: string;
@@ -20,6 +22,7 @@ export interface Blog {
   user: BlogAuthor;
   createdAt: string;
   title: string;
+  products: ProductDetail[];
 }
 
 export enum BlogMenuKey {

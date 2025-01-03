@@ -47,50 +47,14 @@ export interface ConfigurableOption {
   uid: string;
   values: ConfigurableOptionValue[];
 }
-
-export interface ProductVariant {
-  attributes: [
-    {
-      code: string;
-      uid: string;
-      value_index: number;
-    }
-  ];
-  product: {
-    uid: string;
-    media_gallery_entries: string[];
-    sku: string;
-    stock_status: number;
-    price: {
-      regularPrice: {
-        amount: {
-          currency: string;
-          value: number;
-        };
-      };
-    };
-    price_range: {
-      maximum_price: {
-        final_price: {
-          currency: string;
-          value: number;
-        };
-        discount: {
-          amount_off: number;
-        };
-      };
-    };
-  };
-}
-
 export interface ProductVariant {
   id: number;
-  product_id: number;
   stock?: number;
   sold?: number;
   size?: string;
   color?: string;
-  price: string;
+  price: number;
+  product?: ProductDetail;
 }
 
 export interface ProductDetail {

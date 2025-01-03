@@ -13,6 +13,10 @@ export default function ProductCard({ product, className = "" }: Props) {
   const router = useRouter();
 
   const totalSold = useMemo(() => {
+    if (!product.variants) {
+      return 0;
+    }
+
     return product.variants.reduce(
       (acc, variant) => acc + (variant?.sold || 0),
       0
