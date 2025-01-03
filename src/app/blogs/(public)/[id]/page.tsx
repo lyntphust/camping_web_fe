@@ -2,12 +2,13 @@
 
 import ProductVariantCard from "@/components/catalog/product/ProductVariantCard";
 import { useBlogById } from "@/hooks/blog/useBlogs";
+import { useUpdateCartProduct } from "@/hooks/cart/useCart";
 import { useListProductVariant } from "@/hooks/catalog/useProduct";
 import { MapPinIcon } from "@heroicons/react/24/solid";
-import { Button } from "antd";
+import { Button, message } from "antd";
 import dayjs from "dayjs";
 import Image from "next/image";
-import { useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 
 interface Props {
   params: {
@@ -18,21 +19,40 @@ interface Props {
 export default function DetailBlog({ params: { id } }: Props) {
   const { data: blog } = useBlogById(Number(id));
   const { data: productVariantData, fetchData } = useListProductVariant();
+  const { doMutate: updateCartProduct, error } = useUpdateCartProduct();
 
-  const productIds = useMemo(
+  const variantIds = useMemo(
     () => blog?.products.map((product) => product.id),
     [blog]
   );
 
-  console.log(productIds);
+  const handleAddProducts = useCallback(async () => {
+    if (variantIds) {
+      const updatePromises = variantIds.map((variantId) =>
+        updateCartProduct({
+          productId: variantId,
+          quantity: 1,
+        })
+      );
+      await Promise.all(updatePromises);
+
+      if (!error) {
+        message.success(
+          "Thêm sản phẩm vào giỏ hàng thành công. Vui lòng kiểm tra giỏ hàng"
+        );
+      } else {
+        message.error("Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng");
+      }
+    }
+  }, [error, updateCartProduct, variantIds]);
 
   useEffect(() => {
     fetchData("product/variant", {
-      ids: productIds,
+      ids: variantIds,
     });
-  }, [fetchData, productIds]);
+  }, [fetchData, variantIds]);
 
-  const productList = useMemo(
+  const variantList = useMemo(
     () =>
       productVariantData?.data?.map((variant) => ({
         key: variant.id,
@@ -127,12 +147,14 @@ export default function DetailBlog({ params: { id } }: Props) {
           <article className="mx-auto w-full format format-sm sm:format-base lg:format-lg format-blue dark:format-invert">
             <div className="flex justify-between">
               <span>Các sản phẩm được gắn trong bài</span>
-              <Button>Thêm tất cả vào giỏ hàng</Button>
+              <Button onClick={handleAddProducts}>
+                Thêm tất cả vào giỏ hàng
+              </Button>
             </div>
             <ul role="list" className="flex flex-wrap gap-4 mt-4">
-              {productList?.map((product) => (
-                <li key={product.id}>
-                  <ProductVariantCard variant={product} />
+              {variantList?.map((variant) => (
+                <li key={variant.id}>
+                  <ProductVariantCard variant={variant} />
                 </li>
               ))}
             </ul>
