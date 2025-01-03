@@ -1,12 +1,16 @@
 "use client";
 
-import ProductPartialPrice from "@/components/catalog/product/ProductPartialPrice";
+import { navigationCategories } from "@/data";
 import { useCreateBlog } from "@/hooks/blog/useBlogs";
+import { useListProduct } from "@/hooks/catalog/useProduct";
+import { ProductDetail } from "@/types";
+import { formatPrice } from "@/util";
 import { CloseCircleFilled, PlusOutlined } from "@ant-design/icons";
-import { ArrowLeftIcon, XMarkIcon } from "@heroicons/react/24/solid";
+import { ArrowLeftIcon } from "@heroicons/react/24/solid";
 import "@styles/blogs/create.scss";
-import { Button, Form, Image, Input, message, Upload } from "antd";
+import { Button, Form, Image, Input, message, Table, Tag, Upload } from "antd";
 import TextArea from "antd/es/input/TextArea";
+import { ColumnsType, TableProps } from "antd/es/table";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -14,7 +18,15 @@ interface Blog {
   content: string;
   location?: string;
   image: string;
+  productIds: number[];
 }
+
+const calculateTotalStock = (product: ProductDetail) => {
+  return product?.variants?.reduce(
+    (acc, variant) => acc + (variant.stock || 0),
+    0
+  );
+};
 
 export default function BlogCreatePage() {
   const [form] = Form.useForm<Blog>();
@@ -61,13 +73,80 @@ export default function BlogCreatePage() {
   };
 
   const onFinish = async (values: Blog) => {
-    const result = await createBlog(values);
+    const result = await createBlog({
+      ...values,
+      productIds: values.productIds?.map((id) => ({ id })) || [],
+    });
 
     if (result?.data) {
       message.success("Create blog successfully!");
 
       router.push("/blogs/my");
     }
+  };
+
+  const { data: productData } = useListProduct();
+
+  const productList =
+    productData?.data.map((product) => ({
+      ...product,
+      key: product.id,
+    })) || [];
+
+  const columns: ColumnsType<ProductDetail> = [
+    {
+      title: "ID",
+      dataIndex: "id",
+      key: "id",
+    },
+    {
+      title: "Hình ảnh",
+      dataIndex: "image",
+      key: "image",
+      render: (image: string, record) => {
+        return <Image src={image} alt={`image-${record.id}`} width={50} />;
+      },
+    },
+    {
+      title: "Tên sản phẩm",
+      dataIndex: "name",
+      key: "name",
+    },
+    {
+      title: "Giá",
+      dataIndex: "price",
+      key: "price",
+      render: (record: any) => <div>{formatPrice(record)}</div>,
+    },
+    {
+      title: "Category",
+      dataIndex: "category",
+      key: "category",
+      render: (categoryId: any) => {
+        const category = navigationCategories.find(
+          (cat) => cat.id == categoryId
+        );
+        return <span>{category?.name || "-"}</span>;
+      },
+    },
+    {
+      title: "Số lượng",
+      dataIndex: "id",
+      key: "id",
+      render: (text: Number, record: any) => {
+        const total = calculateTotalStock(record);
+
+        return <span>{total ? total : <Tag color="volcano">SOLD</Tag>}</span>;
+      },
+    },
+  ];
+
+  const rowSelection: TableProps<ProductDetail>["rowSelection"] = {
+    onChange: (selectedRowKeys: React.Key[]) => {
+      form.setFieldsValue({
+        productIds: selectedRowKeys as number[],
+      });
+    },
   };
 
   return (
@@ -127,45 +206,15 @@ export default function BlogCreatePage() {
           </div>
           <Form.Item
             label="Sản phẩm gợi ý"
-            name="text"
-            className="font-bold text-lg mt-3"
+            name="productIds"
+            className="text-lg mt-3"
           >
-            <Input.Search
-              placeholder="Tìm kiếm sản phẩm trong trang"
-              // suffix={SearchOutlined}
+            <Table
+              dataSource={productList}
+              columns={columns}
+              rowSelection={{ ...rowSelection }}
             />
           </Form.Item>
-          {[1, 2, 3].map((index) => (
-            <li
-              className=" m-2 px-4 rounded-lg flex py-4 transition-all shadow shadow-lg "
-              key={index}
-            >
-              <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
-                <Image
-                  src="/about_img.png"
-                  alt=""
-                  className="h-full w-full object-cover object-center"
-                />
-              </div>
-              <div className="ml-4 flex flex-1 flex-col">
-                <div>
-                  <div className="flex justify-between text-base font-medium text-gray-900">
-                    <h3>
-                      <a href="#">name</a>
-                    </h3>
-                    <ProductPartialPrice
-                      price={100}
-                      discount={20}
-                      className="flex-row-reverse"
-                    />
-                  </div>
-                </div>
-              </div>
-              <div>
-                <XMarkIcon height={24} width={24} />
-              </div>
-            </li>
-          ))}
           <Form.Item
             label="Nội dung"
             name="text"

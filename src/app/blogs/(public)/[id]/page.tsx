@@ -106,15 +106,12 @@ export default function DetailBlog({ params: { id } }: Props) {
               <span>Các sản phẩm được gắn trong bài</span>
               <Button>Thêm tất cả vào giỏ hàng</Button>
             </div>
-            <ul role="list" className="">
-              {listProduct &&
-                listProduct.data &&
-                listProduct.data.length > 0 && (
-                  <ProductCard
-                    product={listProduct.data[0]}
-                    className="w-1/4"
-                  />
-                )}
+            <ul role="list" className="flex flex-wrap gap-4 mt-4">
+              {listProduct?.data?.map((product) => (
+                <li key={product.id}>
+                  <ProductCard product={product} />
+                </li>
+              ))}
             </ul>
           </article>
         </div>

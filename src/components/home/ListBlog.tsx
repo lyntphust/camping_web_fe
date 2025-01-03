@@ -37,7 +37,7 @@ export default function ListBlog({ blogData }: ListBlogProps) {
                   <div
                     className="flex w-[calc(24%_-_46px)] h-600 flex-wrap hover:scale-110 transition-all hover:cursor-pointer"
                     key={j}
-                    onClick={() => router.push(`/detailblog/${blog.id}`)}
+                    onClick={() => router.push(`/blogs/${blog.id}`)}
                   >
                     <div className="relative w-full h-500 p-1 pb-16 bg-white rounded-lg border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700 ">
                       <Image

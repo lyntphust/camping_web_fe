@@ -105,6 +105,8 @@ export interface ProductDetail {
   category: string;
   variants: ProductVariant[];
   totalSold: number;
+  rating_summary?: number;
+  review_count?: number;
 }
 
 export interface FavProduct {
