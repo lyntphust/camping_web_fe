@@ -57,7 +57,7 @@ export default function DetailBlog({ params: { id } }: Props) {
       productVariantData?.data?.map((variant) => ({
         key: variant.id,
         ...variant,
-      })),
+      })) || [],
     [productVariantData]
   );
 
@@ -143,23 +143,25 @@ export default function DetailBlog({ params: { id } }: Props) {
             </div>
           </article>
         </div>
-        <div className="flex justify-between px-4 mx-auto max-w-screen-xl my-16">
-          <article className="mx-auto w-full format format-sm sm:format-base lg:format-lg format-blue dark:format-invert">
-            <div className="flex justify-between">
-              <span>Các sản phẩm được gắn trong bài</span>
-              <Button onClick={handleAddProducts}>
-                Thêm tất cả vào giỏ hàng
-              </Button>
-            </div>
-            <ul role="list" className="flex flex-wrap gap-4 mt-4">
-              {variantList?.map((variant) => (
-                <li key={variant.id}>
-                  <ProductVariantCard variant={variant} />
-                </li>
-              ))}
-            </ul>
-          </article>
-        </div>
+        {variantList?.length > 0 ? (
+          <div className="flex justify-between px-4 mx-auto max-w-screen-xl my-16">
+            <article className="mx-auto w-full format format-sm sm:format-base lg:format-lg format-blue dark:format-invert">
+              <div className="flex justify-between">
+                <span>Các sản phẩm được gắn trong bài</span>
+                <Button onClick={handleAddProducts}>
+                  Thêm tất cả vào giỏ hàng
+                </Button>
+              </div>
+              <ul role="list" className="flex flex-wrap gap-4 mt-4">
+                {variantList?.map((variant) => (
+                  <li key={variant.id}>
+                    <ProductVariantCard variant={variant} />
+                  </li>
+                ))}
+              </ul>
+            </article>
+          </div>
+        ) : null}
       </main>
     </>
   );
