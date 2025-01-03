@@ -214,7 +214,7 @@ export default function CategoryProductList({ categoryId }: Props) {
         <ul className="grid grid-cols-1 lg:grid-cols-3 md:grid-cols-2 justify-items-center justify-center gap-y-12 gap-x-6 mt-10 mb-5">
           {filteredProducts?.map((product) => (
             <li key={product?.id} className="h-full">
-              <ProductCard product={product} className="h-3/4" />
+              <ProductCard product={product} />
             </li>
           ))}
         </ul>
