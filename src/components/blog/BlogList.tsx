@@ -1,7 +1,8 @@
+import { useListFavoriteBlogs } from "@/hooks/user/useFavoriteBlog";
 import { Blog, BlogStatus } from "@/types";
-import Link from "next/link";
 import { Tag } from "antd";
 import dayjs from "dayjs";
+import Link from "next/link";
 
 interface Props {
   blogs: Blog[];
@@ -9,6 +10,12 @@ interface Props {
 }
 
 export default function BlogList({ blogs, hiddenBookMark }: Props) {
+  const { data: favoriteBlogsData } = useListFavoriteBlogs();
+
+  const isFavorite = (id: number | string) => {
+    return favoriteBlogsData?.data.includes(id.toString());
+  };
+
   return (
     <div className=" grid gap-8 lg:grid-cols-2">
       {blogs.map((blog) => (
@@ -41,7 +48,7 @@ export default function BlogList({ blogs, hiddenBookMark }: Props) {
                 )}
               </span>
             ) : (
-              <span>
+              <span className={isFavorite(blog.id) ? "text-red-500" : ""}>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
@@ -63,7 +70,7 @@ export default function BlogList({ blogs, hiddenBookMark }: Props) {
             {dayjs(blog.createdAt).format("DD/MM/YYYY")}
           </span>
           <h2 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-            <a href="#">{blog.title}</a>
+            <Link href={`/blogs/${blog.id}`}>{blog.title}</Link>
           </h2>
           <p
             style={{

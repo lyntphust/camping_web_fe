@@ -4,11 +4,15 @@ import ProductVariantCard from "@/components/catalog/product/ProductVariantCard"
 import { useBlogById } from "@/hooks/blog/useBlogs";
 import { useUpdateCartProduct } from "@/hooks/cart/useCart";
 import { useListProductVariant } from "@/hooks/catalog/useProduct";
+import {
+  useAddFavoriteBlog,
+  useListFavoriteBlogs,
+  useRemoveFavoriteBlog,
+} from "@/hooks/user/useFavoriteBlog";
 import { MapPinIcon } from "@heroicons/react/24/solid";
-import { Button, message } from "antd";
+import { Button, Image, message } from "antd";
 import dayjs from "dayjs";
-import Image from "next/image";
-import { useCallback, useEffect, useMemo } from "react";
+import { useEffect, useMemo } from "react";
 
 interface Props {
   params: {
@@ -20,13 +24,19 @@ export default function DetailBlog({ params: { id } }: Props) {
   const { data: blog } = useBlogById(Number(id));
   const { data: productVariantData, fetchData } = useListProductVariant();
   const { doMutate: updateCartProduct, error } = useUpdateCartProduct();
+  const { data: favoriteBlogsData, refetch: refetchFavorite } =
+    useListFavoriteBlogs();
+  const { doMutate: addFavoriteBlog } = useAddFavoriteBlog(Number(id));
+  const { doDelete: removeFavoriteBlog } = useRemoveFavoriteBlog(Number(id));
+
+  const isBlogFavorite = favoriteBlogsData?.data.includes(id);
 
   const variantIds = useMemo(
     () => blog?.products.map((product) => product.id),
     [blog]
   );
 
-  const handleAddProducts = useCallback(async () => {
+  const handleAddProducts = async () => {
     if (variantIds) {
       const updatePromises = variantIds.map((variantId) =>
         updateCartProduct({
@@ -44,7 +54,16 @@ export default function DetailBlog({ params: { id } }: Props) {
         message.error("Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng");
       }
     }
-  }, [error, updateCartProduct, variantIds]);
+  };
+
+  const handleFavoriteClick = async () => {
+    if (isBlogFavorite) {
+      await removeFavoriteBlog();
+    } else {
+      await addFavoriteBlog();
+    }
+    refetchFavorite();
+  };
 
   useEffect(() => {
     fetchData("product/variant", {
@@ -104,7 +123,12 @@ export default function DetailBlog({ params: { id } }: Props) {
                       </p>
                     </div>
                   </div>
-                  <div>
+                  <div
+                    className={`cursor-pointer ${
+                      isBlogFavorite ? "text-red-500" : ""
+                    }`}
+                    onClick={handleFavoriteClick}
+                  >
                     <span>
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -134,12 +158,7 @@ export default function DetailBlog({ params: { id } }: Props) {
             </div>
             <div className="indent-6 mt-4">{text}</div>
             <div className="mt-6 flex justify-center">
-              <Image
-                src="/about_img.png"
-                width={600}
-                height={400}
-                alt="blog-image"
-              />
+              <Image src={image} alt="blog-image" />
             </div>
           </article>
         </div>

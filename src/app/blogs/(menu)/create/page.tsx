@@ -19,6 +19,7 @@ interface Blog {
   location?: string;
   image: string;
   productIds: number[];
+  file: File;
 }
 
 interface ProductVariant extends ProductVariantType {
@@ -27,7 +28,7 @@ interface ProductVariant extends ProductVariantType {
 
 export default function BlogCreatePage() {
   const [form] = Form.useForm<Blog>();
-  const [fileList, setFileList] = useState([]);
+  const [fileList, setFileList] = useState<any>([]);
 
   const { doMutate: createBlog } = useCreateBlog();
 
@@ -70,15 +71,22 @@ export default function BlogCreatePage() {
   };
 
   const onFinish = async (values: Blog) => {
+    if (fileList.length > 0) {
+      values.file = fileList[0].originFileObj;
+    }
+
     const result = await createBlog({
       ...values,
       productIds: values.productIds?.map((id) => ({ id })) || [],
     });
 
-    if (result?.data) {
-      message.success("Create blog successfully!");
+    if (result) {
+      message.success("Tạo blog thành công!");
 
-      router.push("/blogs/my");
+      form.resetFields();
+      form.focusField("title");
+    } else {
+      message.error("Có lỗi xảy ra khi tạo blog!");
     }
   };
 

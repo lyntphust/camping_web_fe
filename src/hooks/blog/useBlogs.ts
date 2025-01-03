@@ -1,9 +1,9 @@
 import { Blog } from "@/types";
+import useDelete from "../useDelete";
+import useEdit from "../useEdit";
+import useImageMutation from "../useImageMutation";
 import useLazyQuery from "../useLazyQuery";
 import useQuery from "../useQuery";
-import useEdit from "../useEdit";
-import useDelete from "../useDelete";
-import useMutation from "../useMutation";
 
 export function useListBlog() {
   return useLazyQuery<Blog[]>();
@@ -25,7 +25,7 @@ export function useListBlogSaved() {
 }
 
 export function useCreateBlog() {
-  return useMutation("/blog");
+  return useImageMutation("/blog");
 }
 
 export function useUpdateBlog() {
