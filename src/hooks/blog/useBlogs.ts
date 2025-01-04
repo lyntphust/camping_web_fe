@@ -14,14 +14,7 @@ export function useListBlogAll() {
 }
 
 export function useListBlogSaved() {
-  const hookResult = useLazyQuery<Blog[]>();
-
-  const { data: listBlog } = hookResult;
-
-  return {
-    ...hookResult,
-    data: { data: listBlog?.data.filter((blog) => blog.bookmark) },
-  };
+  return useQuery<Blog[]>("/user/favorite-blog");
 }
 
 export function useCreateBlog() {

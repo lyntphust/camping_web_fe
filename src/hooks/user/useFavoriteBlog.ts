@@ -1,9 +1,10 @@
+import { Blog } from "@/types";
 import useDeletion from "@hooks/useDeletion";
 import useMutation from "@hooks/useMutation";
 import useQuery from "@hooks/useQuery";
 
 export function useListFavoriteBlogs() {
-  return useQuery<string[]>("/user/favorite-blog");
+  return useQuery<Blog[]>("/user/favorite-blog");
 }
 
 export function useAddFavoriteBlog(blogId: number) {

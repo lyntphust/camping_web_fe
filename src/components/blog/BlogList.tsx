@@ -7,13 +7,14 @@ import Link from "next/link";
 interface Props {
   blogs: Blog[];
   hiddenBookMark?: boolean;
+  hiddenSts?: boolean;
 }
 
-export default function BlogList({ blogs, hiddenBookMark }: Props) {
+export default function BlogList({ blogs, hiddenBookMark, hiddenSts }: Props) {
   const { data: favoriteBlogsData } = useListFavoriteBlogs();
 
   const isFavorite = (id: number | string) => {
-    return favoriteBlogsData?.data.includes(id.toString());
+    return favoriteBlogsData?.data.some((blog) => blog.id === id);
   };
 
   return (
@@ -35,7 +36,7 @@ export default function BlogList({ blogs, hiddenBookMark }: Props) {
               </svg>
               {blog.location}
             </span>
-            {hiddenBookMark ? (
+            {!hiddenSts && (
               <span>
                 {blog.status === BlogStatus.PENDING && (
                   <Tag color="blue">Chờ duyệt</Tag>
@@ -47,7 +48,8 @@ export default function BlogList({ blogs, hiddenBookMark }: Props) {
                   <Tag color="red">Từ chối</Tag>
                 )}
               </span>
-            ) : (
+            )}
+            {!hiddenBookMark && (
               <span className={isFavorite(blog.id) ? "text-red-500" : ""}>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"

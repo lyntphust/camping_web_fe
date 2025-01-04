@@ -29,7 +29,9 @@ export default function DetailBlog({ params: { id } }: Props) {
   const { doMutate: addFavoriteBlog } = useAddFavoriteBlog(Number(id));
   const { doDelete: removeFavoriteBlog } = useRemoveFavoriteBlog(Number(id));
 
-  const isBlogFavorite = favoriteBlogsData?.data.includes(id);
+  const isBlogFavorite = favoriteBlogsData?.data.some(
+    (blog) => blog.id === Number(id)
+  );
 
   const variantIds = useMemo(
     () => blog?.products.map((product) => product.id),
@@ -62,13 +64,16 @@ export default function DetailBlog({ params: { id } }: Props) {
     } else {
       await addFavoriteBlog();
     }
+    message.success("Cập nhật thành công");
     refetchFavorite();
   };
 
   useEffect(() => {
-    fetchData("product/variant", {
-      ids: variantIds,
-    });
+    if (variantIds) {
+      fetchData("product/variant", {
+        ids: variantIds && variantIds?.length === 0 ? [0] : variantIds,
+      });
+    }
   }, [fetchData, variantIds]);
 
   const variantList = useMemo(
