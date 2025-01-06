@@ -1,15 +1,17 @@
 "use client";
 
+import { ChatbotRole } from "@/types";
+
 interface Props {
   content: string | React.ReactNode;
-  role?: "bot" | "user";
+  role?: ChatbotRole;
 }
 
 export default function MessageView({ content, role }: Props) {
-  const messageSender = role === "bot" ? "Wildnest Bot" : "You";
+  const messageSender = role === ChatbotRole.MODEL ? "Wildnest Bot" : "You";
 
   const icon =
-    role === "bot" ? (
+    role === ChatbotRole.MODEL ? (
       <svg
         stroke="none"
         fill="black"
