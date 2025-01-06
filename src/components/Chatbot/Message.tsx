@@ -47,10 +47,14 @@ export default function MessageView({ content, role }: Props) {
       <span className="relative flex shrink-0 overflow-hidden rounded-full w-8 h-8">
         <div className="rounded-full bg-gray-100 border p-1">{icon}</div>
       </span>
-      <span className="leading-8">
-        <span className="block font-bold text-gray-700">{messageSender}</span>
-        <span>{content}</span>
-      </span>
+      <div className="leading-8">
+        <div className="block font-bold text-gray-700">{messageSender}</div>
+        <div
+          dangerouslySetInnerHTML={{
+            __html: content as string,
+          }}
+        ></div>
+      </div>
     </div>
   );
 }
