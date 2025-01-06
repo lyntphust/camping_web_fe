@@ -1,14 +1,22 @@
+import { useListFavoriteBlogs } from "@/hooks/user/useFavoriteBlog";
 import { Blog, BlogStatus } from "@/types";
-import Link from "next/link";
 import { Tag } from "antd";
 import dayjs from "dayjs";
+import Link from "next/link";
 
 interface Props {
   blogs: Blog[];
   hiddenBookMark?: boolean;
+  hiddenSts?: boolean;
 }
 
-export default function BlogList({ blogs, hiddenBookMark }: Props) {
+export default function BlogList({ blogs, hiddenBookMark, hiddenSts }: Props) {
+  const { data: favoriteBlogsData } = useListFavoriteBlogs();
+
+  const isFavorite = (id: number | string) => {
+    return favoriteBlogsData?.data.some((blog) => blog.id === id);
+  };
+
   return (
     <div className=" grid gap-8 lg:grid-cols-2">
       {blogs.map((blog) => (
@@ -28,7 +36,7 @@ export default function BlogList({ blogs, hiddenBookMark }: Props) {
               </svg>
               {blog.location}
             </span>
-            {hiddenBookMark ? (
+            {!hiddenSts && (
               <span>
                 {blog.status === BlogStatus.PENDING && (
                   <Tag color="blue">Chờ duyệt</Tag>
@@ -40,8 +48,9 @@ export default function BlogList({ blogs, hiddenBookMark }: Props) {
                   <Tag color="red">Từ chối</Tag>
                 )}
               </span>
-            ) : (
-              <span>
+            )}
+            {!hiddenBookMark && (
+              <span className={isFavorite(blog.id) ? "text-red-500" : ""}>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
@@ -63,7 +72,7 @@ export default function BlogList({ blogs, hiddenBookMark }: Props) {
             {dayjs(blog.createdAt).format("DD/MM/YYYY")}
           </span>
           <h2 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-            <a href="#">{blog.title}</a>
+            <Link href={`/blogs/${blog.id}`}>{blog.title}</Link>
           </h2>
           <p
             style={{
@@ -84,7 +93,7 @@ export default function BlogList({ blogs, hiddenBookMark }: Props) {
               </span>
             </div>
             <Link
-              href={`/detailblog/${blog.id}`}
+              href={`/blogs/${blog.id}`}
               className="inline-flex items-center font-medium text-primary-600 dark:text-primary-500 hover:underline"
             >
               Đọc thêm

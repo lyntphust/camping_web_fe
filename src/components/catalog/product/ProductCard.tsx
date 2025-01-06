@@ -13,6 +13,10 @@ export default function ProductCard({ product, className = "" }: Props) {
   const router = useRouter();
 
   const totalSold = useMemo(() => {
+    if (!product.variants) {
+      return 0;
+    }
+
     return product.variants.reduce(
       (acc, variant) => acc + (variant?.sold || 0),
       0
@@ -27,7 +31,7 @@ export default function ProductCard({ product, className = "" }: Props) {
         router.push(`/product/${product.id}`);
       }}
     >
-      <Image src={product.image} alt={product.name} width={280} height={400} />
+      <Image src={product.image} alt={product.name} width={280} height={280} />
       <div className="p-4">
         <p
           className="pb-4 font-semibold text-xl"
@@ -40,12 +44,14 @@ export default function ProductCard({ product, className = "" }: Props) {
         >
           {product.name}
         </p>
-        <div className="my-2">
-          {/* <ProductRating
+        {product.rating_summary && product.review_count ? (
+          <div className="my-2">
+            {/* <ProductRating
             ratingSummary={product.rating_summary}
             reviewCount={product.review_count}
           /> */}
-        </div>
+          </div>
+        ) : null}
         <div className="mt-6">
           <ProductPartialPrice
             className="inline-flex"

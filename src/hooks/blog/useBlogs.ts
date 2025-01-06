@@ -1,9 +1,9 @@
 import { Blog } from "@/types";
-import useLazyQuery from "../useLazyQuery";
-import useMutation from "../useMutation";
-import useQuery from "../useQuery";
-import useEdit from "../useEdit";
 import useDelete from "../useDelete";
+import useEdit from "../useEdit";
+import useImageMutation from "../useImageMutation";
+import useLazyQuery from "../useLazyQuery";
+import useQuery from "../useQuery";
 
 export function useListBlog() {
   return useLazyQuery<Blog[]>();
@@ -14,18 +14,11 @@ export function useListBlogAll() {
 }
 
 export function useListBlogSaved() {
-  const hookResult = useLazyQuery<Blog[]>();
-
-  const { data: listBlog } = hookResult;
-
-  return {
-    ...hookResult,
-    data: { data: listBlog?.data.filter((blog) => blog.bookmark) },
-  };
+  return useQuery<Blog[]>("/user/favorite-blog");
 }
 
 export function useCreateBlog() {
-  return useMutation("/blog");
+  return useImageMutation("/blog");
 }
 
 export function useUpdateBlog() {
@@ -34,4 +27,22 @@ export function useUpdateBlog() {
 
 export function useDeleteBlog() {
   return useDelete();
+}
+
+export function useBlogById(id: number): {
+  data: Blog | undefined;
+  isLoading: boolean;
+  error: unknown;
+  refetch: () => void;
+} {
+  const hookResult = useQuery<Blog[]>(`/blog/admin`);
+
+  const { data: listBlog } = hookResult;
+
+  const blog = listBlog?.data.find((blog) => blog.id === id);
+
+  return {
+    ...hookResult,
+    data: blog,
+  };
 }

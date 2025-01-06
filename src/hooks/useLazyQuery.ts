@@ -8,14 +8,16 @@ export default function useLazyQuery<T>() {
   const [error, setError] = useState<unknown>();
 
   const refetch = (url: string, params?: any) => {
-    fetchData(url, params);
+    fetchData(url, { params });
   };
 
   const fetchData = useCallback(async (url: string, params?: any) => {
     setIsLoading(true);
 
     try {
-      const response = await api.get(url, params);
+      const response = await api.get(url, {
+        params,
+      });
 
       if (response) {
         setData(response);

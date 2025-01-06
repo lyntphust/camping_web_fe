@@ -44,7 +44,7 @@ const Blog = () => {
           <Link href="/blogs/create">Tạo blog mới</Link>
         </Button>
       )}
-      <BlogList blogs={blogs} />
+      <BlogList blogs={blogs} hiddenSts />
       <Pagination
         className="mt-10 text-center"
         hideOnSinglePage

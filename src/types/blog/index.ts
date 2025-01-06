@@ -1,6 +1,9 @@
+import { ProductDetail } from "../catalog";
+
 export interface BlogAuthor {
   name: string;
   avatar: string;
+  email: string;
 }
 
 export enum BlogStatus {
@@ -19,6 +22,7 @@ export interface Blog {
   user: BlogAuthor;
   createdAt: string;
   title: string;
+  products: ProductDetail[];
 }
 
 export enum BlogMenuKey {
