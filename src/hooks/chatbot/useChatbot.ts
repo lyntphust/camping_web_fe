@@ -1,8 +1,9 @@
+import { ChatbotRole } from "@/types";
 import useMutation from "../useMutation";
 import useQuery from "../useQuery";
 
 interface Message {
-  role: "bot" | "user";
+  role: ChatbotRole;
   content: string | React.ReactNode;
 }
 
