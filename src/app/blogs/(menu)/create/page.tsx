@@ -244,7 +244,7 @@ export default function BlogCreatePage() {
                 name="title"
                 className="w-full font-bold text-lg mt-3"
               >
-                <Input />
+                <Input autoFocus />
               </Form.Item>
               <Form.Item
                 label="Địa điểm"
