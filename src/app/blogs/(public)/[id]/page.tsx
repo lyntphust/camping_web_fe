@@ -12,6 +12,7 @@ import {
 import { MapPinIcon } from "@heroicons/react/24/solid";
 import { Button, Image, message } from "antd";
 import dayjs from "dayjs";
+import { useRouter } from "next/navigation";
 import { useEffect, useMemo } from "react";
 
 interface Props {
@@ -28,6 +29,8 @@ export default function DetailBlog({ params: { id } }: Props) {
     useListFavoriteBlogs();
   const { doMutate: addFavoriteBlog } = useAddFavoriteBlog(Number(id));
   const { doDelete: removeFavoriteBlog } = useRemoveFavoriteBlog(Number(id));
+
+  const router = useRouter();
 
   const isBlogFavorite = favoriteBlogsData?.data.some(
     (blog) => blog.id === Number(id)
@@ -48,10 +51,14 @@ export default function DetailBlog({ params: { id } }: Props) {
       );
       await Promise.all(updatePromises);
 
+      console.log(error);
+
       if (!error) {
         message.success(
           "Thêm sản phẩm vào giỏ hàng thành công. Vui lòng kiểm tra giỏ hàng"
         );
+
+        router.push("/cart");
       } else {
         message.error("Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng");
       }
@@ -162,9 +169,11 @@ export default function DetailBlog({ params: { id } }: Props) {
               <span className="font-bold text-lg">{location}</span>
             </div>
             <div className="indent-6 mt-4">{text}</div>
-            <div className="mt-6 flex justify-center">
-              <Image src={image} alt="blog-image" />
-            </div>
+            {image ? (
+              <div className="mt-6 flex justify-center">
+                <Image src={image} alt="blog-image" />
+              </div>
+            ) : null}
           </article>
         </div>
         {variantList?.length > 0 ? (

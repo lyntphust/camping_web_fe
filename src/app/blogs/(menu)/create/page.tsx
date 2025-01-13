@@ -83,8 +83,7 @@ export default function BlogCreatePage() {
     if (result) {
       message.success("Tạo blog thành công!");
 
-      form.resetFields();
-      form.focusField("title");
+      router.push("/blogs/my");
     } else {
       message.error("Có lỗi xảy ra khi tạo blog!");
     }

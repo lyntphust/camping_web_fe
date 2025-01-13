@@ -40,13 +40,23 @@ export default function ListBlog({ blogData }: ListBlogProps) {
                     onClick={() => router.push(`/blogs/${blog.id}`)}
                   >
                     <div className="relative w-full h-500 p-1 pb-16 bg-white rounded-lg border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700 ">
-                      <Image
-                        alt="gallery"
-                        className="block h-full w-full rounded-lg object-cover object-center "
-                        src="/about_img.png"
-                        width={150}
-                        height={50}
-                      />
+                      {blog.image ? (
+                        <Image
+                          alt="gallery"
+                          className="block h-full w-full rounded-lg object-cover object-center "
+                          src={blog.image}
+                          width={150}
+                          height={50}
+                        />
+                      ) : (
+                        <Image
+                          alt="gallery"
+                          className="block h-full w-full rounded-lg object-cover object-center "
+                          src="/about_img.png"
+                          width={150}
+                          height={50}
+                        />
+                      )}
                       <p className="mb-2 mt-1 text-m font-bold tracking-tight text-gray-900 dark:text-white">
                         {blog.title}
                       </p>
