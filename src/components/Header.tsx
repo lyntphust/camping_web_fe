@@ -15,7 +15,7 @@ import {
   UserIcon,
 } from "@heroicons/react/24/solid";
 import type { MenuProps } from "antd";
-import { Dropdown, Input, Space } from "antd";
+import { Dropdown, Form, Input, Space } from "antd";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
@@ -88,11 +88,16 @@ export default function Header() {
   ];
   return (
     <div className="flex items-center justify-center">
-      <Input.Search
-        placeholder="Tìm kiếm sản phẩm"
-        style={{ width: 500 }}
-        size="large"
-      />
+      <Form>
+        <Input.Search
+          placeholder="Tìm kiếm sản phẩm"
+          style={{ width: 500 }}
+          size="large"
+          onSearch={(value) => {
+            router.push(`/search?q=${value}`);
+          }}
+        />
+      </Form>
 
       {/* Cart */}
       {accessToken ? (
