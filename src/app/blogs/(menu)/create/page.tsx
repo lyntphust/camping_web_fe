@@ -95,6 +95,7 @@ export default function BlogCreatePage() {
     return (
       productVariantData?.data?.map((variant) => ({
         ...variant,
+        name: variant.product?.name,
         image: variant.product?.image,
         category: variant.product?.category,
         key: variant.id,

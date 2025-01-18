@@ -435,6 +435,7 @@ const ProductAdminPage = () => {
       const data = await updateProduct({
         ...values,
         discount: String(values.discount),
+        price: String(values.price),
       });
 
       if (data) {
