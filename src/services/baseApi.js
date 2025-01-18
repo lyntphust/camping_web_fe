@@ -5,8 +5,8 @@ const api = axios.create({
   headers: {
     "accept ": "application/json",
     "Content-Type": "application/json",
-    "ngrok-skip-browser-warning": "69420",
   },
+  withCredentials: true,
 });
 
 api.interceptors.request.use(
