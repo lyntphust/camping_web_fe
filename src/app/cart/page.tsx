@@ -8,11 +8,14 @@ import {
   useUpdateCartProduct,
 } from "@/hooks/cart/useCart";
 import { useCreateOrder } from "@/hooks/order/useOrder";
+import { useShipping } from "@/hooks/order/useShipping";
 import { formatPrice } from "@/util";
 import { QuestionMarkCircleIcon } from "@heroicons/react/24/solid";
-import { Button, Form, Image, Input, message, Skeleton } from "antd";
+import { Button, Form, Image, Input, message, Select, Skeleton } from "antd";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
+
+const { Option } = Select;
 
 const CartComponent = () => {
   const router = useRouter();
@@ -33,7 +36,10 @@ const CartComponent = () => {
   const { doMutate: createOrder, isLoading: createOrderIsLoading } =
     useCreateOrder();
 
+  const { calculateShippingFee, provinces, shop } = useShipping();
+
   const [showCheckoutModal, setShowCheckoutModal] = useState(false);
+  const [selectedProvince, setSelectedProvince] = useState(null);
 
   const [form] = Form.useForm();
 
@@ -52,6 +58,7 @@ const CartComponent = () => {
       const data = {
         address: values.address,
         phone: values.phone,
+        shippingFee: calculateShippingFee(selectedProvince || 1),
         products: cartProducts.map((product) => ({
           id: product.id,
           quantity: product.quantity,
@@ -160,6 +167,17 @@ const CartComponent = () => {
           >
             <div className="w-full">
               <Form form={form} layout="vertical">
+                <Select
+                  className="w-full mb-5"
+                  placeholder="Chọn tỉnh/thành phố"
+                  onChange={(value) => setSelectedProvince(value)}
+                >
+                  {provinces.map((location: any) => (
+                    <Option key={location.id} value={location.id}>
+                      {location.name}
+                    </Option>
+                  ))}
+                </Select>
                 <Form.Item
                   label="Địa chỉ nhận hàng"
                   name="address"
@@ -182,6 +200,53 @@ const CartComponent = () => {
                   <Input />
                 </Form.Item>
               </Form>
+              <section className="total-order">
+                <h2
+                  id="summary-heading"
+                  className="text-lg font-medium text-gray-900"
+                >
+                  Chi tiết thanh toán
+                </h2>
+
+                <dl className="mt-6 space-y-4">
+                  <div className="flex items-center justify-between">
+                    <dt className="text-sm text-gray-600">Tổng tiền hàng</dt>
+                    <dd className="text-sm font-medium text-gray-900">
+                      {formatPrice(cartTotal)}
+                    </dd>
+                  </div>
+                  <div className="flex items-center justify-between border-t border-gray-200 pt-4">
+                    <dt className="flex items-center text-sm text-gray-600">
+                      <span>Phí vận chuyển</span>
+                      <a
+                        href="#"
+                        className="ml-2 flex-shrink-0 text-gray-400 hover:text-gray-500"
+                      >
+                        <span className="sr-only">
+                          Learn more about how shipping is calculated
+                        </span>
+                        <QuestionMarkCircleIcon
+                          className="h-5 w-5"
+                          aria-hidden="true"
+                        />
+                      </a>
+                    </dt>
+                    <dd className="text-sm font-medium text-gray-900">
+                      {formatPrice(calculateShippingFee(selectedProvince || 1))}
+                    </dd>
+                  </div>
+                  <div className="flex items-center justify-between border-t border-gray-200 pt-4">
+                    <dt className="text-base font-medium text-gray-900">
+                      Tổng thanh toán
+                    </dt>
+                    <dd className="text-base font-medium text-gray-900">
+                      {formatPrice(
+                        cartTotal + calculateShippingFee(selectedProvince || 1)
+                      )}
+                    </dd>
+                  </div>
+                </dl>
+              </section>
             </div>
           </CheckoutModal>
           <div className="mx-auto max-w-screen-sm text-center ">
@@ -343,7 +408,7 @@ const CartComponent = () => {
                       </a>
                     </dt>
                     <dd className="text-sm font-medium text-gray-900">
-                      {formatPrice(50000)}
+                      Nhập địa chỉ để xem
                     </dd>
                   </div>
                   <div className="flex items-center justify-between border-t border-gray-200 pt-4">
@@ -351,7 +416,7 @@ const CartComponent = () => {
                       Tổng thanh toán
                     </dt>
                     <dd className="text-base font-medium text-gray-900">
-                      {formatPrice(cartTotal + 50000)}
+                      Nhập địa chỉ để xem
                     </dd>
                   </div>
                 </dl>

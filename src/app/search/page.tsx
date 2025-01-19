@@ -24,11 +24,23 @@ export default function SearchPage() {
       <h1>Kết quả tìm kiếm</h1>
       {Number(products?.length) > 0 ? (
         <ul className="grid grid-cols-1 lg:grid-cols-3 md:grid-cols-2 justify-items-center justify-center gap-y-12 gap-x-6 mt-10 mb-5">
-          {products?.map((product) => (
-            <li key={product?.id} className="h-full">
-              <ProductCard product={product} />
-            </li>
-          ))}
+          {products
+            ?.sort((a, b) => {
+              const totalSoldA = a.variants.reduce(
+                (acc, variant) => acc + (variant?.sold || 0),
+                0
+              );
+              const totalSoldB = b.variants.reduce(
+                (acc, variant) => acc + (variant?.sold || 0),
+                0
+              );
+              return totalSoldB - totalSoldA;
+            })
+            .map((product) => (
+              <li key={product?.id} className="h-full">
+                <ProductCard product={product} />
+              </li>
+            ))}
         </ul>
       ) : (
         <div>
