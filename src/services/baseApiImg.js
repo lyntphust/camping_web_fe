@@ -1,11 +1,8 @@
 import axios from "axios";
 
 const apiImg = axios.create({
-  baseURL: "http://localhost:8888",
+  baseURL: "https://camping-web-production.up.railway.app",
   headers: {
-    "accept ": "application/json",
-    "Content-Type": "application/json",
-    "ngrok-skip-browser-warning": "69420",
     "Content-Type": "multipart/form-data",
   },
 });
