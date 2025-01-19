@@ -1,9 +1,8 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "http://localhost:8888",
+  baseURL: "https://camping-web-production.up.railway.app",
   headers: {
-    "accept ": "application/json",
     "Content-Type": "application/json",
   },
   withCredentials: true,
